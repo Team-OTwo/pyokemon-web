@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router"
 
 import AdminProtectedRoute from "./components/admin-protected-route"
 import ProtectedRoute from "./components/protected-route"
+import EventListPage from "./pages/event-list-page"
 import HomePage from "./pages/home-page"
 import MainEmptyLayout from "./pages/main-empty-layout"
 import MainGrayLayout from "./pages/main-gray-layout"
@@ -32,7 +33,12 @@ const router = createBrowserRouter([
         children: [
           {
             Component: ProtectedRoute,
-            children: [],
+            children: [
+              {
+                path: "event",
+                Component: EventListPage,
+              },
+            ],
           },
         ],
       },

@@ -1,104 +1,59 @@
 import { GithubOutlined, RocketOutlined } from "@ant-design/icons"
 import { Box, Typography } from "@mui/material"
 import { Button } from "antd"
-import { Link } from "react-router"
+import { IoSearch } from "react-icons/io5"
+import { Link, useSearchParams } from "react-router"
 
 import { color, zIndex } from "@/styles/design-tokens"
 
+import logo from "../../assets/images/logo.svg"
 import HeaderMenuSection from "./header-menu-section"
 
 function Header() {
+  const [searchParams] = useSearchParams()
+  const currentType = searchParams.get("type")
+
+  const list = [
+    { title: "콘서트", type: "concert" },
+    { title: "뮤지컬", type: "musical" },
+    { title: "연극", type: "play" },
+    { title: "클래식", type: "classic" },
+    { title: "스포츠", type: "sports" },
+    { title: "행사", type: "exhibition" },
+  ]
   return (
-    <Box
-      component="header"
-      sx={{
-        position: "sticky",
-        top: 0,
-        zIndex: zIndex.header,
-        borderBottom: `1px solid ${color.gray[2]}`,
-        bgcolor: color.white,
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
-        backdropFilter: "blur(8px)",
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-      }}
-    >
-      <Box
-        sx={{
-          width: "var(--container-width)",
-          mx: "auto",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0 var(--header-spacing-left) 0 var(--header-spacing-right)",
-          height: "var(--header-height)",
-        }}
-      >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box
-            component={Link}
-            to="/"
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              textDecoration: "none",
-              color: color.primary[6],
-              transition: "transform 0.2s",
-              "&:hover": {
-                transform: "scale(1.05)",
-              },
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: 40,
-                height: 40,
-                borderRadius: "50%",
-                mr: 1.5,
-                background: `linear-gradient(135deg, ${color.primary[4]}, ${color.primary[6]})`,
-                color: "white",
-                boxShadow: `0 4px 12px ${color.primary[3]}40`,
-              }}
-            >
-              <RocketOutlined style={{ fontSize: 24 }} />
-            </Box>
-            <Typography
-              variant="h4Bold"
-              sx={{
-                background: `linear-gradient(135deg, ${color.primary[6]}, ${color.primary[4]})`,
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                fontWeight: 700,
-                letterSpacing: "-0.5px",
-              }}
-            >
-              Pyokemon
-            </Typography>
-          </Box>
-        </Box>
+    <div className="flex bg-black h-70 w-full text-white items-center justify-between px-60">
+      <div className="flex items-center">
+        <Link to="/">
+          <img src={logo} alt="logo" className="h-50" />
+        </Link>
 
-        <HeaderMenuSection />
+        <div className="w-270 h-40 mx-40 flex items-center border-primary border-1 rounded-full px-16 justify-between">
+          <input
+            type="text"
+            className="focus:outline-none text-sm h-full placeholder:text-gray-500"
+            placeholder="공연 검색"
+          />
+          <IoSearch className="text-gray-300" />
+        </div>
+        <nav className="flex gap-16 items-center">
+          {list.map((genre) => {
+            const isActive = currentType === genre.type
+            return (
+              <Link
+                to={"/event?type=" + genre.type}
+                key={genre.title}
+                className={`hover:text-primary ${isActive ? "text-primary" : ""}`}
+              >
+                {genre.title}
+              </Link>
+            )
+          })}
+        </nav>
+      </div>
 
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <Button
-            type="default"
-            icon={<GithubOutlined />}
-            href="https://github.com"
-            target="_blank"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              borderColor: color.gray[4],
-              color: color.gray[7],
-            }}
-          >
-            GitHub
-          </Button>
-        </Box>
-      </Box>
-    </Box>
+      <Link to="/login">로그인</Link>
+    </div>
   )
 }
 

@@ -1,0 +1,26 @@
+import React from "react"
+
+import { EventType } from "@/types/event"
+
+interface CarouselCardProps {
+  event: EventType
+}
+
+const CarouselCard: React.FC<CarouselCardProps> = ({ event }) => {
+  return (
+    <div className="relative rounded-lg aspect-[3/4] flex flex-col justify-end overflow-hidden w-full">
+      <img src={event.thumbnail_url} alt="img" className="object-cover w-full h-full" />
+
+      {/* text */}
+      <div className="p-24 z-1 text-white bg-gradient-to-b from-black/0 to-black/75 absolute bottom-0 left-0">
+        <h1 className="text-2xl font-semibold pb-12">{event.title}</h1>
+        <p className="text-sm font-semibold">{event.venue_name}</p>
+        <p className="text-sm">
+          {event.start_date} - {event.end_date}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+export default CarouselCard
