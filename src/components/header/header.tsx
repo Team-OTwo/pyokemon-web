@@ -6,6 +6,7 @@ import { Link, useSearchParams } from "react-router"
 
 import { color, zIndex } from "@/styles/design-tokens"
 
+import logo from "../../assets/images/logo.svg"
 import HeaderMenuSection from "./header-menu-section"
 
 function Header() {
@@ -23,7 +24,9 @@ function Header() {
   return (
     <div className="flex bg-black h-70 w-full text-white items-center justify-between px-60">
       <div className="flex items-center">
-        <Link to="/">logo</Link>
+        <Link to="/">
+          <img src={logo} alt="logo" className="h-50" />
+        </Link>
 
         <div className="w-270 h-40 mx-40 flex items-center border-primary border-1 rounded-full px-16 justify-between">
           <input
