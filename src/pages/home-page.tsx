@@ -1,4 +1,4 @@
-import { eventList } from "@/utils/event"
+import { eventList, eventRank } from "@/utils/event"
 import { Box } from "@mui/material"
 
 import Dashboard from "@/components/dashboard/dashboard"
@@ -18,7 +18,7 @@ function HomePage() {
       <section className="mb-48">
         <h1 className="head1 py-24">실시간 랭킹</h1>
         <div className="grid grid-cols-4 gap-24">
-          {eventList.map((event, i) => {
+          {eventRank.map((event, i) => {
             return <EventPreviewCard key={i} rank={i + 1} event={event} />
           })}
         </div>
