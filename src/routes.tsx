@@ -27,6 +27,14 @@ const router = createBrowserRouter([
               },
             ],
           },
+          {
+            path: "event",
+            Component: EventListPage,
+          },
+          {
+            path: "event/detail/:id", // ✅ 상세 경로 추가
+            Component: EventDetailPage,
+          },
         ],
       },
       {
@@ -34,16 +42,7 @@ const router = createBrowserRouter([
         children: [
           {
             Component: ProtectedRoute,
-            children: [
-              {
-                path: "event",
-                Component: EventListPage,
-              },
-              {
-                path: "event/detail/:id", // ✅ 상세 경로 추가
-                Component: EventDetailPage,
-              },
-            ],
+            children: [],
           },
         ],
       },
