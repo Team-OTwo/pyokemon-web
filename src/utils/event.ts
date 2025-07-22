@@ -123,4 +123,5 @@ export const event = {
   ticket_open_at: "2025-07-22",
   genre: "콘서트",
   thumbnail_url: "https://ticketimage.interpark.com/Play/image/large/25/25009134_p.gif",
+  description: "상세 설명입니다.",
 }
