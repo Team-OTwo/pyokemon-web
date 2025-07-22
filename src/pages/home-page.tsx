@@ -1,3 +1,4 @@
+import { eventList } from "@/utils/event"
 import { Box } from "@mui/material"
 
 import Dashboard from "@/components/dashboard/dashboard"
@@ -17,10 +18,9 @@ function HomePage() {
       <section className="mb-48">
         <h1 className="head1 py-24">실시간 랭킹</h1>
         <div className="grid grid-cols-4 gap-24">
-          <EventPreviewCard rank={1} />
-          <EventPreviewCard rank={2} />
-          <EventPreviewCard rank={3} />
-          <EventPreviewCard rank={4} />
+          {eventList.map((event, i) => {
+            return <EventPreviewCard key={i} rank={i + 1} event={event} />
+          })}
         </div>
       </section>
 
@@ -29,10 +29,9 @@ function HomePage() {
       <section className="mb-48">
         <h1 className="head1 py-24">오픈 예정</h1>
         <div className="grid grid-cols-4 gap-24">
-          <EventPreviewCard openAt={today} />
-          <EventPreviewCard openAt={today} />
-          <EventPreviewCard openAt={today} />
-          <EventPreviewCard openAt={today} />
+          {eventList.map((event, i) => {
+            return <EventPreviewCard key={i} event={event} openAt={true} />
+          })}
         </div>
       </section>
     </div>
