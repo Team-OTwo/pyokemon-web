@@ -1,4 +1,5 @@
 export interface EventType {
+  id: number
   title: string
   age_limit: number
   venue_name: string
