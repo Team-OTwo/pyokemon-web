@@ -1,5 +1,8 @@
 import React from "react"
+import { eventList } from "@/utils/event"
 import { useSearchParams } from "react-router"
+
+import EventPreviewCard from "@/components/event/EventPreviewCard"
 
 const EventListPage = () => {
   const [searchParams] = useSearchParams()
@@ -17,8 +20,13 @@ const EventListPage = () => {
   const typeName = typeMap[type ?? ""] ?? ""
 
   return (
-    <div>
-      <h1 className="head1 py-32">{typeName} 둘러보기</h1>
+    <div className="px-60 mb-48">
+      <h1 className="head1 py-32 text-center">{typeName} 둘러보기</h1>
+      <div className="grid grid-cols-4 gap-24">
+        {eventList.map((event, i) => {
+          return <EventPreviewCard key={i} event={event} openAt={true} />
+        })}
+      </div>
     </div>
   )
 }
