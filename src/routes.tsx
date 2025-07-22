@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router"
 
 import AdminProtectedRoute from "./components/admin-protected-route"
 import ProtectedRoute from "./components/protected-route"
+import EventDetailPage from "./pages/event-detail-page"
 import EventListPage from "./pages/event-list-page"
 import HomePage from "./pages/home-page"
 import MainEmptyLayout from "./pages/main-empty-layout"
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
               {
                 path: "event",
                 Component: EventListPage,
+              },
+              {
+                path: "event/detail/:id", // ✅ 상세 경로 추가
+                Component: EventDetailPage,
               },
             ],
           },
