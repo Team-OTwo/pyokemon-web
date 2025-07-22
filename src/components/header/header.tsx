@@ -2,13 +2,16 @@ import { GithubOutlined, RocketOutlined } from "@ant-design/icons"
 import { Box, Typography } from "@mui/material"
 import { Button } from "antd"
 import { IoSearch } from "react-icons/io5"
-import { Link } from "react-router"
+import { Link, useSearchParams } from "react-router"
 
 import { color, zIndex } from "@/styles/design-tokens"
 
 import HeaderMenuSection from "./header-menu-section"
 
 function Header() {
+  const [searchParams] = useSearchParams()
+  const currentType = searchParams.get("type")
+
   const list = [
     { title: "콘서트", type: "concert" },
     { title: "뮤지컬", type: "musical" },
@@ -32,11 +35,12 @@ function Header() {
         </div>
         <nav className="flex gap-16 items-center">
           {list.map((genre) => {
+            const isActive = currentType === genre.type
             return (
               <Link
                 to={"/event?type=" + genre.type}
                 key={genre.title}
-                className="hover:text-primary"
+                className={`hover:text-primary ${isActive ? "text-primary" : ""}`}
               >
                 {genre.title}
               </Link>
