@@ -1,10 +1,8 @@
-import { eventList, eventRank } from "@/utils/event"
-import { Box } from "@mui/material"
+import { eventList, eventRank } from "@/constants/event"
 
-import Dashboard from "@/components/dashboard/dashboard"
-import EventPreviewCard from "@/components/event/EventPreviewCard"
-import Footer from "@/components/footer"
-import Carousel from "@/components/home/Carousel"
+import EventPreviewCard from "@/components/event-preview-card/event-preview-card"
+
+import Carousel from "./_component/carousel"
 
 function HomePage() {
   const today = new Date()

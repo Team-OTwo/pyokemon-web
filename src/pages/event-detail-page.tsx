@@ -2,10 +2,10 @@ import React, { useState } from "react"
 import { IoStar, IoStarOutline } from "react-icons/io5"
 import { useParams } from "react-router"
 
-import Button from "@/components/common/Button"
-import GenreBadge from "@/components/common/GenreBadge"
+import Button from "@/components/ui/button"
+import GenreBadge from "@/components/ui/genre-badge"
 
-import { event } from "../utils/event"
+import { event } from "../constants/event"
 
 const EventDetailPage = () => {
   const { id } = useParams()

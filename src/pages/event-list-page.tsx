@@ -1,8 +1,8 @@
 import React from "react"
-import { eventList } from "@/utils/event"
+import { eventList } from "@/constants/event"
 import { useSearchParams } from "react-router"
 
-import EventPreviewCard from "@/components/event/EventPreviewCard"
+import EventPreviewCard from "@/components/event-preview-card/event-preview-card"
 
 const EventListPage = () => {
   const [searchParams] = useSearchParams()
