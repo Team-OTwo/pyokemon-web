@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { format } from "date-fns"
 import { IoStar, IoStarOutline } from "react-icons/io5"
 import { useParams } from "react-router"
 
@@ -15,6 +16,7 @@ const EventDetailPage = () => {
   const handleMarkClick = () => {
     setIsMarked(!isMarked)
   }
+
   return (
     <div className="px-120 py-32 relative flex">
       <div className="w-full">
@@ -46,16 +48,14 @@ const EventDetailPage = () => {
           <div className="flex gap-12">
             <ul className="w-90 flex flex-col gap-16">
               <li>장소</li>
-              <li>기간</li>
+              <li>일시</li>
               <li>연령</li>
               <li>등급 및 가격</li>
             </ul>
 
             <ul className="flex flex-col gap-16">
               <li>{event.venue_name}</li>
-              <li>
-                {event.start_date} - {event.end_date}
-              </li>
+              <li>{format(new Date(event.start_date), "yyyy.MM.dd")}</li>
               <li>{event.age_limit}세</li>
               <li>
                 <ul className="text-gray-700">
