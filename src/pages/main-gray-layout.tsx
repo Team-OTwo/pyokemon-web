@@ -11,7 +11,6 @@ function MainGrayLayout() {
         flex: 1,
         display: "flex",
         flexDirection: "column",
-        backgroundColor: color.gray[2],
       }}
     >
       <Box

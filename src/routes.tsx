@@ -2,8 +2,9 @@ import { createBrowserRouter } from "react-router"
 
 import AdminProtectedRoute from "./components/admin-protected-route"
 import ProtectedRoute from "./components/protected-route"
+import EventDetailPage from "./pages/event-detail/event-detail-page"
 import EventListPage from "./pages/event-list-page"
-import HomePage from "./pages/home-page"
+import HomePage from "./pages/home/home-page"
 import MainEmptyLayout from "./pages/main-empty-layout"
 import MainGrayLayout from "./pages/main-gray-layout"
 import MainContainerLayout from "./pages/main-layout"
@@ -26,6 +27,14 @@ const router = createBrowserRouter([
               },
             ],
           },
+          {
+            path: "event",
+            Component: EventListPage,
+          },
+          {
+            path: "event/detail/:id", // ✅ 상세 경로 추가
+            Component: EventDetailPage,
+          },
         ],
       },
       {
@@ -33,12 +42,7 @@ const router = createBrowserRouter([
         children: [
           {
             Component: ProtectedRoute,
-            children: [
-              {
-                path: "event",
-                Component: EventListPage,
-              },
-            ],
+            children: [],
           },
         ],
       },

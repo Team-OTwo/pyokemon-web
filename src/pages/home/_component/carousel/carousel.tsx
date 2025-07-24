@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react"
-import { eventList } from "@/utils/event"
+import { eventList } from "@/constants/event"
 import { Autoplay, Pagination } from "swiper/modules"
 import { Swiper, SwiperSlide } from "swiper/react"
 
-import CarouselCard from "./CarouselCard"
+import CarouselCard from "../carousel-card/carousel-card"
 
 const Carousel = () => {
   const [swiperReady, setSwiperReady] = useState(false)

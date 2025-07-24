@@ -1,8 +1,7 @@
 import React from "react"
+import { useNavigate } from "react-router"
 
 import { EventType } from "@/types/event"
-
-import { event } from "../../utils/event"
 
 interface EventPreviewProps {
   openAt?: boolean
@@ -11,11 +10,16 @@ interface EventPreviewProps {
 }
 
 const EventPreviewCard: React.FC<EventPreviewProps> = ({ openAt, rank, event }) => {
+  const navigate = useNavigate()
+
+  const handleClick = () => {
+    navigate(`/event/detail/${event.id}`)
+  }
+
   return (
-    <div className="mb-8">
+    <div className="mb-8" onClick={handleClick}>
       <div className="relative mb-8 aspect-[3/4]">
         <img src={event.thumbnail_url} alt="img" className="rounded-lg object-cover" />
-
         {rank && (
           <p className="absolute bottom-24 left-24 text-white text-5xl font-bold [text-shadow:_0px_0px_10px_rgb(0_0_0_/_0.5)]">
             {rank}
