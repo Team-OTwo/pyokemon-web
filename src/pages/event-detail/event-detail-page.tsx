@@ -3,15 +3,14 @@ import { format } from "date-fns"
 import { IoStar, IoStarOutline } from "react-icons/io5"
 import { useParams } from "react-router"
 
-import Button from "@/components/ui/button"
 import GenreBadge from "@/components/ui/genre-badge"
 
-import { event } from "../constants/event"
+import { event } from "../../constants/event"
+import BookingSidebar from "./_component/booking-sidebar"
 
 const EventDetailPage = () => {
   const { id } = useParams()
   const [isMarked, setIsMarked] = useState(true)
-  const isOpen = false
 
   const handleMarkClick = () => {
     setIsMarked(!isMarked)
@@ -19,7 +18,7 @@ const EventDetailPage = () => {
 
   return (
     <div className="px-120 py-32 relative flex">
-      <div className="w-full">
+      <article className="w-full">
         {/* Title */}
         <div className="mb-16">
           <GenreBadge genre={event.genre} />
@@ -77,20 +76,9 @@ const EventDetailPage = () => {
         <hr />
 
         <div className="h-600 py-24">{event.description}</div>
-      </div>
+      </article>
 
-      <div className="w-480 bg-white">
-        {/* book */}
-        <div className="w-320 fixed right-80 rounded-lg">
-          <div className="border-1 border-primary rounded-lg text-center flex flex-col justify-center items-center bg-white py-24 w-320 h-374 mb-32">
-            <h3>티켓 오픈 일정</h3>
-            <h1 className="text-primary text-5xl font-bold py-32">D-10</h1>
-            <p>티켓 오픈</p>
-            <p className="text-gray-700">{event.ticket_open_at}</p>
-          </div>
-          {isOpen && <Button text="예매하기" />}
-        </div>
-      </div>
+      <BookingSidebar />
     </div>
   )
 }

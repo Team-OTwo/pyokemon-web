@@ -5,7 +5,6 @@ import EventPreviewCard from "@/components/event-preview-card/event-preview-card
 import Carousel from "./_component/carousel"
 
 function HomePage() {
-  const today = new Date()
   return (
     <div className="px-60">
       <section className="mb-24">

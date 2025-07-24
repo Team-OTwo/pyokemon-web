@@ -132,7 +132,7 @@ export const event = {
   venue_name: "고양 스타디움",
   start_date: "2025-08-22",
   end_date: "2025-08-23",
-  ticket_open_at: "2025-07-22 10:00",
+  ticket_open_at: "2025-07-28 10:00",
   genre: "콘서트",
   thumbnail_url: "https://ticketimage.interpark.com/Play/image/large/25/25009134_p.gif",
   description: "상세 설명입니다.",
