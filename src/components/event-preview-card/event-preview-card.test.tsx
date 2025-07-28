@@ -1,4 +1,7 @@
 import { render, screen } from "@testing-library/react"
+
+import "@testing-library/jest-dom"
+
 import { MemoryRouter } from "react-router"
 import { describe, expect, it, test } from "vitest"
 

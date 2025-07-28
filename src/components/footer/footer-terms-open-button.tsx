@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { ButtonBase } from "@mui/material"
 
-import TermsOfUseDialog from "@/components/terms-of-use-dialog"
+// import TermsOfUseDialog from "@/components/terms-of-use-dialog"
 import { color } from "@/styles/design-tokens"
 
 function FooterTermsOpenButton() {
@@ -20,7 +20,7 @@ function FooterTermsOpenButton() {
       >
         이용약관
       </ButtonBase>
-      <TermsOfUseDialog open={open} onClose={() => setOpen(false)} />
+      {/* <TermsOfUseDialog open={open} onClose={() => setOpen(false)} /> */}
     </>
   )
 }
