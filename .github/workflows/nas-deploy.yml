@@ -47,4 +47,4 @@ jobs:
           
           # tar로 파일 전송
           cd $BUILD_DIR
-          tar czf - * | ssh -o StrictHostKeyChecking=no -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "mkdir -p /volume1/web/pyokemon-web && cd /volume1/web/pyokemon-web && rm -rf * && tar xzf -"
+          tar czf - * | ssh -o StrictHostKeyChecking=no -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "mkdir -p /volume1/web/ && cd /volume1/web/ && rm -rf * && tar xzf -"
