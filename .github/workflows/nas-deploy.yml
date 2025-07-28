@@ -16,13 +16,19 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'npm'
+          cache: 'pnpm'
+
+      - name: pnpm 설치
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: false
 
       - name: 의존성 설치
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: 빌드
-        run: npm run build
+        run: pnpm build
 
       - name: SSH 키 설정
         uses: shimataro/ssh-key-action@v2
