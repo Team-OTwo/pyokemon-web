@@ -1,0 +1,36 @@
+name: NAS 배포 워크플로우
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy-to-nas:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+
+      - name: Node.js 설정
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: 빌드
+        run: npm run build
+
+      - name: SSH 키 설정
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.NAS_SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.NAS_HOST }}
+          if_key_exists: replace
+
+      - name: NAS에 배포
+        run: |
+          rsync -avz --delete ./build/ ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }}:/volume1/pyokemon-web/
