@@ -21,8 +21,10 @@ jobs:
           node-version: 18
           cache: 'pnpm'
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9  # pnpm 버전
 
       # 3. 의존성 설치
       - name: Install dependencies
@@ -33,12 +35,12 @@ jobs:
         run: pnpm build
 
       # 5. SSH 키 설정
-      - name: SSH 키 설정
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.NAS_SSH_PRIVATE_KEY }}
-          known_hosts: ${{ secrets.NAS_HOST }}
-          if_key_exists: replace
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.NAS_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.NAS_SSH_PORT }} ${{ secrets.NAS_HOST }} >> ~/.ssh/known_hosts
 
       # 6. NAS로 배포
       - name: Deploy build files to NAS
