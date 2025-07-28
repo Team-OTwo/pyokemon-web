@@ -12,17 +12,16 @@ jobs:
       - name: 코드 체크아웃
         uses: actions/checkout@v3
 
+      - name: pnpm 설치
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Node.js 설정
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'pnpm'
-
-      - name: pnpm 설치
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-          run_install: false
 
       - name: 의존성 설치
         run: pnpm install --frozen-lockfile
