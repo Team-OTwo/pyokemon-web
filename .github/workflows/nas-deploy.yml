@@ -82,15 +82,17 @@ jobs:
       - name: Add NAS to known_hosts
         run: ssh-keyscan -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_HOST }} >> ~/.ssh/known_hosts
       
-      # SSH 연결 테스트
-      - name: Test SSH Connection
-        run: ssh -v -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} 'echo "SSH Connection Test Successful"'
+      # SSH 연결 테스트 및 사용자 홈 디렉토리 확인
+      - name: Check home directory
+        run: |
+          ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} 'echo "홈 디렉토리: $HOME"'
+          ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} 'ls -la $HOME'
       
-      # 배포 디렉토리 생성 및 권한 확인
+      # 배포 디렉토리 생성 및 권한 확인 (사용자 홈 디렉토리 내에)
       - name: Create and check permissions for deploy directory
         run: |
-          DEPLOY_PATH="${{ secrets.NAS_DEPLOY_PATH || '/volume1/pyokemon-web/' }}"
-          ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "mkdir -p $DEPLOY_PATH && chmod 755 $DEPLOY_PATH && ls -la $DEPLOY_PATH"
+          DEPLOY_PATH="pyokemon-web"
+          ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "mkdir -p ~/$DEPLOY_PATH && chmod 755 ~/$DEPLOY_PATH && ls -la ~/$DEPLOY_PATH"
       
       # 올바른 빌드 디렉토리 찾기
       - name: Find build directory and deploy
@@ -107,7 +109,7 @@ jobs:
           fi
           
           echo "Starting deployment from $BUILD_DIR directory..."
-          # -O 옵션 추가하여 권한 문제 해결
+          # 사용자 홈 디렉토리 내의 pyokemon-web 폴더로 배포
           rsync -avzO --delete -e "ssh -v -p ${{ secrets.NAS_SSH_PORT || 22 }}" \
-          ./$BUILD_DIR/ ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }}:${{ secrets.NAS_DEPLOY_PATH || '/volume1/pyokemon-web/' }}
+          ./$BUILD_DIR/ ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }}:~/pyokemon-web/
           echo "Deployment completed"
