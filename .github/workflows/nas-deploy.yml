@@ -86,6 +86,12 @@ jobs:
       - name: Test SSH Connection
         run: ssh -v -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} 'echo "SSH Connection Test Successful"'
       
+      # 배포 디렉토리 생성 및 권한 확인
+      - name: Create and check permissions for deploy directory
+        run: |
+          DEPLOY_PATH="${{ secrets.NAS_DEPLOY_PATH || '/volume1/pyokemon-web/' }}"
+          ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "mkdir -p $DEPLOY_PATH && chmod 755 $DEPLOY_PATH && ls -la $DEPLOY_PATH"
+      
       # 올바른 빌드 디렉토리 찾기
       - name: Find build directory and deploy
         run: |
@@ -101,6 +107,7 @@ jobs:
           fi
           
           echo "Starting deployment from $BUILD_DIR directory..."
-          rsync -avz --delete -e "ssh -v -p ${{ secrets.NAS_SSH_PORT || 22 }}" \
+          # -O 옵션 추가하여 권한 문제 해결
+          rsync -avzO --delete -e "ssh -v -p ${{ secrets.NAS_SSH_PORT || 22 }}" \
           ./$BUILD_DIR/ ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }}:${{ secrets.NAS_DEPLOY_PATH || '/volume1/pyokemon-web/' }}
           echo "Deployment completed"
