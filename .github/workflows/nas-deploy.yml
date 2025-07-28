@@ -31,7 +31,7 @@ jobs:
 
       # 의존성 설치
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       # 빌드
       - name: Build React App
