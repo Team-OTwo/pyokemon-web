@@ -29,6 +29,10 @@ jobs:
       - name: Check pnpm version
         run: pnpm --version
 
+      # package.json 확인
+      - name: Check package.json
+        run: cat package.json | grep build
+
       # 의존성 설치
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
@@ -44,6 +48,18 @@ jobs:
       # 테스트 건너뛰기 및 타입 에러 무시하고 빌드
       - name: Build React App
         run: CI=false pnpm build
+
+      # 빌드 디렉토리 확인
+      - name: Check project directory structure
+        run: |
+          echo "프로젝트 루트 디렉토리:"
+          ls -la
+          echo "----------------------------"
+          echo "dist 디렉토리 확인:"
+          ls -la dist || echo "dist 디렉토리가 없습니다."
+          echo "----------------------------"
+          echo "build 디렉토리 확인:"
+          ls -la build || echo "build 디렉토리가 없습니다."
       
       # rsync 및 SSH 도구 설치
       - name: Install required tools
@@ -56,7 +72,7 @@ jobs:
           echo "LogLevel DEBUG" >> ~/.ssh/config
           chmod 700 ~/.ssh
           
-      # SSH 키 설정 (appleboy/ssh-action 라이브러리 사용)
+      # SSH 키 설정
       - name: Setup SSH Key
         uses: webfactory/ssh-agent@v0.7.0
         with:
@@ -70,14 +86,21 @@ jobs:
       - name: Test SSH Connection
         run: ssh -v -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} 'echo "SSH Connection Test Successful"'
       
-      # 빌드 디렉토리 확인
-      - name: Check build directory
-        run: ls -la ./build
-      
-      # NAS로 배포 (SSH 키 사용)
-      - name: Deploy to NAS
+      # 올바른 빌드 디렉토리 찾기
+      - name: Find build directory and deploy
         run: |
-          echo "Starting deployment..."
+          BUILD_DIR="build"
+          if [ ! -d "$BUILD_DIR" ]; then
+            if [ -d "dist" ]; then
+              BUILD_DIR="dist"
+              echo "Using dist directory for deployment"
+            else
+              echo "ERROR: Could not find build output directory"
+              exit 1
+            fi
+          fi
+          
+          echo "Starting deployment from $BUILD_DIR directory..."
           rsync -avz --delete -e "ssh -v -p ${{ secrets.NAS_SSH_PORT || 22 }}" \
-          ./build/ ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }}:${{ secrets.NAS_DEPLOY_PATH || '/volume1/pyokemon-web/' }}
+          ./$BUILD_DIR/ ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }}:${{ secrets.NAS_DEPLOY_PATH || '/volume1/pyokemon-web/' }}
           echo "Deployment completed"
