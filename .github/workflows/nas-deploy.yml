@@ -10,31 +10,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. 레포지토리 체크아웃
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Node.js 및 pnpm 설치
+      # pnpm 먼저 설정
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      # Node.js 설치
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'pnpm'
 
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 9  # pnpm 버전
+      # pnpm 버전 확인 (디버깅용)
+      - name: Check pnpm version
+        run: pnpm --version
 
-      # 3. 의존성 설치
+      # 의존성 설치
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # 4. 빌드
+      # 빌드
       - name: Build React App
         run: pnpm build
 
-      # 5. SSH 키 설정
+      # SSH 키 설정
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
@@ -42,7 +45,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p ${{ secrets.NAS_SSH_PORT }} ${{ secrets.NAS_HOST }} >> ~/.ssh/known_hosts
 
-      # 6. NAS로 배포
+      # NAS로 배포
       - name: Deploy build files to NAS
         run: |
           rsync -avz --delete -e "ssh -p ${{ secrets.NAS_SSH_PORT }}" \
