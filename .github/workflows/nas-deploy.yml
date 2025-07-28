@@ -1,4 +1,4 @@
-name: Frontend Deploy to NAS (pnpm)
+name: NAS 배포
 
 on:
   push:
@@ -10,116 +10,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: 코드 체크아웃
         uses: actions/checkout@v3
 
-      # pnpm 먼저 설정
-      - name: Set up pnpm
+      - name: pnpm 설정
         uses: pnpm/action-setup@v2
         with:
           version: 9
 
-      # Node.js 설치
-      - name: Set up Node.js
+      - name: Node.js 설정
         uses: actions/setup-node@v3
         with:
           node-version: 18
+          cache: 'pnpm'
 
-      # pnpm 버전 확인 (디버깅용)
-      - name: Check pnpm version
-        run: pnpm --version
+      - name: 의존성 설치
+        run: pnpm install
 
-      # package.json 확인
-      - name: Check package.json
-        run: cat package.json | grep build
+      - name: 빌드
+        run: pnpm build
+        env:
+          CI: false
 
-      # 의존성 설치
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
-
-      # .env 파일 생성
-      - name: Create .env file
-        run: |
-          touch .env
-          echo "SKIP_PREFLIGHT_CHECK=true" >> .env
-          echo "TSC_COMPILE_ON_ERROR=true" >> .env
-          echo "ESLINT_NO_DEV_ERRORS=true" >> .env
-
-      # 테스트 건너뛰기 및 타입 에러 무시하고 빌드
-      - name: Build React App
-        run: CI=false pnpm build
-
-      # 빌드 디렉토리 확인
-      - name: Check project directory structure
-        run: |
-          echo "프로젝트 루트 디렉토리:"
-          ls -la
-          echo "----------------------------"
-          echo "dist 디렉토리 확인:"
-          ls -la dist || echo "dist 디렉토리가 없습니다."
-          echo "----------------------------"
-          echo "build 디렉토리 확인:"
-          ls -la build || echo "build 디렉토리가 없습니다."
-      
-      # 필요한 도구 설치
-      - name: Install required tools
-        run: sudo apt-get update && sudo apt-get install -y openssh-client rsync tar gzip
-      
-      # SSH 디버깅 활성화
-      - name: Enable SSH debugging
-        run: |
-          mkdir -p ~/.ssh
-          echo "LogLevel DEBUG" >> ~/.ssh/config
-          chmod 700 ~/.ssh
-          
-      # SSH 키 설정
-      - name: Setup SSH Key
+      - name: SSH 키 설정
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.NAS_SSH_PRIVATE_KEY }}
-      
-      # known_hosts 설정
-      - name: Add NAS to known_hosts
-        run: ssh-keyscan -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_HOST }} >> ~/.ssh/known_hosts
-      
-      # SSH 연결 테스트 및 사용자 홈 디렉토리 확인
-      - name: Find home directory path
+
+      - name: 배포
         run: |
-          HOME_DIR=$(ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} 'echo $HOME')
-          echo "HOME_DIR=$HOME_DIR" >> $GITHUB_ENV
-          echo "홈 디렉토리: $HOME_DIR"
-          ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "ls -la $HOME_DIR"
-      
-      # 배포 디렉토리 생성 (절대 경로 사용)
-      - name: Create deploy directory
-        run: |
-          DEPLOY_PATH="${HOME_DIR}/pyokemon-web"
-          echo "DEPLOY_PATH=$DEPLOY_PATH" >> $GITHUB_ENV
-          ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "mkdir -p $DEPLOY_PATH && chmod -R 755 $DEPLOY_PATH"
-          echo "배포 디렉토리: $DEPLOY_PATH"
-      
-      # 빌드 디렉토리 찾기
-      - name: Determine build directory
-        run: |
-          if [ -d "dist" ]; then
-            echo "BUILD_DIR=dist" >> $GITHUB_ENV
-          elif [ -d "build" ]; then
-            echo "BUILD_DIR=build" >> $GITHUB_ENV
-          else
-            echo "빌드 디렉토리가 없습니다"
-            exit 1
+          # 빌드 디렉토리 확인
+          BUILD_DIR="dist"
+          if [ ! -d "$BUILD_DIR" ]; then
+            BUILD_DIR="build"
           fi
-      
-      # tar를 사용한 파일 전송
-      - name: Deploy with tar over SSH
-        run: |
-          echo "빌드 디렉토리: $BUILD_DIR"
-          echo "배포 대상: ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }}:$DEPLOY_PATH"
+          
+          # tar로 파일 전송
           cd $BUILD_DIR
-          tar czf - * | ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "cd $DEPLOY_PATH && rm -rf * && tar xzf -"
-          echo "파일 전송이 완료되었습니다."
-      
-      # 배포 확인
-      - name: Verify deployment
-        run: |
-          ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "echo '배포 내용 확인:' && ls -la $DEPLOY_PATH"
+          tar czf - * | ssh -o StrictHostKeyChecking=no -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "mkdir -p ~/pyokemon-web && cd ~/pyokemon-web && rm -rf * && tar xzf -"
