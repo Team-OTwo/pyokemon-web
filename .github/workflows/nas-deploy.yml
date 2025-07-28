@@ -61,10 +61,10 @@ jobs:
           echo "build 디렉토리 확인:"
           ls -la build || echo "build 디렉토리가 없습니다."
       
-      # rsync 및 SSH 도구 설치
+      # 필요한 도구 설치
       - name: Install required tools
-        run: sudo apt-get update && sudo apt-get install -y openssh-client rsync
-
+        run: sudo apt-get update && sudo apt-get install -y openssh-client rsync tar gzip
+      
       # SSH 디버깅 활성화
       - name: Enable SSH debugging
         run: |
@@ -110,14 +110,16 @@ jobs:
             exit 1
           fi
       
-      # 단순화된 SCP 명령으로 배포 (rsync 대신)
-      - name: Deploy with SCP
+      # tar를 사용한 파일 전송
+      - name: Deploy with tar over SSH
         run: |
           echo "빌드 디렉토리: $BUILD_DIR"
           echo "배포 대상: ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }}:$DEPLOY_PATH"
-          scp -P ${{ secrets.NAS_SSH_PORT || 22 }} -r $BUILD_DIR/* ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }}:$DEPLOY_PATH/
+          cd $BUILD_DIR
+          tar czf - * | ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "cd $DEPLOY_PATH && rm -rf * && tar xzf -"
+          echo "파일 전송이 완료되었습니다."
       
       # 배포 확인
       - name: Verify deployment
         run: |
-          ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "ls -la $DEPLOY_PATH"
+          ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "echo '배포 내용 확인:' && ls -la $DEPLOY_PATH"
