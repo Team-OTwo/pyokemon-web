@@ -44,6 +44,11 @@ jobs:
       # 테스트 건너뛰기 및 타입 에러 무시하고 빌드
       - name: Build React App
         run: CI=false pnpm build
+      
+      - name: Add NAS to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p ${{ secrets.NAS_SSH_PORT }} ${{ secrets.NAS_HOST }} >> ~/.ssh/known_hosts
 
       # SSH 키 설정
       - name: SSH 키 설정
