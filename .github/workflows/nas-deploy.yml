@@ -46,12 +46,12 @@ jobs:
         run: CI=false pnpm build
 
       # SSH 키 설정
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.NAS_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -p ${{ secrets.NAS_SSH_PORT }} ${{ secrets.NAS_HOST }} >> ~/.ssh/known_hosts
+      - name: SSH 키 설정
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.NAS_SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.NAS_HOST }}
+          if_key_exists: replace
 
       # NAS로 배포
       - name: Deploy build files to NAS
