@@ -83,33 +83,41 @@ jobs:
         run: ssh-keyscan -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_HOST }} >> ~/.ssh/known_hosts
       
       # SSH 연결 테스트 및 사용자 홈 디렉토리 확인
-      - name: Check home directory
+      - name: Find home directory path
         run: |
-          ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} 'echo "홈 디렉토리: $HOME"'
-          ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} 'ls -la $HOME'
+          HOME_DIR=$(ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} 'echo $HOME')
+          echo "HOME_DIR=$HOME_DIR" >> $GITHUB_ENV
+          echo "홈 디렉토리: $HOME_DIR"
+          ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "ls -la $HOME_DIR"
       
-      # 배포 디렉토리 생성 및 권한 확인 (사용자 홈 디렉토리 내에)
-      - name: Create and check permissions for deploy directory
+      # 배포 디렉토리 생성 (절대 경로 사용)
+      - name: Create deploy directory
         run: |
-          DEPLOY_PATH="pyokemon-web"
-          ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "mkdir -p ~/$DEPLOY_PATH && chmod 755 ~/$DEPLOY_PATH && ls -la ~/$DEPLOY_PATH"
+          DEPLOY_PATH="${HOME_DIR}/pyokemon-web"
+          echo "DEPLOY_PATH=$DEPLOY_PATH" >> $GITHUB_ENV
+          ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "mkdir -p $DEPLOY_PATH && chmod -R 755 $DEPLOY_PATH"
+          echo "배포 디렉토리: $DEPLOY_PATH"
       
-      # 올바른 빌드 디렉토리 찾기
-      - name: Find build directory and deploy
+      # 빌드 디렉토리 찾기
+      - name: Determine build directory
         run: |
-          BUILD_DIR="build"
-          if [ ! -d "$BUILD_DIR" ]; then
-            if [ -d "dist" ]; then
-              BUILD_DIR="dist"
-              echo "Using dist directory for deployment"
-            else
-              echo "ERROR: Could not find build output directory"
-              exit 1
-            fi
+          if [ -d "dist" ]; then
+            echo "BUILD_DIR=dist" >> $GITHUB_ENV
+          elif [ -d "build" ]; then
+            echo "BUILD_DIR=build" >> $GITHUB_ENV
+          else
+            echo "빌드 디렉토리가 없습니다"
+            exit 1
           fi
-          
-          echo "Starting deployment from $BUILD_DIR directory..."
-          # 사용자 홈 디렉토리 내의 pyokemon-web 폴더로 배포
-          rsync -avzO --delete -e "ssh -v -p ${{ secrets.NAS_SSH_PORT || 22 }}" \
-          ./$BUILD_DIR/ ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }}:~/pyokemon-web/
-          echo "Deployment completed"
+      
+      # 단순화된 SCP 명령으로 배포 (rsync 대신)
+      - name: Deploy with SCP
+        run: |
+          echo "빌드 디렉토리: $BUILD_DIR"
+          echo "배포 대상: ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }}:$DEPLOY_PATH"
+          scp -P ${{ secrets.NAS_SSH_PORT || 22 }} -r $BUILD_DIR/* ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }}:$DEPLOY_PATH/
+      
+      # 배포 확인
+      - name: Verify deployment
+        run: |
+          ssh -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "ls -la $DEPLOY_PATH"
