@@ -1,0 +1,20 @@
+.react-calendar {
+    border-radius: 12px;
+    border:1px solid var(--color-primary);
+    padding:12px;
+    margin-bottom: 16px;
+}
+
+.react-calendar__tile:enabled:hover:not(.react-calendar__tile--active),
+.react-calendar__tile:enabled:focus:not(.react-calendar__tile--active),
+.react-calendar__tile--hasActive:not(.react-calendar__tile--active),
+.react-calendar__tile--now {
+  background: none !important;
+  color: inherit !important;
+}
+
+.react-calendar__tile--active {
+  background: var(--color-primary) !important;
+  color: white !important;
+  border-radius: 8px;
+}
