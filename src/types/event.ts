@@ -1,11 +1,12 @@
 export interface EventType {
-  id: number
+  eventId: number
   title: string
-  age_limit: number
-  venue_name: string
-  start_date: string
-  end_date: string
-  ticket_open_at: string
+  ageLimit: number
+  venueName: string
+  eventDate: string
+  ticketOpenAt: string
   genre: string
-  thumbnail_url: string
+  thumbnailUrl: string
+  description: string
+  eventScheduleId: number
 }
