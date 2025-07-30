@@ -6,3 +6,11 @@ export interface Booking_sidebar {
     price: number
   }[]
 }
+
+export interface Seat_class {
+  seatId: number
+  row: string
+  col: string
+  seatGrade: string
+  booked: boolean
+}
