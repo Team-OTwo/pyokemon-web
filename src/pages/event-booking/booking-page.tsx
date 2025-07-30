@@ -1,84 +1,68 @@
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 import { useParams } from "react-router"
 
-import { getEventBooking, getSeat_class } from "../../api/booking/fetchers/get-event-booking"
+import {
+  useGetEventBookingQuery,
+  useGetSeatClassQuery,
+} from "../../api/booking/queries/use-get-event-booking-query"
 import Footer from "../../components/footer"
 import Header from "../../components/header"
-import { Booking_sidebar, Seat_class } from "../../types/booking"
+import { Seat_class } from "../../types/booking"
 import BookingSidebar from "./_component/booking_sidebar"
 import SeatClassSeat from "./_component/seat_class_seat"
 import SeatingChart from "./_component/seating_chart"
 
 const BookingPage: React.FC = () => {
   const { id } = useParams()
+  const eventId = useMemo(() => id || "", [id])
+
   const [selectedGrade, setSelectedGrade] = useState<string>("")
   const [selectedSeat, setSelectedSeat] = useState<Seat_class | null>(null)
-  const [bookingData, setBookingData] = useState<Booking_sidebar | null>(null)
-  const [seatsData, setSeatsData] = useState<Seat_class[]>([])
-  const [loading, setLoading] = useState(false)
 
-  const fetchBookingData = useCallback(async (eventId: string) => {
-    if (!eventId) return
-
-    setLoading(true)
-    try {
-      const eventScheduleId = BigInt(eventId)
-      const data = await getEventBooking(eventScheduleId)
-      setBookingData(data)
-    } catch (error) {
-      console.error("Failed to fetch booking data:", error)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  const fetchSeatsData = useCallback(async (eventId: string, seatGrade: string) => {
-    if (!eventId || !seatGrade) return
-
-    try {
-      const eventScheduleId = BigInt(eventId)
-      const data: Seat_class[] = await getSeat_class(eventScheduleId, seatGrade)
-      setSeatsData(data)
-    } catch (error) {
-      console.error("Failed to fetch seats data:", error)
-    }
-  }, [])
-
-  const handleSeatGradeSelect = useCallback(
-    async (grade: string) => {
-      setSelectedGrade(grade)
-      setSelectedSeat(null)
-
-      if (id) {
-        await fetchSeatsData(id, grade)
-      }
-    },
-    [id, fetchSeatsData]
+  const { data: bookingData, isLoading: isBookingLoading } = useGetEventBookingQuery(
+    Number(eventId)
   )
+  const { data: seatsData, isLoading: isSeatsLoading } = useGetSeatClassQuery(
+    Number(eventId),
+    selectedGrade
+  )
+
+  // ===== 이벤트 핸들러 =====
+  const handleSeatGradeSelect = useCallback((grade: string) => {
+    setSelectedGrade(grade)
+    setSelectedSeat(null)
+  }, [])
 
   const handleSeatSelect = useCallback((seat: Seat_class) => {
     setSelectedSeat(seat)
   }, [])
 
   const handlePayment = useCallback(() => {
-    if (selectedSeat && id) {
+    if (selectedSeat && eventId) {
       alert(
         `결제 진행: ${selectedSeat.seatGrade}-${selectedSeat.row}열-${selectedSeat.col} (${selectedSeat.seatId}번 좌석)`
       )
     }
-  }, [selectedSeat, id])
+  }, [selectedSeat, eventId])
 
-  const handleInitialLoad = useCallback(async () => {
-    if (id && !bookingData) {
-      await fetchBookingData(id)
+  const isLoading = isBookingLoading || (selectedGrade && isSeatsLoading)
+
+  const mainContent = useMemo(() => {
+    if (!selectedGrade) {
+      return <SeatingChart onSeatGradeSelect={handleSeatGradeSelect} />
     }
-  }, [id, bookingData, fetchBookingData])
 
-  if (id && !bookingData && !loading) {
-    handleInitialLoad()
-  }
+    return (
+      <SeatClassSeat
+        seatGrade={selectedGrade}
+        seats={seatsData || []}
+        onSeatSelect={handleSeatSelect}
+        selectedSeat={selectedSeat}
+      />
+    )
+  }, [selectedGrade, seatsData, selectedSeat, handleSeatGradeSelect, handleSeatSelect])
 
-  if (loading || !bookingData) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-l text-white">
         <Header />
@@ -91,27 +75,18 @@ const BookingPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <div className="min-h-screen bg-black text-white">
       <main className="flex pr-20 min-h-[calc(100vh-280px)]">
-        <div className="flex-1">
-          {!selectedGrade ? (
-            <SeatingChart onSeatGradeSelect={handleSeatGradeSelect} />
-          ) : (
-            <SeatClassSeat
-              seatGrade={selectedGrade}
-              seats={seatsData}
-              onSeatSelect={handleSeatSelect}
-              selectedSeat={selectedSeat}
-            />
-          )}
-        </div>
+        <div className="flex-1">{mainContent}</div>
 
         <div className="w-350">
-          <BookingSidebar
-            bookingData={bookingData}
-            selectedSeat={selectedSeat}
-            onPayment={handlePayment}
-          />
+          {bookingData && (
+            <BookingSidebar
+              bookingData={bookingData}
+              selectedSeat={selectedSeat}
+              onPayment={handlePayment}
+            />
+          )}
         </div>
       </main>
     </div>
