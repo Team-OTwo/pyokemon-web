@@ -10,6 +10,12 @@ import GenreBadge from "@/components/ui/genre-badge"
 
 import BookingSidebar from "./_component/booking-sidebar"
 
+interface SeatPrice {
+  seatGrade: string
+  price: number
+  remainingSeats?: number
+}
+
 const EventDetailPage = () => {
   const { eventId } = useParams()
   const [isMarked, setIsMarked] = useState(true)
@@ -80,8 +86,8 @@ const EventDetailPage = () => {
               <li>
                 <ul className="text-gray-700">
                   {prices
-                    .filter((price) => price.price != 0)
-                    .map((price) => {
+                    .filter((price: SeatPrice) => price.price != 0)
+                    .map((price: SeatPrice) => {
                       return (
                         <li key={price.seatGrade}>
                           {price.seatGrade}{" "}
