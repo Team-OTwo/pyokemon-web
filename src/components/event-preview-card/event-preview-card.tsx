@@ -1,7 +1,12 @@
 import React from "react"
+import dayjs from "dayjs"
 import { useNavigate } from "react-router"
 
 import { EventType } from "@/types/event"
+
+import "dayjs/locale/ko"
+
+dayjs.locale("ko")
 
 interface EventPreviewProps {
   openAt?: boolean
@@ -26,10 +31,14 @@ const EventPreviewCard: React.FC<EventPreviewProps> = ({ openAt, rank, event }) 
           </p>
         )}
       </div>
-      {openAt && <p className="text-primary font-semibold">{event.ticketOpenAt}</p>}
+      {openAt && (
+        <p className="text-primary font-semibold">
+          {dayjs(event.ticketOpenAt).format("MM.DD(dd) HH:mm")}
+        </p>
+      )}
 
       <p className="text-lg font-semibold mb-4">{event.title}</p>
-      <p className="text-sm text-gray-700 mb-6">{event.eventDate}</p>
+      <p className="text-sm text-gray-700 mb-6">{dayjs(event.eventDate).format("YYYY.MM.DD")}</p>
 
       <div className="py-4 px-16 rounded-full h-25 bg-primary/10 text-center text-sm text-primary border-1 border-primary  justify-center items-center inline">
         {event.genre}
