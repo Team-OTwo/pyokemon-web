@@ -22,10 +22,10 @@ export const fetchEventToBeOpened = async () => {
   }
 }
 
-export const fetchEventlist = async (genre: string, page: number = 1) => {
+export const fetchEventlist = async (genre: string, page: number = 1, size: number = 8) => {
   try {
-    const res = await baseClient.get(`http://localhost:8080/api/events/eventlist`, {
-      params: { genre, page },
+    const res = await baseClient.get(`http://localhost:8080/api/events`, {
+      params: { genre, page, size },
     })
     console.log(res.data)
     return res.data
