@@ -12,7 +12,7 @@ function HomePage() {
         <Carousel />
       </section>
 
-      <section className="mb-48">
+      {/* <section className="mb-48">
         <h1 className="head1 py-24">실시간 랭킹</h1>
         <div className="grid grid-cols-4 gap-24">
           {eventRank.map((event, i) => {
@@ -21,7 +21,7 @@ function HomePage() {
         </div>
       </section>
 
-      <hr />
+      <hr /> */}
 
       <section className="mb-48">
         <h1 className="head1 py-24">오픈 예정</h1>

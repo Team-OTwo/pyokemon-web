@@ -1,19 +1,40 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+import { useGetEventBookingQuery } from "@/api/event/queries/use-get-event-booking.query"
+import { useGetEventDetailQuery } from "@/api/event/queries/use-get-event-detail-query"
+import { useEventStore } from "@/store/event/event-store"
 import { format } from "date-fns"
 import { IoStar, IoStarOutline } from "react-icons/io5"
 import { useParams } from "react-router"
 
 import GenreBadge from "@/components/ui/genre-badge"
 
-import { event } from "../../constants/event"
 import BookingSidebar from "./_component/booking-sidebar"
 
 const EventDetailPage = () => {
-  const { id } = useParams()
+  const { eventId } = useParams()
   const [isMarked, setIsMarked] = useState(true)
 
   const handleMarkClick = () => {
     setIsMarked(!isMarked)
+  }
+  const { data: event, isLoading } = useGetEventDetailQuery(Number(eventId))
+  const { data: booking } = useGetEventBookingQuery(event?.eventScheduleId ?? 0)
+  const prices = booking?.remainingSeatsByGrade
+
+  const { setEvent } = useEventStore()
+
+  useEffect(() => {
+    if (event) {
+      setEvent(event)
+    }
+  }, [event, setEvent])
+
+  if (isLoading) {
+    return <div>loading...</div>
+  }
+
+  if (!event || !prices) {
+    return <div>존재하지 않는 공연입니다.</div> // 로딩 중 UI
   }
 
   return (
@@ -38,7 +59,7 @@ const EventDetailPage = () => {
         {/* info */}
         <div className="flex gap-24 mb-36">
           <img
-            src={event.thumbnail_url}
+            src={event.thumbnailUrl}
             alt="thumbnail"
             width="320"
             height="420"
@@ -53,20 +74,23 @@ const EventDetailPage = () => {
             </ul>
 
             <ul className="flex flex-col gap-16">
-              <li>{event.venue_name}</li>
-              <li>{format(new Date(event.start_date), "yyyy.MM.dd")}</li>
-              <li>{event.age_limit}세</li>
+              <li>{event.venueName}</li>
+              <li>{format(new Date(event.eventDate), "yyyy.MM.dd")}</li>
+              <li>{event.ageLimit}세</li>
               <li>
                 <ul className="text-gray-700">
-                  <li>
-                    VIP <span className="font-bold text-black">198,000원</span>
-                  </li>
-                  <li>
-                    R <span className="font-bold text-black">178,000원</span>
-                  </li>
-                  <li>
-                    A <span className="font-bold text-black">148,000원</span>
-                  </li>
+                  {prices
+                    .filter((price) => price.price != 0)
+                    .map((price) => {
+                      return (
+                        <li key={price.seatGrade}>
+                          {price.seatGrade}{" "}
+                          <span className="font-bold text-black">
+                            {price.price.toLocaleString()}원
+                          </span>
+                        </li>
+                      )
+                    })}
                 </ul>
               </li>
             </ul>
