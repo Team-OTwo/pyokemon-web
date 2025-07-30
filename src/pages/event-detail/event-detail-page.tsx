@@ -1,19 +1,34 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+import { useGetEventDetailQuery } from "@/api/event/queries/use-get-event-detail-query"
+import { useEventStore } from "@/store/event/event-store"
 import { format } from "date-fns"
 import { IoStar, IoStarOutline } from "react-icons/io5"
 import { useParams } from "react-router"
 
 import GenreBadge from "@/components/ui/genre-badge"
 
-import { event } from "../../constants/event"
+// import { event } from "../../constants/event"
 import BookingSidebar from "./_component/booking-sidebar"
 
 const EventDetailPage = () => {
-  const { id } = useParams()
+  const { eventId } = useParams()
   const [isMarked, setIsMarked] = useState(true)
 
   const handleMarkClick = () => {
     setIsMarked(!isMarked)
+  }
+  const { data, isLoading } = useGetEventDetailQuery(Number(eventId))
+
+  const { setEvent, event } = useEventStore()
+
+  useEffect(() => {
+    if (data) {
+      setEvent(data)
+    }
+  }, [data, setEvent])
+
+  if (isLoading || !event) {
+    return <div>Loading...</div> // 로딩 중 UI
   }
 
   return (
@@ -38,7 +53,7 @@ const EventDetailPage = () => {
         {/* info */}
         <div className="flex gap-24 mb-36">
           <img
-            src={event.thumbnail_url}
+            src={event.thumbnailUrl}
             alt="thumbnail"
             width="320"
             height="420"
@@ -53,9 +68,9 @@ const EventDetailPage = () => {
             </ul>
 
             <ul className="flex flex-col gap-16">
-              <li>{event.venue_name}</li>
-              <li>{format(new Date(event.start_date), "yyyy.MM.dd")}</li>
-              <li>{event.age_limit}세</li>
+              <li>{event.venueName}</li>
+              <li>{format(new Date(event.eventDate), "yyyy.MM.dd")}</li>
+              <li>{event.ageLimit}세</li>
               <li>
                 <ul className="text-gray-700">
                   <li>
