@@ -12,7 +12,7 @@ export const getEventBooking = async (eventScheduleId: number) => {
   }
 }
 
-export const getSeat_class = async (eventScheduleId: number, seatGrade: string) => {
+export const getSeatClass = async (eventScheduleId: number, seatGrade: string) => {
   try {
     const response = await baseClient.get(
       `http://localhost:8080/api/events/booking/${eventScheduleId}/${seatGrade}`
