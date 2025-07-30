@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react"
-import { getEventBooking } from "@/api/booking/fetchers/get-event-booking"
+import React, { useCallback, useState } from "react"
 import { useParams } from "react-router"
 
+import { getEventBooking, getSeat_class } from "../../api/booking/fetchers/get-event-booking"
 import Footer from "../../components/footer"
 import Header from "../../components/header"
-import { MOCK_VIP_SEATS } from "../../constants/booking"
 import { Booking_sidebar, Seat_class } from "../../types/booking"
 import BookingSidebar from "./_component/booking_sidebar"
 import SeatClassSeat from "./_component/seat_class_seat"
@@ -16,11 +15,14 @@ const BookingPage: React.FC = () => {
   const [selectedSeat, setSelectedSeat] = useState<Seat_class | null>(null)
   const [bookingData, setBookingData] = useState<Booking_sidebar | null>(null)
   const [seatsData, setSeatsData] = useState<Seat_class[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
-  const fetchBookingData = async (scheduleId: string) => {
+  const fetchBookingData = useCallback(async (eventId: string) => {
+    if (!eventId) return
+
+    setLoading(true)
     try {
-      const eventScheduleId = BigInt(scheduleId)
+      const eventScheduleId = BigInt(eventId)
       const data = await getEventBooking(eventScheduleId)
       setBookingData(data)
     } catch (error) {
@@ -28,52 +30,52 @@ const BookingPage: React.FC = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const fetchSeatsData = async (scheduleId: string, seatGrade: string) => {
+  const fetchSeatsData = useCallback(async (eventId: string, seatGrade: string) => {
+    if (!eventId || !seatGrade) return
+
     try {
-      // TODO: 실제 API 호출로 교체
-      // const response = await fetch(`/booking/${scheduleId}/${seatGrade}`);
-      // const data = await response.json();
-
-      // VIP 좌석 목업 데이터 사용
-      setSeatsData(MOCK_VIP_SEATS)
+      const eventScheduleId = BigInt(eventId)
+      const data: Seat_class[] = await getSeat_class(eventScheduleId, seatGrade)
+      setSeatsData(data)
     } catch (error) {
       console.error("Failed to fetch seats data:", error)
     }
-  }
+  }, [])
 
-  // 컴포넌트 마운트 시 booking 데이터 로드
-  useEffect(() => {
-    if (id) {
-      fetchBookingData(id)
-      setLoading(false)
-    }
-  }, [id])
+  const handleSeatGradeSelect = useCallback(
+    async (grade: string) => {
+      setSelectedGrade(grade)
+      setSelectedSeat(null)
 
-  // 좌석 등급 선택 시 해당 좌석 데이터 로드
-  useEffect(() => {
-    if (id && selectedGrade) {
-      fetchSeatsData(id, selectedGrade)
-    }
-  }, [id, selectedGrade])
+      if (id) {
+        await fetchSeatsData(id, grade)
+      }
+    },
+    [id, fetchSeatsData]
+  )
 
-  const handleSeatGradeSelect = (grade: string) => {
-    setSelectedGrade(grade)
-    setSelectedSeat(null) // Reset selected seat when changing grade
-  }
-
-  const handleSeatSelect = (seat: Seat_class) => {
+  const handleSeatSelect = useCallback((seat: Seat_class) => {
     setSelectedSeat(seat)
-  }
+  }, [])
 
-  const handlePayment = () => {
+  const handlePayment = useCallback(() => {
     if (selectedSeat && id) {
       alert(
         `결제 진행: ${selectedSeat.seatGrade}-${selectedSeat.row}열-${selectedSeat.col} (${selectedSeat.seatId}번 좌석)`
       )
-      // TODO: 실제 결제 API 호출
     }
+  }, [selectedSeat, id])
+
+  const handleInitialLoad = useCallback(async () => {
+    if (id && !bookingData) {
+      await fetchBookingData(id)
+    }
+  }, [id, bookingData, fetchBookingData])
+
+  if (id && !bookingData && !loading) {
+    handleInitialLoad()
   }
 
   if (loading || !bookingData) {
