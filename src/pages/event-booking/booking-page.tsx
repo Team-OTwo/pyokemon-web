@@ -1,34 +1,32 @@
 import React, { useEffect, useState } from "react"
+import { getEventBooking } from "@/api/booking/fetchers/get-event-booking"
 import { useParams } from "react-router"
 
 import Footer from "../../components/footer"
 import Header from "../../components/header"
-import { MOCK_BOOKING_DATA, MOCK_VIP_SEATS } from "../../constants/booking"
+import { MOCK_VIP_SEATS } from "../../constants/booking"
 import { Booking_sidebar, Seat_class } from "../../types/booking"
 import BookingSidebar from "./_component/booking_sidebar"
 import SeatClassSeat from "./_component/seat_class_seat"
 import SeatingChart from "./_component/seating_chart"
 
 const BookingPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>()
+  const { id } = useParams()
   const [selectedGrade, setSelectedGrade] = useState<string>("")
   const [selectedSeat, setSelectedSeat] = useState<Seat_class | null>(null)
   const [bookingData, setBookingData] = useState<Booking_sidebar | null>(null)
   const [seatsData, setSeatsData] = useState<Seat_class[]>([])
   const [loading, setLoading] = useState(true)
 
-  // API 호출 함수들
   const fetchBookingData = async (scheduleId: string) => {
     try {
-      // TODO: 실제 API 호출로 교체
-      // const response = await fetch(`/api/events/booking/${scheduleId}`);
-      // const data = await response.json();
-
-      // 목업 데이터 사용
-      const mockData = { ...MOCK_BOOKING_DATA, eventScheduleId: parseInt(scheduleId) }
-      setBookingData(mockData)
+      const eventScheduleId = BigInt(scheduleId)
+      const data = await getEventBooking(eventScheduleId)
+      setBookingData(data)
     } catch (error) {
       console.error("Failed to fetch booking data:", error)
+    } finally {
+      setLoading(false)
     }
   }
 

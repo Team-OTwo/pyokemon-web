@@ -38,7 +38,7 @@ const router = createBrowserRouter([
             Component: EventDetailPage,
           },
           {
-            path: "event/booking/:id", // ✅ 예매 페이지 경로 추가 (eventScheduleId 포함)
+            path: "event/booking/:id",
             Component: BookingPage,
           },
         ],

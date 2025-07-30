@@ -1,8 +1,6 @@
 import { Booking_sidebar, Seat_class } from "../types/booking"
 
-// VIP 좌석 120석 목업 데이터 (A열 1-10번만 예약됨)
 export const MOCK_VIP_SEATS: Seat_class[] = [
-  // A열 (1-10번) - 예약됨
   { seatId: 1, row: "A", col: "1", seatGrade: "VIP", booked: true },
   { seatId: 2, row: "A", col: "2", seatGrade: "VIP", booked: true },
   { seatId: 3, row: "A", col: "3", seatGrade: "VIP", booked: true },
