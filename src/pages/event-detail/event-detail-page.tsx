@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"
+import { useGetEventBookingQuery } from "@/api/event/queries/use-get-event-booking.query"
 import { useGetEventDetailQuery } from "@/api/event/queries/use-get-event-detail-query"
 import { useEventStore } from "@/store/event/event-store"
 import { format } from "date-fns"
@@ -7,7 +8,6 @@ import { useParams } from "react-router"
 
 import GenreBadge from "@/components/ui/genre-badge"
 
-// import { event } from "../../constants/event"
 import BookingSidebar from "./_component/booking-sidebar"
 
 const EventDetailPage = () => {
@@ -17,18 +17,24 @@ const EventDetailPage = () => {
   const handleMarkClick = () => {
     setIsMarked(!isMarked)
   }
-  const { data, isLoading } = useGetEventDetailQuery(Number(eventId))
+  const { data: event, isLoading } = useGetEventDetailQuery(Number(eventId))
+  const { data: booking } = useGetEventBookingQuery(event?.eventScheduleId ?? 0)
+  const prices = booking?.remainingSeatsByGrade
 
-  const { setEvent, event } = useEventStore()
+  const { setEvent } = useEventStore()
 
   useEffect(() => {
-    if (data) {
-      setEvent(data)
+    if (event) {
+      setEvent(event)
     }
-  }, [data, setEvent])
+  }, [event, setEvent])
 
-  if (isLoading || !event) {
-    return <div>Loading...</div> // 로딩 중 UI
+  if (isLoading) {
+    return <div>loading...</div>
+  }
+
+  if (!event || !prices) {
+    return <div>존재하지 않는 공연입니다.</div> // 로딩 중 UI
   }
 
   return (
@@ -73,15 +79,18 @@ const EventDetailPage = () => {
               <li>{event.ageLimit}세</li>
               <li>
                 <ul className="text-gray-700">
-                  <li>
-                    VIP <span className="font-bold text-black">198,000원</span>
-                  </li>
-                  <li>
-                    R <span className="font-bold text-black">178,000원</span>
-                  </li>
-                  <li>
-                    A <span className="font-bold text-black">148,000원</span>
-                  </li>
+                  {prices
+                    .filter((price) => price.price != 0)
+                    .map((price) => {
+                      return (
+                        <li key={price.seatGrade}>
+                          {price.seatGrade}{" "}
+                          <span className="font-bold text-black">
+                            {price.price.toLocaleString()}원
+                          </span>
+                        </li>
+                      )
+                    })}
                 </ul>
               </li>
             </ul>
