@@ -9,8 +9,10 @@ import "react-calendar/dist/Calendar.css"
 import "./calendar.css"
 
 import { useEventStore } from "@/store/event/event-store"
+import { useNavigate } from "react-router"
 
 const BookingSidebar = () => {
+  const navigate = useNavigate()
   const { event } = useEventStore()
 
   if (!event) {
@@ -22,13 +24,17 @@ const BookingSidebar = () => {
   const diffDays = differenceInCalendarDays(ticketOpenAt, today)
   const isOpen = isBefore(new Date(), ticketOpenAt) === false
 
+  const handleClickBooking = () => {
+    navigate(`/event/booking/${event.eventScheduleId}`)
+  }
+
   return (
     <article className="w-480">
       <div className="w-320 fixed right-80 rounded-lg">
         {isOpen ? (
           <div>
             <Calendar value={event.eventDate} onClickDay={() => {}} locale="en-US" />
-            <Button text="예매하기" />
+            <Button text="예매하기" onClick={handleClickBooking} />
           </div>
         ) : (
           // 오픈 일정
