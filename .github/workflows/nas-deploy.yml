@@ -32,6 +32,12 @@ jobs:
         env:
           CI: false
 
+      - name: 빌드 결과 확인
+        run: |
+          echo "===== 프로젝트 디렉토리 구조 ====="
+          ls -la
+          echo "=========================="
+
       - name: SSH 키 설정
         uses: webfactory/ssh-agent@v0.7.0
         with:
@@ -40,11 +46,25 @@ jobs:
       - name: 배포
         run: |
           # 빌드 디렉토리 확인
-          BUILD_DIR="dist"
-          if [ ! -d "$BUILD_DIR" ]; then
+          if [ -d "dist" ]; then
+            BUILD_DIR="dist"
+          elif [ -d "build" ]; then
             BUILD_DIR="build"
+          else
+            echo "오류: dist 또는 build 디렉토리를 찾을 수 없습니다"
+            exit 1
           fi
           
-          # tar로 파일 전송
+          echo "사용할 빌드 디렉토리: $BUILD_DIR"
+          echo "빌드 디렉토리 내용:"
+          ls -la $BUILD_DIR
+          
+          # NAS 디렉토리 권한 확인
+          echo "NAS 디렉토리 권한 확인 중..."
+          ssh -o StrictHostKeyChecking=no -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "mkdir -p /volume1/web/ || echo '디렉토리 생성 실패'; ls -la /volume1/web/ || echo '디렉토리 접근 실패'"
+          
+          # tar로 파일 전송 (verbose 모드)
+          echo "파일 전송 시작..."
           cd $BUILD_DIR
-          tar czf - * | ssh -o StrictHostKeyChecking=no -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "mkdir -p /volume1/web/ && cd /volume1/web/ && rm -rf * && tar xzf -"
+          tar czf - * | ssh -v -o StrictHostKeyChecking=no -p ${{ secrets.NAS_SSH_PORT || 22 }} ${{ secrets.NAS_USER }}@${{ secrets.NAS_HOST }} "cd /volume1/web/ && rm -rf * && tar xzvf - || echo '파일 압축 해제 실패'"
+          echo "파일 전송 완료"
