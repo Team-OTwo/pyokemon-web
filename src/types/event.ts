@@ -10,4 +10,5 @@ export interface EventType {
   description?: string
   eventScheduleId: number
   venueId?: number
+  total?: number
 }
