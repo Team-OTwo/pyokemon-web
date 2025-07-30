@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react"
+import { useState } from "react"
 import { useParams } from "react-router"
 
 import {
@@ -12,13 +12,11 @@ import BookingSidebar from "./_component/booking_sidebar"
 import SeatClassSeat from "./_component/seat_class_seat"
 import SeatingChart from "./_component/seating_chart"
 
-const BookingPage: React.FC = () => {
+const BookingPage = () => {
   const { id } = useParams()
-  const eventId = useMemo(() => id || "", [id])
-
+  const eventId = id || ""
   const [selectedGrade, setSelectedGrade] = useState<string>("")
   const [selectedSeat, setSelectedSeat] = useState<Seat_class | null>(null)
-
   const { data: bookingData, isLoading: isBookingLoading } = useGetEventBookingQuery(
     Number(eventId)
   )
@@ -27,41 +25,22 @@ const BookingPage: React.FC = () => {
     selectedGrade
   )
 
-  // ===== 이벤트 핸들러 =====
-  const handleSeatGradeSelect = useCallback((grade: string) => {
+  const handleSeatGradeSelect = (grade: string) => {
     setSelectedGrade(grade)
     setSelectedSeat(null)
-  }, [])
-
-  const handleSeatSelect = useCallback((seat: Seat_class) => {
+  }
+  const handleSeatSelect = (seat: Seat_class) => {
     setSelectedSeat(seat)
-  }, [])
-
-  const handlePayment = useCallback(() => {
+  }
+  const handlePayment = () => {
     if (selectedSeat && eventId) {
       alert(
         `결제 진행: ${selectedSeat.seatGrade}-${selectedSeat.row}열-${selectedSeat.col} (${selectedSeat.seatId}번 좌석)`
       )
     }
-  }, [selectedSeat, eventId])
+  }
 
   const isLoading = isBookingLoading || (selectedGrade && isSeatsLoading)
-
-  const mainContent = useMemo(() => {
-    if (!selectedGrade) {
-      return <SeatingChart onSeatGradeSelect={handleSeatGradeSelect} />
-    }
-
-    return (
-      <SeatClassSeat
-        seatGrade={selectedGrade}
-        seats={seatsData || []}
-        onSeatSelect={handleSeatSelect}
-        selectedSeat={selectedSeat}
-      />
-    )
-  }, [selectedGrade, seatsData, selectedSeat, handleSeatGradeSelect, handleSeatSelect])
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-l text-white">
@@ -77,7 +56,18 @@ const BookingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-black text-white">
       <main className="flex pr-20 min-h-[calc(100vh-280px)]">
-        <div className="flex-1">{mainContent}</div>
+        <div className="flex-1">
+          {!selectedGrade ? (
+            <SeatingChart onSeatGradeSelect={handleSeatGradeSelect} />
+          ) : (
+            <SeatClassSeat
+              seatGrade={selectedGrade}
+              seats={seatsData || []}
+              onSeatSelect={handleSeatSelect}
+              selectedSeat={selectedSeat}
+            />
+          )}
+        </div>
 
         <div className="w-350">
           {bookingData && (

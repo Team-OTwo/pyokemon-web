@@ -1,10 +1,4 @@
-import React from "react"
-
-interface SeatingChartProps {
-  onSeatGradeSelect: (grade: string) => void
-}
-
-const SeatingChart: React.FC<SeatingChartProps> = ({ onSeatGradeSelect }) => {
+const SeatingChart = ({ onSeatGradeSelect }: { onSeatGradeSelect: (grade: string) => void }) => {
   return (
     <div className="flex flex-col items-center gap-30 p-30 rounded-lg">
       <h2 className="text-white text-2xl font-bold">좌석 배치도</h2>

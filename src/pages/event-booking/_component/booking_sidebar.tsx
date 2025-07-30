@@ -1,19 +1,15 @@
-import React from "react"
-
 import SeatingChart from "../../../assets/images/Seating_Chart.png"
 import Button from "../../../components/ui/button"
 import { Booking_sidebar, Seat_class } from "../../../types/booking"
 
-interface BookingSidebarProps {
-  bookingData: Booking_sidebar
-  selectedSeat?: Seat_class | null
-  onPayment: () => void
-}
-
-const BookingSidebar: React.FC<BookingSidebarProps> = ({
+const BookingSidebar = ({
   bookingData,
   selectedSeat,
   onPayment,
+}: {
+  bookingData: Booking_sidebar
+  selectedSeat?: Seat_class | null
+  onPayment: () => void
 }) => {
   const getSeatGradeColor = (grade: string) => {
     switch (grade) {
@@ -26,7 +22,7 @@ const BookingSidebar: React.FC<BookingSidebarProps> = ({
       case "B":
         return "bg-blue-500"
       default:
-        return "bg-gray-600"
+        return "bg-gray-500"
     }
   }
 
@@ -40,7 +36,6 @@ const BookingSidebar: React.FC<BookingSidebarProps> = ({
 
   return (
     <div className="bg-white flex flex-col gap-40 p-15 bg-gray-900 rounded-lg h-fit">
-      {/* Seat chart Map */}
       <div>
         <h3 className="text-black m-0 mb-4 text-base font-bold">좌석 배치도</h3>
         <div className="h-200 bg-black rounded-lg flex items-center justify-center overflow-hidden">
@@ -48,7 +43,6 @@ const BookingSidebar: React.FC<BookingSidebarProps> = ({
         </div>
       </div>
 
-      {/* Seat Grade Information */}
       <div>
         <h3 className="text-black m-0 mb-4 text-base font-bold border-b border-gray-300 pb-5">
           좌석 등급 / 잔여석
@@ -68,7 +62,6 @@ const BookingSidebar: React.FC<BookingSidebarProps> = ({
         </div>
       </div>
 
-      {/* Selection Information */}
       <div>
         <h3 className="text-black m-0 mb-4 text-base font-bold border-b border-gray-300 pb-5">
           선택
@@ -95,7 +88,6 @@ const BookingSidebar: React.FC<BookingSidebarProps> = ({
         </div>
       </div>
 
-      {/* Payment Button */}
       <div className="mt-auto" onClick={onPayment}>
         <Button text="결제하기" border={false} />
       </div>
