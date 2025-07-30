@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { useGetEventBookingQuery } from "@/api/event/queries/use-get-event-booking.query"
+import { useGetEventBookingQuery } from "@/api/booking/queries/use-get-event-booking-query"
 import { useGetEventDetailQuery } from "@/api/event/queries/use-get-event-detail-query"
 import { useEventStore } from "@/store/event/event-store"
 import { format } from "date-fns"
@@ -18,7 +18,7 @@ const EventDetailPage = () => {
     setIsMarked(!isMarked)
   }
   const { data: event, isLoading } = useGetEventDetailQuery(Number(eventId))
-  const { data: booking } = useGetEventBookingQuery(event?.eventScheduleId ?? 0)
+  const { data: booking } = useGetEventBookingQuery(event?.eventScheduleId ?? 1)
   const prices = booking?.remainingSeatsByGrade
 
   const { setEvent } = useEventStore()
