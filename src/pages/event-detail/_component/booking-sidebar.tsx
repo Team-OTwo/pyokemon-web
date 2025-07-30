@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { differenceInCalendarDays, format, parseISO } from "date-fns"
+import { differenceInCalendarDays, format, isBefore, parseISO } from "date-fns"
 import { ko } from "date-fns/locale"
 import Calendar from "react-calendar"
 
@@ -20,7 +20,7 @@ const BookingSidebar = () => {
   const today = new Date()
   const ticketOpenAt = parseISO(event.ticketOpenAt)
   const diffDays = differenceInCalendarDays(ticketOpenAt, today)
-  const isOpen = diffDays < 0
+  const isOpen = isBefore(new Date(), ticketOpenAt) === false
 
   return (
     <article className="w-480">
