@@ -21,3 +21,16 @@ export const fetchEventToBeOpened = async () => {
     console.log(error)
   }
 }
+
+export const fetchEventlist = async (genre: string, page: number = 1, size: number = 8) => {
+  try {
+    const res = await baseClient.get(`http://localhost:8080/api/events`, {
+      params: { genre, page, size },
+    })
+    console.log(res.data)
+    return res.data
+  } catch (error) {
+    console.error("이벤트 리스트 fetch 실패:", error)
+    throw error
+  }
+}

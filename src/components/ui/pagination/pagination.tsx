@@ -9,9 +9,13 @@ const StyledPagination = styled(AntdPagination)`
 
       &:hover {
         &:not(:disabled) {
-          background-color: ${({ theme }) => theme.colors.primary[1]};
+          background-color: var(--color-primary);
         }
       }
+    }
+    &&& .ant-pagination-item-active {
+      border-color: transparent !important;
+      background-color: transparent !important;
     }
   }
 `
