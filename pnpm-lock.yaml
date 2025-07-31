@@ -56,9 +56,6 @@ importers:
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
-      dayjs:
-        specifier: ^1.11.13
-        version: 1.11.13
       qs:
         specifier: ^6.14.0
         version: 6.14.0
