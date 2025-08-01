@@ -1,5 +1,7 @@
 import { useState } from "react"
+import { loadTossPayments } from "@tosspayments/payment-sdk"
 import { useParams } from "react-router"
+import Swal from "sweetalert2"
 
 import {
   useGetEventBookingQuery,
@@ -32,11 +34,51 @@ const BookingPage = () => {
   const handleSeatSelect = (seat: Seat_class) => {
     setSelectedSeat(seat)
   }
+
+  const getSelectedSeatPrice = () => {
+    if (!selectedSeat || !bookingData) return 0
+
+    const gradeInfo = bookingData.remainingSeatsByGrade.find(
+      (g: { seatGrade: string; price: number }) => g.seatGrade === selectedSeat.seatGrade
+    )
+
+    return gradeInfo?.price || 0
+  }
+
+  const handlePaymentClick = async () => {
+    if (!selectedSeat) {
+      Swal.fire({
+        icon: "warning",
+        title: "좌석을 선택해주세요!",
+        confirmButtonText: "확인",
+        confirmButtonColor: "var(--color-primary)",
+      })
+      return
+    }
+
+    try {
+      const tossPayments = await loadTossPayments(import.meta.env.VITE_TOSS_CLIENT_KEY)
+
+      await tossPayments.requestPayment("카드", {
+        amount: getSelectedSeatPrice(),
+        orderId: `ORDER_${Date.now()}`,
+        orderName: `${selectedSeat.seatGrade}석 예매`,
+        customerName: "홍길동",
+        successUrl: `${window.location.origin}/mypage`,
+        failUrl: `${window.location.origin}/event/booking/${eventId}`,
+      })
+    } catch (error) {
+      console.error("토스 결제 오류:", error)
+      Swal.fire("결제 실패", "잠시 후 다시 시도해주세요.", "error")
+    }
+  }
   const handlePayment = () => {
     if (selectedSeat && eventId) {
+      /*
       alert(
         `결제 진행: ${selectedSeat.seatGrade}-${selectedSeat.row}열-${selectedSeat.col} (${selectedSeat.seatId}번 좌석)`
       )
+        */
     }
   }
 
@@ -74,7 +116,8 @@ const BookingPage = () => {
             <BookingSidebar
               bookingData={bookingData}
               selectedSeat={selectedSeat}
-              onPayment={handlePayment}
+              /*onPayment={handlePayment}*/
+              onPayment={handlePaymentClick}
             />
           )}
         </div>
