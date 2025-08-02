@@ -1,5 +1,5 @@
 import React from "react"
-import { createBrowserRouter, Navigate } from "react-router"
+import { createBrowserRouter } from "react-router"
 
 import AdminProtectedRoute from "./components/admin-protected-route"
 import ProtectedRoute from "./components/protected-route"
@@ -21,14 +21,10 @@ const router = createBrowserRouter([
         Component: MainEmptyLayout,
         children: [
           {
-            index: true,
-            element: <Navigate to="/home" replace />,
-          },
-          {
             Component: ProtectedRoute,
             children: [
               {
-                path: "home",
+                index: true,
                 Component: HomePage,
               },
             ],

@@ -7,6 +7,7 @@ import tsconfigPaths from "vite-tsconfig-paths"
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: "/home/",
   plugins: [react(), tsconfigPaths(), svgr(), tailwindcss()],
   test: {
     globals: true,
