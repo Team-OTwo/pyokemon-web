@@ -12,8 +12,9 @@ body {
 
   --color-black: #222222;
   --color-white: #FFFFFF;
-  --color-primary: #FFCF36;
-  --color-error: #ED7171;
+  --color-primary-dark: #3B9AFF;
+  --color-primary: #75B8FF;
+  --color-error: #FF5959;
   --color-success: #44CB8F;
   --color-gray-100: #F3F2F1;
   --color-gray-300: #DDDDDB;
