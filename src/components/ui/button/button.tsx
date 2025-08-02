@@ -40,7 +40,7 @@ const Button: React.FC<ButtonProps> = ({
   const borderColorClass = getColorClass("border", borderColor)
 
   const baseStyle =
-    "rounded-lg h-51 flex justify-center items-center cursor-pointer hover:opacity-80"
+    "rounded-lg h-51 flex justify-center items-center cursor-pointer hover:opacity-80 text-16-semibold "
 
   const sizeStyle = small ? "px-24" : "w-320"
   const borderStyle = border ? `border-1 ${borderColorClass}` : ""
