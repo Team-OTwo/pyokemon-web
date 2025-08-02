@@ -30,11 +30,11 @@ const EventListPage = () => {
   if (error) return <p>에러 발생!</p>
 
   return (
-    <div className="px-60 mb-48">
+    <div className="px-160 mb-48">
       <h1 className="head1 py-32 text-center">{genre} 둘러보기</h1>
-      <div className="grid grid-cols-4 gap-24">
+      <div className="grid grid-cols-3 gap-24">
         {eventList.map((event, i) => {
-          return <EventPreviewCard key={i} event={event} openAt={true} />
+          return <EventPreviewCard key={i} event={event} />
         })}
       </div>
 

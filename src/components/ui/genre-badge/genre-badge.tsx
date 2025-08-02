@@ -2,7 +2,7 @@ import React from "react"
 
 const GenreBadge = ({ genre }: { genre: string }) => {
   return (
-    <div className="py-4 px-16 rounded-full h-25 bg-primary/10 text-center text-sm text-primary border-1 border-primary  justify-center items-center inline">
+    <div className="py-6 px-16 rounded-full bg-primary/20 text-center text-primary-dark justify-center items-center inline text-14-semibold">
       {genre}
     </div>
   )
