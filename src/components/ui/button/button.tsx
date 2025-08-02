@@ -19,6 +19,9 @@ const colorMap: Record<string, string> = {
   white: "white",
   black: "black",
   error: "error",
+  "gray-300": "gray-300",
+  "gray-500": "gray-500",
+  "gray-700": "gray-700",
 }
 
 const getColorClass = (prefix: string, color?: string) => {
