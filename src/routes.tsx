@@ -12,72 +12,77 @@ import MainGrayLayout from "./pages/main-gray-layout"
 import MainContainerLayout from "./pages/main-layout"
 import RootLayout from "./pages/root-layout"
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      Component: RootLayout,
+      children: [
+        {
+          Component: MainEmptyLayout,
+          children: [
+            {
+              Component: ProtectedRoute,
+              children: [
+                {
+                  index: true,
+                  Component: HomePage,
+                },
+              ],
+            },
+            {
+              path: "event",
+              Component: EventListPage,
+            },
+            {
+              path: "event/detail/:eventId", // ✅ 상세 경로 추가
+              Component: EventDetailPage,
+            },
+            {
+              path: "event/booking/:id",
+              Component: BookingPage,
+            },
+          ],
+        },
+        {
+          Component: MainGrayLayout,
+          children: [
+            {
+              Component: ProtectedRoute,
+              children: [],
+            },
+          ],
+        },
+        {
+          Component: MainContainerLayout,
+          children: [
+            {
+              Component: ProtectedRoute,
+              children: [
+                {
+                  path: "admin",
+                  Component: AdminProtectedRoute,
+                  children: [
+                    {
+                      index: true,
+                      element: <div>어드민 페이지</div>,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      path: "*",
+      element: <div>Catch All Route</div>,
+    },
+  ],
   {
-    path: "/",
-    Component: RootLayout,
-    children: [
-      {
-        Component: MainEmptyLayout,
-        children: [
-          {
-            Component: ProtectedRoute,
-            children: [
-              {
-                index: true,
-                Component: HomePage,
-              },
-            ],
-          },
-          {
-            path: "event",
-            Component: EventListPage,
-          },
-          {
-            path: "event/detail/:eventId", // ✅ 상세 경로 추가
-            Component: EventDetailPage,
-          },
-          {
-            path: "event/booking/:id",
-            Component: BookingPage,
-          },
-        ],
-      },
-      {
-        Component: MainGrayLayout,
-        children: [
-          {
-            Component: ProtectedRoute,
-            children: [],
-          },
-        ],
-      },
-      {
-        Component: MainContainerLayout,
-        children: [
-          {
-            Component: ProtectedRoute,
-            children: [
-              {
-                path: "admin",
-                Component: AdminProtectedRoute,
-                children: [
-                  {
-                    index: true,
-                    element: <div>어드민 페이지</div>,
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    path: "*",
-    element: <div>Catch All Route</div>,
-  },
-])
+    basename: "/home",
+  }
+)
 
 export default router
