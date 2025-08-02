@@ -10,7 +10,7 @@ import { NavLink } from "react-router"
 import { color } from "@/styles/design-tokens"
 
 function HeaderMenuSection() {
-  const menus = [{ menuId: "1", menuName: "홈", menuPath: "/", icon: <AppstoreOutlined /> }]
+  const menus = [{ menuId: "1", menuName: "홈", menuPath: "/home", icon: <AppstoreOutlined /> }]
 
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
