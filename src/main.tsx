@@ -6,7 +6,6 @@ import { RouterProvider } from "react-router"
 
 import router from "./routes"
 
-import "./styles/global-styles"
 import "./index.css"
 
 // React Query 클라이언트 생성
