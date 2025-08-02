@@ -3,7 +3,7 @@ import baseClient from "../../client/base-client"
 export const getEventBooking = async (eventScheduleId: number) => {
   try {
     const response = await baseClient.get(
-      `http://localhost:8080/api/events/booking/${eventScheduleId}`
+      `http://localhost:8081/event/api/events/booking/${eventScheduleId}`
     )
     return response.data
   } catch (error) {
@@ -15,7 +15,7 @@ export const getEventBooking = async (eventScheduleId: number) => {
 export const getSeatClass = async (eventScheduleId: number, seatGrade: string) => {
   try {
     const response = await baseClient.get(
-      `http://localhost:8080/api/events/booking/${eventScheduleId}/${seatGrade}`
+      `http://localhost:8081/event/api/events/booking/${eventScheduleId}/${seatGrade}`
     )
     return response.data
   } catch (error) {

@@ -1,4 +1,6 @@
 import React from "react"
+import { differenceInCalendarDays, format, isBefore, parseISO } from "date-fns"
+import { ko } from "date-fns/locale"
 import { useNavigate } from "react-router"
 
 import { EventType } from "@/types/event"
@@ -24,7 +26,7 @@ const CarouselCard: React.FC<CarouselCardProps> = ({ event }) => {
       <div className="p-24 z-1 text-white bg-gradient-to-b from-black/0 to-black/75 absolute bottom-0 left-0 w-full">
         <h1 className="text-2xl font-semibold pb-12">{event.title}</h1>
         <p className="text-sm font-semibold">{event.venueName}</p>
-        <p className="text-sm">{event.eventDate}</p>
+        <p className="text-sm">{format(event.eventDate, "yyyy.MM.dd", { locale: ko })}</p>
       </div>
     </div>
   )
