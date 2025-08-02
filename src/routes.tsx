@@ -81,7 +81,7 @@ const router = createBrowserRouter(
     },
   ],
   {
-    basename: "/home",
+    basename: "/user",
   }
 )
 
