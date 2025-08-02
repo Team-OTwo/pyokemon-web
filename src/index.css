@@ -51,6 +51,9 @@ body {
     @apply text-base font-medium;
   }
 
+  .text-14-semibold {
+    @apply text-sm font-semibold;
+  }
   .text-14-medium {
     @apply text-sm font-medium;
   }
