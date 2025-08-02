@@ -34,7 +34,7 @@ const EventListPage = () => {
       <h1 className="head1 py-32 text-center">{genre} 둘러보기</h1>
       <div className="grid grid-cols-3 gap-24">
         {eventList.map((event, i) => {
-          return <EventPreviewCard key={i} event={event} openAt={true} />
+          return <EventPreviewCard key={i} event={event} />
         })}
       </div>
 
