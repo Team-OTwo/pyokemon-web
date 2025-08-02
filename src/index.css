@@ -22,12 +22,47 @@ body {
   --color-gray-700: #686764;
 }
 
+@layer {
+  .title-24-bold {
+    @apply text-2xl font-bold;
+  }
+
+  .title-20-bold {
+    @apply text-xl font-bold;
+  }
+
+  .title-20-medium {
+    @apply text-xl font-medium;
+  }
+
+  .title-18-bold {
+    @apply text-lg font-bold;
+  }
+
+  .text-16-bold {
+    @apply text-base font-bold;
+  }
+
+  .text-16-semibold {
+    @apply text-base font-semibold;
+  }
+
+  .text-16-medium {
+    @apply text-base font-medium;
+  }
+
+  .text-14-medium {
+    @apply text-sm font-medium;
+  }
+}
+
+
 .head1 {
   font-size: 24px;
   font-weight: 600;
 }
 
-.head2{
+.head2 {
   font-size: 20px;
   font-weight: 600;
 }
