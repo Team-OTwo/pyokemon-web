@@ -8,6 +8,7 @@ interface ButtonProps {
   color?: string
   bgColor?: string
   onClick?: () => void
+  icon?: React.ReactNode
 }
 
 // color : 글자 색
@@ -37,6 +38,7 @@ const Button: React.FC<ButtonProps> = ({
   color = "white",
   bgColor = "primary",
   onClick,
+  icon,
 }) => {
   const textColorClass = getColorClass("text", color)
   const bgColorClass = getColorClass("bg", bgColor)
@@ -54,6 +56,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button className={className} onClick={onClick}>
+      {icon && <span className="mr-6">{icon}</span>}
       {text}
     </button>
   )
