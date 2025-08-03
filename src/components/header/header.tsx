@@ -1,13 +1,7 @@
-import { GithubOutlined, RocketOutlined } from "@ant-design/icons"
-import { Box, Typography } from "@mui/material"
-import { Button } from "antd"
 import { IoSearch } from "react-icons/io5"
 import { Link, useSearchParams } from "react-router"
 
-import { color, zIndex } from "@/styles/design-tokens"
-
 import logo from "../../assets/images/logo.svg"
-import HeaderMenuSection from "./header-menu-section"
 
 function Header() {
   const [searchParams] = useSearchParams()
