@@ -3,12 +3,11 @@ import { useGetEventBookingQuery } from "@/api/booking/queries/use-get-event-boo
 import { useGetEventDetailQuery } from "@/api/event/queries/use-get-event-detail-query"
 import { useEventStore } from "@/store/event/event-store"
 import { format } from "date-fns"
-import { IoStar, IoStarOutline } from "react-icons/io5"
-import { useParams } from "react-router"
+import { IoBookmark, IoBookmarkOutline } from "react-icons/io5"
+import { useNavigate, useParams } from "react-router"
 
+import Button from "@/components/ui/button"
 import GenreBadge from "@/components/ui/genre-badge"
-
-import BookingSidebar from "./_component/booking-sidebar"
 
 interface SeatPrice {
   seatGrade: string
@@ -17,6 +16,7 @@ interface SeatPrice {
 }
 
 const EventDetailPage = () => {
+  const navigate = useNavigate()
   const { eventId } = useParams()
   const [isMarked, setIsMarked] = useState(true)
 
@@ -43,72 +43,89 @@ const EventDetailPage = () => {
     return <div>존재하지 않는 공연입니다.</div> // 로딩 중 UI
   }
 
-  return (
-    <div className="px-120 py-32 relative flex">
-      <article className="w-full">
-        {/* Title */}
-        <div className="mb-16">
-          <GenreBadge genre={event.genre} />
-          <div className="flex gap-16 items-center mt-16">
-            <div onClick={handleMarkClick}>
-              {isMarked ? (
-                <IoStar className="text-primary w-20 h-20" />
-              ) : (
-                <IoStarOutline className="text-gray-500 w-20 h-20" />
-              )}
-            </div>
-            <h1 className="head2">{event.title}</h1>
-          </div>
-        </div>
+  const handleClickBooking = () => {
+    navigate(`/event/booking/${event.eventScheduleId}`)
+  }
 
-        {/* event */}
-        {/* info */}
-        <div className="flex gap-24 mb-36">
+  return (
+    <div className="px-240 py-64">
+      <section className="flex gap-60 mb-60 justify-center">
+        <article>
           <img
             src={event.thumbnailUrl}
             alt="thumbnail"
-            width="320"
-            height="420"
+            width="420"
+            height="550"
             className="rounded-lg object-cover"
           />
-          <div className="flex gap-12">
-            <ul className="w-90 flex flex-col gap-16">
-              <li>장소</li>
-              <li>일시</li>
-              <li>연령</li>
-              <li>등급 및 가격</li>
-            </ul>
+        </article>
 
-            <ul className="flex flex-col gap-16">
-              <li>{event.venueName}</li>
-              <li>{format(new Date(event.eventDate), "yyyy.MM.dd")}</li>
-              <li>{event.ageLimit}세</li>
-              <li>
-                <ul className="text-gray-700">
-                  {prices
-                    .filter((price: SeatPrice) => price.price != 0)
-                    .map((price: SeatPrice) => {
-                      return (
-                        <li key={price.seatGrade}>
-                          {price.seatGrade}{" "}
-                          <span className="font-bold text-black">
-                            {price.price.toLocaleString()}원
-                          </span>
-                        </li>
-                      )
-                    })}
-                </ul>
-              </li>
-            </ul>
+        <article className="w-320 flex flex-col justify-between">
+          <div>
+            <GenreBadge genre={event.genre} />
+            <h1 className="title-24-bold pt-16 pb-32">{event.title}</h1>
+
+            {/* info */}
+            <div className="flex gap-12">
+              <ul className="w-90 flex flex-col gap-16 text-16-bold">
+                <li>장소</li>
+                <li>일시</li>
+                <li>관람연령</li>
+                <li>가격</li>
+              </ul>
+
+              <ul className="flex flex-col gap-16 text-16-medium">
+                <li>{event.venueName}</li>
+                <li>{format(new Date(event.eventDate), "yyyy.MM.dd")}</li>
+                <li>{event.ageLimit}세</li>
+                <li>
+                  <ul>
+                    {prices
+                      .filter((price: SeatPrice) => price.price != 0)
+                      .map((price: SeatPrice) => {
+                        return (
+                          <li key={price.seatGrade}>
+                            <p className="flex justify-between w-120">
+                              <span className="text-gray-700">{price.seatGrade} </span>
+                              {price.price.toLocaleString()}원
+                            </p>
+                          </li>
+                        )
+                      })}
+                  </ul>
+                </li>
+              </ul>
+            </div>
           </div>
-        </div>
 
-        <hr />
+          {/* buttons */}
+          <div className="flex flex-col gap-16">
+            <Button text="예매하기" onClick={handleClickBooking} />
 
-        <div className="h-600 py-24">{event.description}</div>
-      </article>
+            <Button
+              onClick={handleMarkClick}
+              text="관심공연"
+              border
+              borderColor="gray-300"
+              bgColor="white"
+              color="gray-700"
+              icon={
+                isMarked ? (
+                  <IoBookmark className="text-primary" />
+                ) : (
+                  <IoBookmarkOutline className="text-gray-700" />
+                )
+              }
+            />
+          </div>
+        </article>
+      </section>
 
-      <BookingSidebar />
+      <hr />
+      <div className="h-600 py-24">
+        <h2 className="title-18-bold mb-24">상세 설명</h2>
+        {event.description}
+      </div>
     </div>
   )
 }
