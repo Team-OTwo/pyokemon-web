@@ -45,8 +45,7 @@ const EventListPage = () => {
       <h1 className="title-24-bold pt-48">공연 둘러보기</h1>
 
       {/* filtering */}
-
-      <ul className="flex gap-12 py-24">
+      <ul className="flex gap-12 py-24 flex-wrap">
         {GENRE_LIST.map((genre) => {
           const isActive = type === genre.type
           return (

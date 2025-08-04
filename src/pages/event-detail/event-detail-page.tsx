@@ -48,7 +48,7 @@ const EventDetailPage = () => {
   }
 
   return (
-    <div className="px-240 py-64">
+    <div className="px-160 py-64">
       <section className="flex gap-60 mb-60 justify-center">
         <article>
           <img
@@ -60,7 +60,7 @@ const EventDetailPage = () => {
           />
         </article>
 
-        <article className="w-320 flex flex-col justify-between">
+        <article className="w-320 min-h-450 flex flex-col justify-between">
           <div>
             <GenreBadge genre={event.genre} />
             <h1 className="title-24-bold pt-16 pb-32">{event.title}</h1>
