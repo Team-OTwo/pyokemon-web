@@ -1,8 +1,8 @@
-import baseClient from "../../client/base-client"
+import { eventClient } from "../../client"
 
 export const fetchEventDetail = async (eventId: number) => {
   try {
-    const res = await baseClient.get(`http://localhost:8081/event/api/events/${eventId}`)
+    const res = await eventClient.get(`/api/events/${eventId}`)
     console.log(res.data)
 
     return res.data

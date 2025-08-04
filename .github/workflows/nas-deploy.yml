@@ -31,6 +31,7 @@ jobs:
         run: pnpm build
         env:
           CI: false
+          VITE_ENVIRONMENT: dev
 
       - name: 빌드 결과 확인
         run: |

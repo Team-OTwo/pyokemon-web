@@ -1,10 +1,8 @@
-import baseClient from "../../client/base-client"
+import { eventClient } from "../../client"
 
 export const getEventBooking = async (eventScheduleId: number) => {
   try {
-    const response = await baseClient.get(
-      `http://localhost:8081/event/api/events/booking/${eventScheduleId}`
-    )
+    const response = await eventClient.get(`/api/events/booking/${eventScheduleId}`)
     return response.data
   } catch (error) {
     console.error("Failed to fetch booking data:", error)
@@ -14,9 +12,7 @@ export const getEventBooking = async (eventScheduleId: number) => {
 
 export const getSeatClass = async (eventScheduleId: number, seatGrade: string) => {
   try {
-    const response = await baseClient.get(
-      `http://localhost:8081/event/api/events/booking/${eventScheduleId}/${seatGrade}`
-    )
+    const response = await eventClient.get(`/api/events/booking/${eventScheduleId}/${seatGrade}`)
     return response.data
   } catch (error) {
     console.error("Failed to fetch seats data:", error)

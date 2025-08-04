@@ -6,6 +6,8 @@
   "scripts": {
     "build": "tsc -b && vite build",
     "dev": "vite",
+    "dev:dev": "cross-env VITE_ENVIRONMENT=dev vite",
+    "dev:local": "cross-env VITE_ENVIRONMENT=local vite",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,json}\" --cache",
     "lint": "eslint .",
@@ -69,6 +71,7 @@
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
+    "cross-env": "^7.0.3",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-react": "^7.37.4",

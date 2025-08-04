@@ -1,8 +1,8 @@
-import baseClient from "../../client/base-client"
+import { eventClient } from "../../client"
 
 export const fetchEventOpenToday = async () => {
   try {
-    const res = await baseClient.get(`http://localhost:8081/event/api/events/open-today`)
+    const res = await eventClient.get(`/api/events/open-today`)
     console.log(res.data)
 
     return res.data
@@ -13,7 +13,7 @@ export const fetchEventOpenToday = async () => {
 
 export const fetchEventToBeOpened = async () => {
   try {
-    const res = await baseClient.get(`http://localhost:8081/event/api/events/to-be-opened`)
+    const res = await eventClient.get(`/api/events/to-be-opened`)
     console.log(res.data)
 
     return res.data
@@ -24,7 +24,7 @@ export const fetchEventToBeOpened = async () => {
 
 export const fetchEventlist = async (genre: string, page: number = 1, size: number = 8) => {
   try {
-    const res = await baseClient.get(`http://localhost:8081/event/api/events`, {
+    const res = await eventClient.get(`/api/events`, {
       params: { genre, page, size },
     })
     console.log(res.data)

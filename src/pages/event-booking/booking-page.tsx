@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { getTossClientKey } from "@/constants/env"
 import { loadTossPayments } from "@tosspayments/payment-sdk"
 import { useParams } from "react-router"
 import Swal from "sweetalert2"
@@ -57,7 +58,7 @@ const BookingPage = () => {
     }
 
     try {
-      const tossPayments = await loadTossPayments(import.meta.env.VITE_TOSS_CLIENT_KEY)
+      const tossPayments = await loadTossPayments(getTossClientKey())
 
       await tossPayments.requestPayment("카드", {
         amount: getSelectedSeatPrice(),
