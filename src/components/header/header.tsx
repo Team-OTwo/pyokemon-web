@@ -3,19 +3,10 @@ import { IoNotificationsOutline, IoPersonOutline, IoSearchOutline } from "react-
 import { Link, useLocation } from "react-router"
 
 import logo from "../../assets/images/logo.svg"
+import Notification from "../notification"
 
 function Header() {
   const currentPath = useLocation().pathname
-  console.log(currentPath)
-
-  // const list = [
-  //   { title: "콘서트", type: "concert" },
-  //   { title: "뮤지컬", type: "musical" },
-  //   { title: "연극", type: "play" },
-  //   { title: "클래식", type: "classic" },
-  //   { title: "스포츠", type: "sports" },
-  //   { title: "행사", type: "exhibition" },
-  // ]
 
   const navItem = [
     { title: "HOME", path: "/" },
@@ -26,6 +17,7 @@ function Header() {
   const iconStyle = "text-black w-24 h-24"
 
   const [showSearchBar, setShowSearchBar] = useState(false)
+  const [showNotification, setShowNotification] = useState(false)
 
   return (
     <div className="flex bg-white h-100 w-full text-black items-center justify-between px-160 shadow-container">
@@ -69,30 +61,18 @@ function Header() {
           </div>
 
           {/* icons */}
-          <ul className="flex gap-16">
+          <ul className="flex gap-16 relative">
             <li className={listStyle} onClick={() => setShowSearchBar(!showSearchBar)}>
               <IoSearchOutline className={iconStyle} />
             </li>
-            <li className={listStyle}>
+            <li className={listStyle} onClick={() => setShowNotification(!showNotification)}>
               <IoNotificationsOutline className={iconStyle} />
             </li>
+            {showNotification && <Notification />}
             <li className={listStyle}>
               <IoPersonOutline className={iconStyle} />
             </li>
           </ul>
-          {/*           
-          {list.map((genre) => {
-            const isActive = currentType === genre.type
-            return (
-              <Link
-                to={"/event?type=" + genre.type}
-                key={genre.title}
-                className={`hover:text-primary ${isActive ? "text-primary" : ""}`}
-              >
-                {genre.title}
-              </Link>
-            )
-          })} */}
         </nav>
       </div>
     </div>
