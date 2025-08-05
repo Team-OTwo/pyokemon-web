@@ -1,10 +1,10 @@
 import { useState } from "react"
 import { useNavigate } from "react-router"
 
-import { postLogin } from "../../api/login/fetchers/post-login"
-import login from "../../assets/images/LOGIN.svg"
-import Button from "../../components/ui/button"
-import Input from "../../components/ui/input"
+import { postLogin } from "../api/login/fetchers/post-login"
+import login from "../assets/images/LOGIN.svg"
+import Button from "../components/ui/button"
+import Input from "../components/ui/input"
 
 const LoginPage = () => {
   const navigate = useNavigate()
