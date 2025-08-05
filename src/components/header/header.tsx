@@ -1,58 +1,80 @@
-import { GithubOutlined, RocketOutlined } from "@ant-design/icons"
-import { Box, Typography } from "@mui/material"
-import { Button } from "antd"
-import { IoSearch } from "react-icons/io5"
-import { Link, useSearchParams } from "react-router"
-
-import { color, zIndex } from "@/styles/design-tokens"
+import { useState } from "react"
+import { IoNotificationsOutline, IoPersonOutline, IoSearchOutline } from "react-icons/io5"
+import { Link, useLocation } from "react-router"
 
 import logo from "../../assets/images/logo.svg"
-import HeaderMenuSection from "./header-menu-section"
+import Notification from "../notification"
 
 function Header() {
-  const [searchParams] = useSearchParams()
-  const currentType = searchParams.get("type")
+  const currentPath = useLocation().pathname
 
-  const list = [
-    { title: "콘서트", type: "concert" },
-    { title: "뮤지컬", type: "musical" },
-    { title: "연극", type: "play" },
-    { title: "클래식", type: "classic" },
-    { title: "스포츠", type: "sports" },
-    { title: "행사", type: "exhibition" },
+  const navItem = [
+    { title: "HOME", path: "/" },
+    { title: "TICKETS", path: "/event" },
   ]
-  return (
-    <div className="flex bg-black h-70 w-full text-white items-center justify-between px-60">
-      <div className="flex items-center">
-        <Link to="/">
-          <img src={logo} alt="logo" className="h-50" />
-        </Link>
 
-        <div className="w-270 h-40 mx-40 flex items-center border-primary border-1 rounded-full px-16 justify-between">
-          <input
-            type="text"
-            className="focus:outline-none text-sm h-full placeholder:text-gray-500"
-            placeholder="공연 검색"
-          />
-          <IoSearch className="text-gray-300" />
-        </div>
-        <nav className="flex gap-16 items-center">
-          {list.map((genre) => {
-            const isActive = currentType === genre.type
+  const listStyle = "p-4 rounded-lg hover:bg-gray-100 cursor-pointer"
+  const iconStyle = "text-black w-24 h-24"
+
+  const [showSearchBar, setShowSearchBar] = useState(false)
+  const [showNotification, setShowNotification] = useState(false)
+
+  return (
+    <div className="flex bg-white h-100 w-full text-black items-center justify-between px-160 shadow-container">
+      <Link to="/">
+        <img src={logo} alt="logo" className="h-24" />
+      </Link>
+
+      <div>
+        <nav className="flex items-center">
+          {navItem.map((item) => {
+            const isActive = currentPath === item.path
             return (
               <Link
-                to={"/event?type=" + genre.type}
-                key={genre.title}
-                className={`hover:text-primary ${isActive ? "text-primary" : ""}`}
+                to={item.path}
+                className={`text-black ml-32 ${isActive ? "title-20-bold" : "title-20-medium"}`}
+                key={item.title}
               >
-                {genre.title}
+                {item.title}
               </Link>
             )
           })}
+
+          {/* search bar */}
+          <div
+            className="h-36 flex items-center border-black border-1 px-16 rounded-full justify-between transition-all duration-300 ease-in-out overflow-hidden"
+            style={{
+              opacity: showSearchBar ? 1 : 0,
+              width: showSearchBar ? "240px" : "0px",
+              margin: showSearchBar ? "0px 32px" : "0px",
+            }}
+          >
+            <input
+              type="text"
+              className="focus:outline-none text-14-medium h-full placeholder:text-gray-500 transition-opacity duration-200"
+              placeholder="공연 검색"
+              style={{
+                opacity: showSearchBar ? 1 : 0,
+                width: showSearchBar ? "100%" : "0",
+              }}
+            />
+          </div>
+
+          {/* icons */}
+          <ul className="flex gap-16 relative">
+            <li className={listStyle} onClick={() => setShowSearchBar(!showSearchBar)}>
+              <IoSearchOutline className={iconStyle} />
+            </li>
+            <li className={listStyle} onClick={() => setShowNotification(!showNotification)}>
+              <IoNotificationsOutline className={iconStyle} />
+            </li>
+            {showNotification && <Notification />}
+            <li className={listStyle}>
+              <IoPersonOutline className={iconStyle} />
+            </li>
+          </ul>
         </nav>
       </div>
-
-      <Link to="/login">로그인</Link>
     </div>
   )
 }
