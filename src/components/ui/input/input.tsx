@@ -4,10 +4,11 @@ interface InputProps {
   placeholder?: string
   value?: string
   onChange?: (value: string) => void
-  type?: "text" | "password" | "email"
+  type?: "text" | "password" | "email" | "tel" | "date"
   disabled?: boolean
   error?: boolean
   className?: string
+  onBlur?: () => void
 }
 
 const Input: React.FC<InputProps> = ({
@@ -18,6 +19,7 @@ const Input: React.FC<InputProps> = ({
   disabled = false,
   error = false,
   className = "",
+  onBlur,
 }) => {
   const baseStyle =
     "w-320 h-51 px-16 rounded-lg border-1 text-16-regular outline-none transition-colors"
@@ -44,6 +46,7 @@ const Input: React.FC<InputProps> = ({
       placeholder={placeholder}
       value={value}
       onChange={handleChange}
+      onBlur={onBlur}
       disabled={disabled}
       className={`${getStyleClass()} ${className}`}
     />
