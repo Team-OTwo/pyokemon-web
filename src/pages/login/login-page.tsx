@@ -1,17 +1,33 @@
 import { useState } from "react"
 import { useNavigate } from "react-router"
 
+import { postLogin } from "../../api/login/fetchers/post-login"
 import login from "../../assets/images/LOGIN.svg"
 import Button from "../../components/ui/button"
 import Input from "../../components/ui/input"
 
 const LoginPage = () => {
   const navigate = useNavigate()
-  const [username, setUsername] = useState("")
+  const [loginId, setLoginId] = useState("")
   const [password, setPassword] = useState("")
 
-  const handleLogin = () => {
-    console.log("로그인 시도:", { username, password })
+  const handleLogin = async () => {
+    try {
+      const response = await postLogin({
+        loginId,
+        password,
+      })
+
+      console.log("로그인 성공:", response)
+
+      if (response.success && response.data) {
+        localStorage.setItem("accessToken", response.data.accessToken)
+        localStorage.setItem("refreshToken", response.data.refreshToken)
+        navigate("/")
+      }
+    } catch (error) {
+      console.error("로그인 실패:", error)
+    }
   }
 
   const handleSignupClick = () => {
@@ -24,7 +40,7 @@ const LoginPage = () => {
         <img src={login} alt="login" className="h-24 mb-60 mt-60" />
 
         <div className="flex flex-col gap-16 mb-24">
-          <Input placeholder="아이디" value={username} onChange={setUsername} type="text" />
+          <Input placeholder="아이디" value={loginId} onChange={setLoginId} type="text" />
           <Input placeholder="비밀번호" value={password} onChange={setPassword} type="password" />
         </div>
 
