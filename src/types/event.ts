@@ -11,4 +11,5 @@ export interface EventType {
   eventScheduleId: number
   venueId?: number
   total?: number
+  saved?: boolean
 }

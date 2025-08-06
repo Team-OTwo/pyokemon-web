@@ -18,7 +18,7 @@ interface SeatPrice {
 const EventDetailPage = () => {
   const navigate = useNavigate()
   const { eventId } = useParams()
-  const [isMarked, setIsMarked] = useState(true)
+  const [isMarked, setIsMarked] = useState<boolean | null>(null)
 
   const handleMarkClick = () => {
     setIsMarked(!isMarked)
@@ -31,6 +31,7 @@ const EventDetailPage = () => {
 
   useEffect(() => {
     if (event) {
+      setIsMarked(event.saved ?? false)
       setEvent(event)
     }
   }, [event, setEvent])
