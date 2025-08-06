@@ -59,10 +59,10 @@ const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({ isOpen, onClo
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="shadow-container rounded-lg p-40 w-520 max-w-90vw shadow-xl">
         <div className="flex justify-between items-center mb-32">
-          <h2 className="title-20-bold text-gray-900">비밀번호 수정</h2>
+          <h2 className="title-20-bold text-black">비밀번호 수정</h2>
           <button
             onClick={handleClose}
-            className="w-32 h-32 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
+            className="w-32 h-32 flex items-center justify-center text-gray-300 hover:text-gray-700 transition-colors"
           >
             <svg className="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -82,7 +82,7 @@ const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({ isOpen, onClo
               type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full p-16 border border-gray-200 rounded-12 text-14 transition-colors focus:border-primary focus:outline-none"
+              className="w-full p-16 border border-gray-300 rounded-12 text-14 transition-colors focus:border-primary focus:outline-none"
               placeholder="현재 비밀번호를 입력하세요"
             />
           </div>
@@ -96,12 +96,12 @@ const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({ isOpen, onClo
               onFocus={() => setIsNewPasswordFocused(true)}
               className={`w-full p-16 border rounded-12 text-14 transition-colors ${
                 newPasswordError
-                  ? "border-red-500 focus:border-red-500"
-                  : "border-gray-200 focus:border-primary"
+                  ? "border-error focus:border-error"
+                  : "border-gray-300 focus:border-primary"
               } focus:outline-none`}
               placeholder="새 비밀번호를 입력하세요"
             />
-            {newPasswordError && <p className="text-12 text-red-500 mt-8">{newPasswordError}</p>}
+            {newPasswordError && <p className="text-12 text-error mt-8">{newPasswordError}</p>}
           </div>
 
           <div>
@@ -113,14 +113,12 @@ const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({ isOpen, onClo
               onFocus={() => setIsPasswordCheckFocused(true)}
               className={`w-full p-16 border rounded-12 text-14 transition-colors ${
                 passwordCheckError
-                  ? "border-red-500 focus:border-red-500"
-                  : "border-gray-200 focus:border-primary"
+                  ? "border-error focus:border-error"
+                  : "border-gray-300 focus:border-primary"
               } focus:outline-none`}
               placeholder="비밀번호를 다시 입력하세요"
             />
-            {passwordCheckError && (
-              <p className="text-12 text-red-500 mt-8">{passwordCheckError}</p>
-            )}
+            {passwordCheckError && <p className="text-12 text-error mt-8">{passwordCheckError}</p>}
           </div>
         </div>
 
