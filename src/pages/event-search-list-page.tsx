@@ -1,5 +1,5 @@
-import React, { useState } from "react"
-import { useGetEventListQuery } from "@/api/event/queries/get-event-list-query"
+import React, { useCallback, useState } from "react"
+import { useGetEventSearchListQuery } from "@/api/event/queries/get-event-list-query"
 import { GENRE_LIST, GENRE_MAP } from "@/constants/genre"
 import { useSearchParams } from "react-router"
 
@@ -7,42 +7,53 @@ import GenreBadge from "@/components/ui/genre-badge"
 import Pagination from "@/components/ui/pagination"
 import EventPreviewCard from "@/components/event-preview-card/event-preview-card"
 
-const EventListPage = () => {
+const EventSearchListPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const type = searchParams.get("type") ?? ""
   const page = Number(searchParams.get("page") ?? "1")
   const genre = GENRE_MAP[type] ?? ""
+  const keyword = searchParams.get("keyword") ?? ""
 
-  const { data: eventList, isLoading, error } = useGetEventListQuery(genre, page)
+  const { data: eventList, isLoading, error } = useGetEventSearchListQuery(keyword, page, genre)
 
   const handlePageChange = (newPage: number) => {
     setSearchParams({ type, page: newPage.toString() })
   }
 
-  const handleGenreClick = (newType: string) => {
-    const currentType = searchParams.get("type") ?? ""
-    const nextParams = new URLSearchParams(searchParams)
+  const handleGenreClick = useCallback(
+    (newType: string) => {
+      const currentType = searchParams.get("type") ?? ""
+      const nextParams = new URLSearchParams(searchParams)
 
-    if (newType === "") {
-      nextParams.delete("type")
-    } else if (newType === currentType) {
-      nextParams.delete("type")
-    } else {
-      nextParams.set("type", newType)
-    }
+      if (newType === "") {
+        nextParams.delete("type")
+      } else if (newType === currentType) {
+        nextParams.delete("type")
+      } else {
+        nextParams.set("type", newType)
+      }
 
-    // 장르 바뀌면 페이지도 초기화
-    nextParams.delete("page")
+      // 장르 바뀌면 페이지도 초기화
+      nextParams.delete("page")
 
-    setSearchParams(nextParams)
-  }
+      setSearchParams(nextParams)
+    },
+    [searchParams, setSearchParams]
+  )
 
   if (isLoading || !eventList) return <div>Loading...</div>
   if (error) return <p>에러 발생!</p>
+  if (eventList.length === 0) {
+    return (
+      <div className="px-160 mb-48">
+        <p className="text-center py-48">검색 결과가 없습니다.</p>
+      </div>
+    )
+  }
 
   return (
     <div className="px-160 mb-48">
-      <h1 className="title-24-bold pt-48">공연 둘러보기</h1>
+      <h1 className="title-24-bold pt-48">공연 검색 결과</h1>
 
       {/* filtering */}
       <ul className="flex gap-12 py-24 flex-wrap">
@@ -75,4 +86,4 @@ const EventListPage = () => {
   )
 }
 
-export default EventListPage
+export default EventSearchListPage
