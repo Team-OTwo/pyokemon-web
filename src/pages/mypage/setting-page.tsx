@@ -1,8 +1,16 @@
+import React, { useState } from "react"
+
 import Button from "../../components/ui/button"
+import PasswordChangeModal from "./_component/PasswordChangeModal"
 
 const SettingPage = () => {
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
+  const handlePasswordChange = (newPassword: string) => {
+    console.log("새 비밀번호:", newPassword)
+  }
+
   return (
-    <div className="px-160 py-64">
+    <div className="px-160 py-64 relative">
       <p className="title-24-bold">계정 설정</p>
 
       <div className="mt-48 space-y-32">
@@ -18,6 +26,7 @@ const SettingPage = () => {
             borderColor="primary"
             color="primary"
             bgColor="white"
+            onClick={() => setIsPasswordModalOpen(true)}
           />
         </div>
 
@@ -31,6 +40,12 @@ const SettingPage = () => {
           <Button text="탈퇴하기" small border borderColor="error" color="error" bgColor="white" />
         </div>
       </div>
+
+      <PasswordChangeModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+        onSubmit={handlePasswordChange}
+      />
     </div>
   )
 }
