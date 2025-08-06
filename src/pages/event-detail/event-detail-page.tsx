@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useGetEventBookingQuery } from "@/api/booking/queries/use-get-event-booking-query"
+import { postSavedEvent } from "@/api/event/fetchers/post-saved-event"
 import { useGetEventDetailQuery } from "@/api/event/queries/use-get-event-detail-query"
 import { useEventStore } from "@/store/event/event-store"
 import { format } from "date-fns"
@@ -18,10 +19,11 @@ interface SeatPrice {
 const EventDetailPage = () => {
   const navigate = useNavigate()
   const { eventId } = useParams()
-  const [isMarked, setIsMarked] = useState(true)
+  const [isMarked, setIsMarked] = useState<boolean | null>(null)
 
   const handleMarkClick = () => {
     setIsMarked(!isMarked)
+    postSavedEvent(Number(eventId))
   }
   const { data: event, isLoading } = useGetEventDetailQuery(Number(eventId))
   const { data: booking } = useGetEventBookingQuery(event?.eventScheduleId ?? 1)
@@ -31,6 +33,7 @@ const EventDetailPage = () => {
 
   useEffect(() => {
     if (event) {
+      setIsMarked(event.saved ?? false)
       setEvent(event)
     }
   }, [event, setEvent])
