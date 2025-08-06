@@ -41,3 +41,20 @@ export interface SignUpResponse {
   }
   errorCode: string | null
 }
+
+export interface VerifyResponse {
+  success: boolean
+  message: string
+  data: {
+    userId: number
+    accountId: number | null
+    loginId: string | null
+    name: string
+    phone: string
+    birth: string
+    isVerified: boolean
+    createdAt: string | null
+    updatedAt: string | null
+  }
+  errorCode: string | null
+}
