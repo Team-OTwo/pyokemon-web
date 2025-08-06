@@ -8,10 +8,13 @@ import EventDetailPage from "./pages/event-detail/event-detail-page"
 import EventListPage from "./pages/event-list-page"
 import EventSearchListPage from "./pages/event-search-list-page"
 import HomePage from "./pages/home/home-page"
+import LoginPage from "./pages/login-page"
 import MainEmptyLayout from "./pages/main-empty-layout"
 import MainGrayLayout from "./pages/main-gray-layout"
 import MainContainerLayout from "./pages/main-layout"
 import RootLayout from "./pages/root-layout"
+import SignUpPage from "./pages/signup-page"
+import VerifyPage from "./pages/verify-page"
 
 const router = createBrowserRouter(
   [
@@ -42,6 +45,18 @@ const router = createBrowserRouter(
             {
               path: "event/booking/:id",
               Component: BookingPage,
+            },
+            {
+              path: "login",
+              Component: LoginPage,
+            },
+            {
+              path: "signup",
+              Component: SignUpPage,
+            },
+            {
+              path: "verify",
+              Component: VerifyPage,
             },
             {
               path: "event/search",
