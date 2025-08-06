@@ -1,0 +1,38 @@
+import Button from "../../components/ui/button"
+
+const SettingPage = () => {
+  return (
+    <div className="px-160 py-64">
+      <p className="title-24-bold">계정 설정</p>
+
+      <div className="mt-48 space-y-32">
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <p className="text-16-bold black mb-8">비밀번호 수정</p>
+            <p className="text-16-medium text-gray-700">비밀번호를 변경할 수 있습니다.</p>
+          </div>
+          <Button
+            text="수정하기"
+            small
+            border
+            borderColor="primary"
+            color="primary"
+            bgColor="white"
+          />
+        </div>
+
+        <div className="h-px bg-gray-300 my-32" />
+
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <p className="text-16-bold black mb-8">회원탈퇴</p>
+            <p className="text-16-medium text-gray-700">계정을 영구적으로 삭제합니다.</p>
+          </div>
+          <Button text="탈퇴하기" small border borderColor="error" color="error" bgColor="white" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default SettingPage
