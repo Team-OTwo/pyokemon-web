@@ -1,4 +1,4 @@
-import { LoginRequest, LoginResponse } from "../../../types/mypage"
+import { LoginRequest, LoginResponse } from "../../../types/login"
 import { accountClient } from "../../client"
 
 export const postLogin = async (data: LoginRequest): Promise<LoginResponse> => {

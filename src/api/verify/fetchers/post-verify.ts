@@ -1,4 +1,4 @@
-import { VerifyResponse } from "../../../types/mypage"
+import { VerifyResponse } from "../../../types/login"
 import { accountClient } from "../../client"
 
 export const postVerify = async (): Promise<VerifyResponse> => {

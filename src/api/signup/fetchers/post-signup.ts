@@ -1,4 +1,4 @@
-import { SignUpRequest, SignUpResponse } from "../../../types/mypage"
+import { SignUpRequest, SignUpResponse } from "../../../types/login"
 import { accountClient } from "../../client"
 
 export const postSignUp = async (data: SignUpRequest): Promise<SignUpResponse> => {

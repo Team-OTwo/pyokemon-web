@@ -6,7 +6,7 @@ import { postLogin } from "../api/login/fetchers/post-login"
 import login from "../assets/images/LOGIN.svg"
 import Button from "../components/ui/button"
 import Input from "../components/ui/input"
-import { LoginRequest } from "../types/mypage"
+import { LoginRequest } from "../types/login"
 
 const LoginPage = () => {
   const navigate = useNavigate()
