@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { putChangePassword } from "@/api/mypage/fetchers/put-change-password"
 import Swal from "sweetalert2"
 
 import Button from "../../components/ui/button"
@@ -7,9 +8,31 @@ import PasswordChangeModal from "./_component/PasswordChangeModal"
 const SettingPage = () => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
 
-  const handlePasswordChange = (currentPassword: string, newPassword: string) => {
-    console.log("현재 비밀번호:", currentPassword)
-    console.log("새 비밀번호:", newPassword)
+  const handlePasswordChange = async (currentPassword: string, newPassword: string) => {
+    try {
+      await putChangePassword({
+        currentPassword,
+        newPassword,
+      })
+
+      Swal.fire({
+        title: "성공",
+        text: "비밀번호가 성공적으로 변경되었습니다.",
+        icon: "success",
+        confirmButtonText: "확인",
+      })
+
+      setIsPasswordModalOpen(false)
+    } catch (error) {
+      console.error("비밀번호 변경 실패:", error)
+
+      Swal.fire({
+        title: "오류",
+        text: "비밀번호 변경에 실패했습니다. 다시 시도해주세요.",
+        icon: "error",
+        confirmButtonText: "확인",
+      })
+    }
   }
 
   const handleWithdraw = () => {
