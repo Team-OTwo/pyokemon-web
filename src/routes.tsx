@@ -6,6 +6,7 @@ import ProtectedRoute from "./components/protected-route"
 import BookingPage from "./pages/event-booking/booking-page"
 import EventDetailPage from "./pages/event-detail/event-detail-page"
 import EventListPage from "./pages/event-list-page"
+import EventSearchListPage from "./pages/event-search-list-page"
 import HomePage from "./pages/home/home-page"
 import LoginPage from "./pages/login-page"
 import MainEmptyLayout from "./pages/main-empty-layout"
@@ -56,6 +57,10 @@ const router = createBrowserRouter(
             {
               path: "verify",
               Component: VerifyPage,
+            },
+            {
+              path: "event/search",
+              Component: EventSearchListPage,
             },
           ],
         },

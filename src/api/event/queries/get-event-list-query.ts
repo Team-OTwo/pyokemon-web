@@ -6,6 +6,7 @@ import { EventType } from "@/types/event"
 import {
   fetchEventlist,
   fetchEventOpenToday,
+  fetchEventSearchlist,
   fetchEventToBeOpened,
 } from "../fetchers/get-event-list"
 
@@ -27,5 +28,12 @@ export const useGetEventListQuery = (genre: string, page: number = 1) => {
   return useQuery<EventType[]>({
     queryKey: ["eventList", genre, page],
     queryFn: () => fetchEventlist(genre, page),
+  })
+}
+
+export const useGetEventSearchListQuery = (keyword: string, page: number = 1, genre: string) => {
+  return useQuery<EventType[]>({
+    queryKey: ["eventSearchList", keyword, page, genre],
+    queryFn: () => fetchEventSearchlist(keyword, page, genre),
   })
 }
