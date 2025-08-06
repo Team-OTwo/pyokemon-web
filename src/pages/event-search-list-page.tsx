@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useCallback, useState } from "react"
 import { useGetEventSearchListQuery } from "@/api/event/queries/get-event-list-query"
 import { GENRE_LIST, GENRE_MAP } from "@/constants/genre"
 import { useSearchParams } from "react-router"
@@ -20,26 +20,36 @@ const EventSearchListPage = () => {
     setSearchParams({ type, page: newPage.toString() })
   }
 
-  const handleGenreClick = (newType: string) => {
-    const currentType = searchParams.get("type") ?? ""
-    const nextParams = new URLSearchParams(searchParams)
+  const handleGenreClick = useCallback(
+    (newType: string) => {
+      const currentType = searchParams.get("type") ?? ""
+      const nextParams = new URLSearchParams(searchParams)
 
-    if (newType === "") {
-      nextParams.delete("type")
-    } else if (newType === currentType) {
-      nextParams.delete("type")
-    } else {
-      nextParams.set("type", newType)
-    }
+      if (newType === "") {
+        nextParams.delete("type")
+      } else if (newType === currentType) {
+        nextParams.delete("type")
+      } else {
+        nextParams.set("type", newType)
+      }
 
-    // 장르 바뀌면 페이지도 초기화
-    nextParams.delete("page")
+      // 장르 바뀌면 페이지도 초기화
+      nextParams.delete("page")
 
-    setSearchParams(nextParams)
-  }
+      setSearchParams(nextParams)
+    },
+    [searchParams, setSearchParams]
+  )
 
   if (isLoading || !eventList) return <div>Loading...</div>
   if (error) return <p>에러 발생!</p>
+  if (eventList.length === 0) {
+    return (
+      <div className="px-160 mb-48">
+        <p className="text-center py-48">검색 결과가 없습니다.</p>
+      </div>
+    )
+  }
 
   return (
     <div className="px-160 mb-48">
@@ -68,7 +78,7 @@ const EventSearchListPage = () => {
         <Pagination
           current={page}
           total={eventList[0]?.total ?? 0}
-          pageSize={8}
+          pageSize={9}
           onChange={(p) => handlePageChange(p)}
         />
       </div>

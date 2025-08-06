@@ -67,7 +67,7 @@ const EventListPage = () => {
         <Pagination
           current={page}
           total={eventList[0]?.total ?? 0}
-          pageSize={8}
+          pageSize={9}
           onChange={(p) => handlePageChange(p)}
         />
       </div>
