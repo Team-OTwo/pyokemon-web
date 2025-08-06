@@ -13,6 +13,7 @@ import MainGrayLayout from "./pages/main-gray-layout"
 import MainContainerLayout from "./pages/main-layout"
 import RootLayout from "./pages/root-layout"
 import SignUpPage from "./pages/signup-page"
+import VerifyPage from "./pages/verify-page"
 
 const router = createBrowserRouter(
   [
@@ -51,6 +52,10 @@ const router = createBrowserRouter(
             {
               path: "signup",
               Component: SignUpPage,
+            },
+            {
+              path: "verify",
+              Component: VerifyPage,
             },
           ],
         },

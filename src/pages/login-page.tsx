@@ -1,33 +1,47 @@
 import { useState } from "react"
+import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "react-router"
 
 import { postLogin } from "../api/login/fetchers/post-login"
 import login from "../assets/images/LOGIN.svg"
 import Button from "../components/ui/button"
 import Input from "../components/ui/input"
+import { LoginRequest } from "../types/mypage"
 
 const LoginPage = () => {
   const navigate = useNavigate()
   const [loginId, setLoginId] = useState("")
   const [password, setPassword] = useState("")
 
-  const handleLogin = async () => {
-    try {
-      const response = await postLogin({
-        loginId,
-        password,
-      })
-
-      console.log("로그인 성공:", response)
-
-      if (response.success && response.data) {
+  const loginMutation = useMutation({
+    mutationFn: (data: LoginRequest) => postLogin(data),
+    onSuccess: (response) => {
+      if (response.success) {
         localStorage.setItem("accessToken", response.data.accessToken)
         localStorage.setItem("refreshToken", response.data.refreshToken)
-        navigate("/")
+
+        if (response.data.isVerified) {
+          navigate("/")
+        } else {
+          navigate("/verify")
+        }
       }
-    } catch (error) {
-      console.error("로그인 실패:", error)
+    },
+    onError: (error) => {
+      console.error("Login failed:", error)
+    },
+  })
+
+  const handleLogin = () => {
+    if (!loginId || !password) {
+      alert("아이디와 비밀번호를 입력해주세요.")
+      return
     }
+
+    loginMutation.mutate({
+      loginId,
+      password,
+    })
   }
 
   const handleSignupClick = () => {
@@ -45,8 +59,19 @@ const LoginPage = () => {
         </div>
 
         <div className="mt-32">
-          <Button text="로그인" bgColor="primary" color="white" onClick={handleLogin} />
+          <Button
+            text={loginMutation.isPending ? "로그인 중..." : "로그인"}
+            bgColor="primary"
+            color="white"
+            onClick={loginMutation.isPending ? undefined : handleLogin}
+          />
         </div>
+
+        {loginMutation.isError && (
+          <div className="mt-16 text-red-500 text-14-regular">
+            로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.
+          </div>
+        )}
 
         <div className="mt-24 text-center">
           <span className="text-black text-14-regular">아직 회원이 아니신가요? </span>
