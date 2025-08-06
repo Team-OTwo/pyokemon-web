@@ -24,9 +24,9 @@ const Input: React.FC<InputProps> = ({
   const baseStyle =
     "w-320 h-51 px-16 rounded-lg border-1 text-16-regular outline-none transition-colors"
 
-  const defaultStyle = "bg-white border-gray-300 text-black placeholder-gray-400"
+  const defaultStyle = "bg-white border-gray-300 text-black placeholder-gray-500"
   const errorStyle = "border-error"
-  const disabledStyle = "bg-gray-100 border-gray-200 text-gray-500 cursor-not-allowed"
+  const disabledStyle = "bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed"
 
   const getStyleClass = () => {
     if (disabled) return `${baseStyle} ${disabledStyle}`
