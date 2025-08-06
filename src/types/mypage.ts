@@ -9,3 +9,10 @@ export interface PasswordChangeResponse {
   data: null
   errorCode: string | null
 }
+
+export interface DeleteAccountResponse {
+  success: boolean
+  message: string
+  data: null
+  errorCode: string | null
+}

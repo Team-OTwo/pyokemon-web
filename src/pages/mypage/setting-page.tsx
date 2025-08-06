@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { deleteAccount } from "@/api/mypage/fetchers/delete-account"
 import { putChangePassword } from "@/api/mypage/fetchers/put-change-password"
 import Swal from "sweetalert2"
 
@@ -35,8 +36,8 @@ const SettingPage = () => {
     }
   }
 
-  const handleWithdraw = () => {
-    Swal.fire({
+  const handleWithdraw = async () => {
+    const result = await Swal.fire({
       title: "회원탈퇴",
       text: "정말로 탈퇴하시겠습니까?",
       icon: "warning",
@@ -45,20 +46,32 @@ const SettingPage = () => {
       cancelButtonColor: "#3085d6",
       confirmButtonText: "탈퇴하기",
       cancelButtonText: "취소",
-    }).then((result) => {
-      if (result.isConfirmed) {
+    })
+
+    if (result.isConfirmed) {
+      try {
+        await deleteAccount()
         localStorage.clear()
 
-        Swal.fire({
+        await Swal.fire({
           title: "탈퇴 완료",
           text: "회원탈퇴가 완료되었습니다.",
           icon: "success",
           confirmButtonText: "확인",
-        }).then(() => {
-          window.location.href = "/"
+        })
+
+        window.location.href = "/"
+      } catch (error) {
+        console.error("회원탈퇴 실패:", error)
+
+        Swal.fire({
+          title: "오류",
+          text: "회원탈퇴에 실패했습니다. 다시 시도해주세요.",
+          icon: "error",
+          confirmButtonText: "확인",
         })
       }
-    })
+    }
   }
 
   return (
