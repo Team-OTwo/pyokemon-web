@@ -3,6 +3,7 @@ import { IoNotificationsOutline, IoPersonOutline, IoSearchOutline } from "react-
 import { Link, useLocation, useNavigate } from "react-router"
 
 import logo from "../../assets/images/logo.svg"
+import MyPageModal from "../my-page-modal"
 import Notification from "../notification"
 
 function Header() {
@@ -20,6 +21,17 @@ function Header() {
   const [keyword, setKeyword] = useState("")
   const navigate = useNavigate()
   const [showNotification, setShowNotification] = useState(false)
+  const [showMyPageModal, setShowMyPageModal] = useState(false)
+
+  const handleClickMyPage = () => {
+    const accessToken = localStorage.getItem("accessToken")
+    if (accessToken) {
+      navigate("login")
+    } else {
+      setShowMyPageModal(!showMyPageModal)
+    }
+  }
+
   const handleSearch = () => {
     if (keyword.trim()) {
       navigate(`/event/search?keyword=${keyword}`)
@@ -80,9 +92,10 @@ function Header() {
               <IoNotificationsOutline className={iconStyle} />
             </li>
             {showNotification && <Notification />}
-            <li className={listStyle}>
+            <li className={listStyle} onClick={() => handleClickMyPage()}>
               <IoPersonOutline className={iconStyle} />
             </li>
+            {showMyPageModal && <MyPageModal setShowMyPageModal={setShowMyPageModal} />}
           </ul>
         </nav>
       </div>
