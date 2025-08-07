@@ -34,9 +34,9 @@ const SeatClassSeat = ({
 
   return (
     <div className="flex flex-col items-center gap-30 p-30 rounded-lg min-h-[500px]">
-      <h2 className="text-white text-2xl font-bold m-0">좌석 배치도 - {seatGrade}</h2>
+      <h2 className="text-gray-700 text-2xl font-bold m-0">좌석 배치도 - {seatGrade}</h2>
 
-      <div className="flex flex-col gap-15 bg-gray-500 p-10 rounded-lg">
+      <div className="flex flex-col gap-15 bg-gray-500 p-50 pl-10 pt-20 rounded-lg">
         <div className="flex gap-20 mb-1 items-center">
           <div className="w-40 h-8"></div>
           {cols.map((col) => (
