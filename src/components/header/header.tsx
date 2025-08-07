@@ -26,9 +26,9 @@ function Header() {
   const handleClickMyPage = () => {
     const accessToken = localStorage.getItem("accessToken")
     if (accessToken) {
-      navigate("login")
-    } else {
       setShowMyPageModal(!showMyPageModal)
+    } else {
+      navigate("login")
     }
   }
 

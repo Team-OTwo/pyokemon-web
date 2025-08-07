@@ -12,6 +12,7 @@ import LoginPage from "./pages/login-page"
 import MainEmptyLayout from "./pages/main-empty-layout"
 import MainGrayLayout from "./pages/main-gray-layout"
 import MainContainerLayout from "./pages/main-layout"
+import SavedEventPage from "./pages/mypage/saved-event-page"
 import SettingPage from "./pages/mypage/setting-page"
 import RootLayout from "./pages/root-layout"
 import SignUpPage from "./pages/signup-page"
@@ -66,6 +67,10 @@ const router = createBrowserRouter(
             {
               path: "mypage/setting",
               Component: SettingPage,
+            },
+            {
+              path: "mypage/saved",
+              Component: SavedEventPage,
             },
           ],
         },
