@@ -97,7 +97,7 @@ const BookingPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-white text-gray-700">
       <main className="flex pr-20 min-h-[calc(100vh-280px)]">
         <div className="flex-1">
           {!selectedGrade ? (
