@@ -1,9 +1,13 @@
-import { eventClient } from "../../client"
+import { eventClient, setAuthorizationHeader } from "../../client"
 
 export const fetchEventDetail = async (eventId: number) => {
+  const accessToken = localStorage.getItem("accessToken")
+
+  if (!accessToken) {
+    throw new Error("Access token not found")
+  }
   try {
-    // 테스트용 헤더 설정
-    eventClient.defaults.headers.common["X-Auth-AccountId"] = "1"
+    setAuthorizationHeader(accessToken)
     const res = await eventClient.get(`/api/events/${eventId}`)
     console.log(res.data)
 
