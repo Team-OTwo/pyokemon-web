@@ -8,6 +8,7 @@ import {
   useGetEventBookingQuery,
   useGetSeatClassQuery,
 } from "../../api/booking/queries/use-get-event-booking-query"
+import { usePostEventBookingQuery } from "../../api/booking/queries/use-post-event-booking-query"
 import Footer from "../../components/footer"
 import Header from "../../components/header"
 import { Seat_class } from "../../types/booking"
@@ -20,6 +21,8 @@ const BookingPage = () => {
   const eventId = id || ""
   const [selectedGrade, setSelectedGrade] = useState<string>("")
   const [selectedSeat, setSelectedSeat] = useState<Seat_class | null>(null)
+  const [isPaymentLoading, setIsLoading] = useState(false)
+  const { mutate: postBooking, isPending: isBookingPending } = usePostEventBookingQuery()
   const { data: bookingData, isLoading: isBookingLoading } = useGetEventBookingQuery(
     Number(eventId)
   )
@@ -46,7 +49,26 @@ const BookingPage = () => {
     return gradeInfo?.price || 0
   }
 
+  interface PaymentRequest {
+    bookingId: number
+    orderId: string
+    amount: number
+    method: string
+    accountId: number
+  }
+
+  interface PaymentResponse {
+    orderId: string
+    amount: number
+  }
+
+  const mutateAsync = async (data: PaymentRequest): Promise<PaymentResponse> => {
+    return { orderId: data.orderId, amount: data.amount }
+  }
+
   const handlePaymentClick = async () => {
+    if (isPaymentLoading) return
+    setIsLoading(true)
     if (!selectedSeat) {
       Swal.fire({
         icon: "warning",
@@ -54,36 +76,51 @@ const BookingPage = () => {
         confirmButtonText: "확인",
         confirmButtonColor: "var(--color-primary)",
       })
+      setIsLoading(false)
       return
     }
 
     try {
-      const tossPayments = await loadTossPayments(getTossClientKey())
-
-      await tossPayments.requestPayment("카드", {
-        amount: getSelectedSeatPrice(),
-        orderId: `ORDER_${Date.now()}`,
-        orderName: `${selectedSeat.seatGrade}석 예매`,
-        customerName: "홍길동",
-        successUrl: `${window.location.origin}/mypage`,
-        failUrl: `${window.location.origin}/event/booking/${eventId}`,
-      })
+      postBooking(
+        {
+          eventScheduleId: Number(eventId),
+          seatId: selectedSeat.seatId,
+        },
+        {
+          onSuccess: async (bookingResponse) => {
+            const res = await mutateAsync({
+              bookingId: bookingResponse.bookingId,
+              orderId: `ORDER_${Date.now()}_${Math.floor(Math.random() * 100000)}`,
+              amount: getSelectedSeatPrice(),
+              method: "카드",
+              accountId: 1,
+            })
+            const { orderId, amount } = res
+            const tossPayments = await loadTossPayments(getTossClientKey())
+            await tossPayments.requestPayment("카드", {
+              amount,
+              orderId,
+              orderName: `${selectedSeat.seatGrade}석 예매`,
+              customerName: "홍길동",
+              successUrl: `${window.location.origin}/user/paymentSuccess`,
+              failUrl: `${window.location.origin}/event/booking/${eventId}`,
+            })
+          },
+          onError: (error) => {
+            console.error("예매 API 오류:", error)
+            Swal.fire("예매 실패", "잠시 후 다시 시도해주세요.", "error")
+          },
+        }
+      )
     } catch (error) {
       console.error("토스 결제 오류:", error)
       Swal.fire("결제 실패", "잠시 후 다시 시도해주세요.", "error")
-    }
-  }
-  const handlePayment = () => {
-    if (selectedSeat && eventId) {
-      /*
-      alert(
-        `결제 진행: ${selectedSeat.seatGrade}-${selectedSeat.row}열-${selectedSeat.col} (${selectedSeat.seatId}번 좌석)`
-      )
-        */
+    } finally {
+      setIsLoading(false)
     }
   }
 
-  const isLoading = isBookingLoading || (selectedGrade && isSeatsLoading)
+  const isLoading = isBookingLoading || (selectedGrade && isSeatsLoading) || isBookingPending
   if (isLoading) {
     return (
       <div className="min-h-screen bg-l text-white">
@@ -117,7 +154,6 @@ const BookingPage = () => {
             <BookingSidebar
               bookingData={bookingData}
               selectedSeat={selectedSeat}
-              /*onPayment={handlePayment}*/
               onPayment={handlePaymentClick}
             />
           )}
