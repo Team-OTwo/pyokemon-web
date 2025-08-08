@@ -11,6 +11,10 @@ body {
   color: var(--color-black);
 }
 
+li{
+  list-style-type: none;
+}
+
 @theme {
   --spacing: 1px;
 
