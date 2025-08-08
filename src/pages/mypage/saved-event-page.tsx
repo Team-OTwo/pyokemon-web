@@ -1,18 +1,19 @@
 import React from "react"
 import { useGetSavedEventQuery } from "@/api/event/queries/use-get-saved-event-query"
-import { eventList } from "@/constants/event"
 
-import Pagination from "@/components/ui/pagination"
 import EventPreviewCard from "@/components/event-preview-card"
 
 const SavedEventPage = () => {
-  const { data } = useGetSavedEventQuery()
+  const { data, isLoading } = useGetSavedEventQuery()
+  if (isLoading) {
+    return <div>loading...</div>
+  }
   return (
     <div className="px-160 mb-48">
       <h1 className="title-24-bold pt-48">내 관심 공연</h1>
       <div>
         <div className="grid grid-cols-3 gap-24 py-32">
-          {eventList.map((event, i) => {
+          {data.map((event, i) => {
             return <EventPreviewCard key={i} event={event} />
           })}
         </div>
