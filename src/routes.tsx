@@ -79,7 +79,7 @@ const router = createBrowserRouter(
               Component: TicketPage,
             },
             {
-              path: "mypage/tickets:bookingId",
+              path: "mypage/tickets/:bookingId",
               Component: TicketDetailPage,
             },
           ],
