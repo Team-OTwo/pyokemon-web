@@ -1,6 +1,8 @@
 import React from "react"
 import { useGetSavedEventQuery } from "@/api/event/queries/use-get-saved-event-query"
 
+import { eventList } from "@/constants/event"
+import Pagination from "@/components/ui/pagination"
 import EventPreviewCard from "@/components/event-preview-card"
 
 const SavedEventPage = () => {
@@ -14,6 +16,7 @@ const SavedEventPage = () => {
       <div>
         <div className="grid grid-cols-3 gap-24 py-32">
           {data.map((event, i) => {
+
             return <EventPreviewCard key={i} event={event} />
           })}
         </div>
