@@ -14,15 +14,15 @@ const BookingSidebar = ({
   const getSeatGradeColor = (grade: string) => {
     switch (grade) {
       case "VIP":
-        return "bg-primary"
+        return "bg-primary-dark"
       case "R":
-        return "bg-red-500"
+        return "bg-primary"
       case "A":
-        return "bg-green-500"
+        return "bg-primary/50"
       case "B":
-        return "bg-blue-500"
+        return "bg-primary/20"
       default:
-        return "bg-gray-500"
+        return "bg-primary"
     }
   }
 
@@ -35,7 +35,7 @@ const BookingSidebar = ({
   }
 
   return (
-    <div className="bg-white flex flex-col gap-40 p-15 bg-gray-900 rounded-lg h-fit">
+    <div className="bg-gray-100 flex flex-col gap-40 p-15 rounded-lg h-fit">
       <div>
         <h3 className="text-black m-0 mb-4 text-base font-bold">좌석 배치도</h3>
         <div className="h-200 bg-black rounded-lg flex items-center justify-center overflow-hidden">
