@@ -26,8 +26,8 @@ const EventDetailPage = () => {
     postSavedEvent(Number(eventId))
   }
   const { data: event, isLoading } = useGetEventDetailQuery(Number(eventId))
-  const { data: booking } = useGetEventBookingQuery(event?.eventScheduleId ?? 1)
-  const prices = booking?.remainingSeatsByGrade
+  // const { data: booking } = useGetEventBookingQuery(event?.eventScheduleId ?? 1)
+  // const prices = booking?.remainingSeatsByGrade
 
   const { setEvent } = useEventStore()
 
@@ -42,7 +42,8 @@ const EventDetailPage = () => {
     return <div>loading...</div>
   }
 
-  if (!event || !prices) {
+  // if (!event || !prices) {
+  if (!event) {
     return <div>존재하지 않는 공연입니다.</div> // 로딩 중 UI
   }
 
@@ -82,7 +83,7 @@ const EventDetailPage = () => {
                 <li>{format(new Date(event.eventDate), "yyyy.MM.dd")}</li>
                 <li>{event.ageLimit}세</li>
                 <li>
-                  <ul>
+                  {/* <ul>
                     {prices
                       .filter((price: SeatPrice) => price.price != 0)
                       .map((price: SeatPrice) => {
@@ -95,7 +96,7 @@ const EventDetailPage = () => {
                           </li>
                         )
                       })}
-                  </ul>
+                  </ul> */}
                 </li>
               </ul>
             </div>

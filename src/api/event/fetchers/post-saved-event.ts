@@ -1,9 +1,13 @@
-import { eventClient } from "@/api/client"
+import { eventClient, setAuthorizationHeader } from "@/api/client"
 
 export const postSavedEvent = async (eventId: number) => {
+  const accessToken = localStorage.getItem("accessToken")
+
+  if (!accessToken) {
+    throw new Error("Access token not found")
+  }
   try {
-    // 테스트용 헤더 설정
-    eventClient.defaults.headers.common["X-Auth-AccountId"] = "1"
+    setAuthorizationHeader(accessToken)
     const res = await eventClient.post(`/api/events/save/${eventId}`)
     console.log(res.data)
 

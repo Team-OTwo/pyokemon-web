@@ -14,6 +14,8 @@ import MainGrayLayout from "./pages/main-gray-layout"
 import MainContainerLayout from "./pages/main-layout"
 import SavedEventPage from "./pages/mypage/saved-event-page"
 import SettingPage from "./pages/mypage/setting-page"
+import TicketDetailPage from "./pages/mypage/ticket-detail-page"
+import TicketPage from "./pages/mypage/ticket-page"
 import RootLayout from "./pages/root-layout"
 import SignUpPage from "./pages/signup-page"
 import VerifyPage from "./pages/verify-page"
@@ -71,6 +73,14 @@ const router = createBrowserRouter(
             {
               path: "mypage/saved",
               Component: SavedEventPage,
+            },
+            {
+              path: "mypage/tickets",
+              Component: TicketPage,
+            },
+            {
+              path: "mypage/tickets/:bookingId",
+              Component: TicketDetailPage,
             },
           ],
         },
