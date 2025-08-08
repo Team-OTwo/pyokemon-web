@@ -1,4 +1,9 @@
-import { getAccountApiUrl, getEventApiUrl, getPaymentApiUrl } from "@/constants/env"
+import {
+  getAccountApiUrl,
+  getBookingApiUrl,
+  getEventApiUrl,
+  getPaymentApiUrl,
+} from "@/constants/env"
 import axios, { AxiosError, AxiosInstance } from "axios"
 
 // 클라이언트 생성 함수
@@ -32,6 +37,7 @@ const createClient = (baseURL: string): AxiosInstance => {
 export const eventClient = createClient(getEventApiUrl())
 export const accountClient = createClient(getAccountApiUrl())
 export const paymentClient = createClient(getPaymentApiUrl())
+export const bookingClient = createClient(getBookingApiUrl())
 
 // 기존 baseClient 호환성 유지 (이벤트 클라이언트로 매핑)
 const baseClient = eventClient
@@ -41,12 +47,14 @@ export const setAuthorizationHeader = (token: string) => {
   eventClient.defaults.headers.common["Authorization"] = `Bearer ${token}`
   accountClient.defaults.headers.common["Authorization"] = `Bearer ${token}`
   paymentClient.defaults.headers.common["Authorization"] = `Bearer ${token}`
+  bookingClient.defaults.headers.common["Authorization"] = `Bearer ${token}`
 }
 
 export const removeAuthorizationHeader = () => {
   delete eventClient.defaults.headers.common["Authorization"]
   delete accountClient.defaults.headers.common["Authorization"]
   delete paymentClient.defaults.headers.common["Authorization"]
+  delete bookingClient.defaults.headers.common["Authorization"]
 }
 
 export default baseClient
