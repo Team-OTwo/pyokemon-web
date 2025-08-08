@@ -14,3 +14,13 @@ export interface Seat_class {
   seatGrade: string
   booked: boolean
 }
+
+export interface PostEventBookingRequest {
+  eventScheduleId: number
+  seatId: number
+}
+
+export interface PostEventBookingResponse {
+  eventScheduleId: number
+  bookingId: number
+}
