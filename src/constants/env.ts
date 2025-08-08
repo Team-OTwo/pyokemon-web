@@ -5,7 +5,7 @@ const ENV: Environment = (import.meta.env.VITE_ENVIRONMENT as Environment) || "l
 // 게이트웨이 URL 상수
 const GATEWAY_URL: Record<Environment, string> = {
   local: "http://localhost:8087",
-  dev: "https://pyokemon.synology.me:8086",
+  dev: "https://pyokemon.synology.me:8087",
 }
 
 // 각 서비스별 API URL은 게이트웨이 URL을 기반으로 구성
