@@ -1,5 +1,5 @@
 import React from "react"
-import { differenceInCalendarDays, format, isBefore, parseISO } from "date-fns"
+import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 import { useNavigate } from "react-router"
 
@@ -24,7 +24,7 @@ const EventPreviewCard: React.FC<EventPreviewProps> = ({ openAt, event }) => {
       </div>
       {openAt && (
         <p className="text-primary-dark text-16-semibold">
-          {format(event.ticketOpenAt, "MM.dd (iii) hh:mm", { locale: ko })}
+          {format(event.ticketOpenAt, "MM.dd (iii) HH:mm", { locale: ko })}
         </p>
       )}
 

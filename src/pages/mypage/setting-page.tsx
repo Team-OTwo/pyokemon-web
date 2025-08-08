@@ -75,8 +75,8 @@ const SettingPage = () => {
   }
 
   return (
-    <div className="px-160 py-64 relative">
-      <p className="title-24-bold">계정 설정</p>
+    <div className="px-160 relative">
+      <h1 className="title-24-bold pt-48">계정 설정</h1>
 
       <div className="mt-48 space-y-32">
         <div className="flex items-center justify-between">
