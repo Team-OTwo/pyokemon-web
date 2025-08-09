@@ -1,6 +1,5 @@
 import React from "react"
 import { useGetSavedEventQuery } from "@/api/event/queries/use-get-saved-event-query"
-import { eventList } from "@/constants/event"
 
 import { EventType } from "@/types/event"
 import Pagination from "@/components/ui/pagination"
