@@ -12,6 +12,7 @@ import Banner6 from "@/assets/images/Banner6.png"
 import Banner7 from "@/assets/images/Banner7.png"
 import Banner8 from "@/assets/images/Banner8.png"
 import Banner9 from "@/assets/images/Banner9.png"
+import Banner10 from "@/assets/images/Banner10.png"
 
 const bannerData = [
   { id: 1, image: Banner9 },
@@ -23,6 +24,7 @@ const bannerData = [
   { id: 7, image: Banner7 },
   { id: 8, image: Banner8 },
   { id: 9, image: Banner1 },
+  { id: 10, image: Banner10 },
 ]
 
 const Banner = () => {
