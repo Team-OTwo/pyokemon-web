@@ -2,6 +2,7 @@ import { useGetEventToBeOpenedQuery } from "@/api/event/queries/get-event-list-q
 
 import EventPreviewCard from "@/components/event-preview-card/event-preview-card"
 
+import ErrorPage from "../error-page"
 import LoadingPage from "../loading-page"
 import Banner from "./_component/banner"
 import Carousel from "./_component/carousel"
@@ -10,7 +11,7 @@ function HomePage() {
   const { data: eventList, isLoading, error } = useGetEventToBeOpenedQuery()
 
   if (isLoading) return <LoadingPage />
-  if (error) return <p>에러 발생!</p>
+  if (error) return <ErrorPage />
 
   return (
     <div className="px-4 md:px-8 lg:px-160">

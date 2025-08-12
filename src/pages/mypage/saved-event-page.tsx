@@ -6,6 +6,7 @@ import { EventType } from "@/types/event"
 import Pagination from "@/components/ui/pagination"
 import EventPreviewCard from "@/components/event-preview-card"
 
+import ErrorPage from "../error-page"
 import LoadingPage from "../loading-page"
 
 const SavedEventPage = () => {
@@ -23,7 +24,7 @@ const SavedEventPage = () => {
   }
 
   if (error) {
-    return <LoadingPage />
+    return <ErrorPage />
   }
 
   return (
