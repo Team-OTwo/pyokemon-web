@@ -1,6 +1,8 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
+import { usePostPaymentInitiateMutation } from "@/api/payment/queries/get-payments-query"
 import { getTossClientKey } from "@/constants/env"
 import { loadTossPayments } from "@tosspayments/payment-sdk"
+import { nanoid } from "nanoid"
 import { useParams } from "react-router"
 import Swal from "sweetalert2"
 
@@ -23,6 +25,7 @@ const BookingPage = () => {
   const [selectedGrade, setSelectedGrade] = useState<string>("")
   const [selectedSeat, setSelectedSeat] = useState<Seat_class | null>(null)
   const [isPaymentLoading, setIsLoading] = useState(false)
+  const { mutateAsync } = usePostPaymentInitiateMutation()
   const { mutate: postBooking, isPending: isBookingPending } = usePostEventBookingQuery()
   const { data: bookingData, isLoading: isBookingLoading } = useGetEventBookingQuery(
     Number(eventId)
@@ -80,8 +83,27 @@ const BookingPage = () => {
       setIsLoading(false)
       return
     }
-
     try {
+<!--       const res = await mutateAsync({
+        bookingId: 1,
+        orderId: `ORDER_${Date.now()}_${nanoid(8)}`,
+        amount: getSelectedSeatPrice(),
+        method: "카드",
+        accountId: 1,
+      })
+
+      const { orderId, amount } = res
+
+      const tossPayments = await loadTossPayments(getTossClientKey())
+
+      await tossPayments.requestPayment("카드", {
+        amount,
+        orderId,
+        orderName: `${selectedSeat.seatGrade}석 예매`,
+        customerName: "홍길동",
+        successUrl: `${window.location.origin}/user/paymentSuccess`,
+        failUrl: `${window.location.origin}/event/booking/${eventId}`,
+      }) -->
       postBooking(
         {
           eventScheduleId: Number(eventId),
