@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { usePostPaymentInitiateMutation } from "@/api/payment/queries/get-payments-query"
 import { getTossClientKey } from "@/constants/env"
 import { loadTossPayments } from "@tosspayments/payment-sdk"
 import { useParams } from "react-router"
@@ -21,6 +22,7 @@ const BookingPage = () => {
   const [selectedGrade, setSelectedGrade] = useState<string>("")
   const [selectedSeat, setSelectedSeat] = useState<Seat_class | null>(null)
   const [isPaymentLoading, setIsLoading] = useState(false)
+  const { mutateAsync: initiatePayment } = usePostPaymentInitiateMutation()
   const { mutate: postBooking, isPending: isBookingPending } = usePostEventBookingQuery()
   const { data: bookingData, isLoading: isBookingLoading } = useGetEventBookingQuery(
     Number(eventId)
@@ -106,7 +108,7 @@ const BookingPage = () => {
         },
         {
           onSuccess: async (bookingResponse) => {
-            const res = await mutateAsync({
+            const res = await initiatePayment({
               bookingId: bookingResponse.bookingId,
               orderId: `ORDER_${Date.now()}_${Math.floor(Math.random() * 100000)}`,
               amount: getSelectedSeatPrice(),
