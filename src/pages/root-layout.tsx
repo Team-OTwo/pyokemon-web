@@ -5,11 +5,11 @@ import { Outlet } from "react-router"
 import Footer from "@/components/footer"
 import Header from "@/components/header"
 
-import RootError from "./_error/root-error"
+import ErrorPage from "./error-page"
 
 function RootLayout() {
   return (
-    <ErrorBoundary FallbackComponent={RootError}>
+    <ErrorBoundary FallbackComponent={ErrorPage}>
       <Box
         sx={{
           display: "flex",

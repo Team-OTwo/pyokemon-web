@@ -7,6 +7,9 @@ import GenreBadge from "@/components/ui/genre-badge"
 import Pagination from "@/components/ui/pagination"
 import EventPreviewCard from "@/components/event-preview-card/event-preview-card"
 
+import ErrorPage from "./error-page"
+import LoadingPage from "./loading-page"
+
 const EventListPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const type = searchParams.get("type") ?? ""
@@ -37,8 +40,8 @@ const EventListPage = () => {
     setSearchParams(nextParams)
   }
 
-  if (isLoading || !eventList) return <div>Loading...</div>
-  if (error) return <p>에러 발생!</p>
+  if (isLoading || !eventList) return <LoadingPage />
+  if (error) return <ErrorPage />
 
   return (
     <div className="px-160 mb-48">

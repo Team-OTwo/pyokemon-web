@@ -1,5 +1,5 @@
 import React from "react"
-import { differenceInCalendarDays, format, isBefore, parseISO } from "date-fns"
+import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 import { useNavigate } from "react-router"
 
@@ -20,11 +20,11 @@ const EventPreviewCard: React.FC<EventPreviewProps> = ({ openAt, event }) => {
   return (
     <div className="mb-8" onClick={handleClick}>
       <div className="relative mb-8 aspect-[3/4]">
-        <img src={event.thumbnailUrl} alt="img" className="rounded-lg object-cover" />
+        <img src={event.thumbnailUrl} alt="img" className="rounded-lg object-cover w-full h-full" />
       </div>
       {openAt && (
         <p className="text-primary-dark text-16-semibold">
-          {format(event.ticketOpenAt, "MM.dd (iii) hh:mm", { locale: ko })}
+          {format(event.ticketOpenAt, "MM.dd (iii) HH:mm", { locale: ko })}
         </p>
       )}
 

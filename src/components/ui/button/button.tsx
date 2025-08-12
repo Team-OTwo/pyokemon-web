@@ -14,20 +14,33 @@ interface ButtonProps {
 // color : 글자 색
 // border button이면 border, borderColor, color 넣어줘야함
 
-const colorMap: Record<string, string> = {
-  primary: "primary",
-  "primary-dark": "primary-dark",
-  white: "white",
-  black: "black",
-  error: "error",
-  "gray-300": "gray-300",
-  "gray-500": "gray-500",
-  "gray-700": "gray-700",
-}
+const getColorStyle = (type: "text" | "bg" | "border", color?: string) => {
+  if (!color) return {}
 
-const getColorClass = (prefix: string, color?: string) => {
-  if (!color || !colorMap[color]) return ""
-  return `${prefix}-${colorMap[color]}`
+  const colorMap: Record<string, string> = {
+    primary: "var(--color-primary)",
+    "primary-dark": "var(--color-primary-dark)",
+    white: "var(--color-white)",
+    black: "var(--color-black)",
+    error: "var(--color-error)",
+    success: "var(--color-success)",
+    "gray-300": "var(--color-gray-300)",
+    "gray-500": "var(--color-gray-500)",
+    "gray-700": "var(--color-gray-700)",
+  }
+
+  const colorValue = colorMap[color]
+  if (!colorValue) return {}
+
+  if (type === "text") {
+    return { color: colorValue }
+  } else if (type === "bg") {
+    return { backgroundColor: colorValue }
+  } else if (type === "border") {
+    return { borderColor: colorValue }
+  }
+
+  return {}
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -40,22 +53,25 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   icon,
 }) => {
-  const textColorClass = getColorClass("text", color)
-  const bgColorClass = getColorClass("bg", bgColor)
-  const borderColorClass = getColorClass("border", borderColor)
+  const textStyle = getColorStyle("text", color)
+  const bgStyle = getColorStyle("bg", bgColor)
+  const borderStyle = border
+    ? {
+        border: "1px solid",
+        ...getColorStyle("border", borderColor),
+      }
+    : {}
 
   const baseStyle =
     "rounded-lg h-51 flex justify-center items-center cursor-pointer hover:opacity-80 text-16-semibold "
 
   const sizeStyle = small ? "px-24" : "w-320"
-  const borderStyle = border ? `border-1 ${borderColorClass}` : ""
 
-  const className = [baseStyle, sizeStyle, textColorClass, bgColorClass, borderStyle]
-    .filter(Boolean)
-    .join(" ")
+  const className = [baseStyle, sizeStyle].join(" ")
+  const style = { ...textStyle, ...bgStyle, ...borderStyle }
 
   return (
-    <button className={className} onClick={onClick}>
+    <button className={className} style={style} onClick={onClick}>
       {icon && <span className="mr-6">{icon}</span>}
       {text}
     </button>

@@ -2,16 +2,23 @@ import { useGetEventToBeOpenedQuery } from "@/api/event/queries/get-event-list-q
 
 import EventPreviewCard from "@/components/event-preview-card/event-preview-card"
 
+import ErrorPage from "../error-page"
+import LoadingPage from "../loading-page"
+import Banner from "./_component/banner"
 import Carousel from "./_component/carousel"
 
 function HomePage() {
   const { data: eventList, isLoading, error } = useGetEventToBeOpenedQuery()
 
-  if (isLoading) return <div>Loading...</div>
-  if (error) return <p>에러 발생!</p>
+  if (isLoading) return <LoadingPage />
+  if (error) return <ErrorPage />
 
   return (
-    <div className="px-160">
+    <div className="px-4 md:px-8 lg:px-160">
+      <section className="mb-32 -mx-4 md:-mx-8 lg:-mx-160">
+        <Banner />
+      </section>
+
       <section className="mb-24">
         <h1 className="title-24-bold py-32">오늘 오픈 티켓</h1>
         <Carousel />
