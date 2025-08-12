@@ -43,7 +43,7 @@ const router = createBrowserRouter(
               Component: EventListPage,
             },
             {
-              path: "event/detail/:eventId", // ✅ 상세 경로 추가
+              path: "event/detail/:eventId",
               Component: EventDetailPage,
             },
             {
