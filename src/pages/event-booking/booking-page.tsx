@@ -1,6 +1,8 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
+import { usePostPaymentInitiateMutation } from "@/api/payment/queries/get-payments-query"
 import { getTossClientKey } from "@/constants/env"
 import { loadTossPayments } from "@tosspayments/payment-sdk"
+import { nanoid } from "nanoid"
 import { useParams } from "react-router"
 import Swal from "sweetalert2"
 
@@ -20,6 +22,8 @@ const BookingPage = () => {
   const eventId = id || ""
   const [selectedGrade, setSelectedGrade] = useState<string>("")
   const [selectedSeat, setSelectedSeat] = useState<Seat_class | null>(null)
+  const [isPaymentLoading, setIsLoading] = useState(false)
+  const { mutateAsync } = usePostPaymentInitiateMutation()
   const { data: bookingData, isLoading: isBookingLoading } = useGetEventBookingQuery(
     Number(eventId)
   )
@@ -47,6 +51,8 @@ const BookingPage = () => {
   }
 
   const handlePaymentClick = async () => {
+    if (isPaymentLoading) return
+    setIsLoading(true)
     if (!selectedSeat) {
       Swal.fire({
         icon: "warning",
@@ -54,23 +60,35 @@ const BookingPage = () => {
         confirmButtonText: "확인",
         confirmButtonColor: "var(--color-primary)",
       })
+      setIsLoading(false)
       return
     }
-
     try {
+      const res = await mutateAsync({
+        bookingId: 1,
+        orderId: `ORDER_${Date.now()}_${nanoid(8)}`,
+        amount: getSelectedSeatPrice(),
+        method: "카드",
+        accountId: 1,
+      })
+
+      const { orderId, amount } = res
+
       const tossPayments = await loadTossPayments(getTossClientKey())
 
       await tossPayments.requestPayment("카드", {
-        amount: getSelectedSeatPrice(),
-        orderId: `ORDER_${Date.now()}`,
+        amount,
+        orderId,
         orderName: `${selectedSeat.seatGrade}석 예매`,
         customerName: "홍길동",
-        successUrl: `${window.location.origin}/mypage`,
+        successUrl: `${window.location.origin}/user/paymentSuccess`,
         failUrl: `${window.location.origin}/event/booking/${eventId}`,
       })
     } catch (error) {
       console.error("토스 결제 오류:", error)
       Swal.fire("결제 실패", "잠시 후 다시 시도해주세요.", "error")
+    } finally {
+      setIsLoading(false)
     }
   }
   const handlePayment = () => {

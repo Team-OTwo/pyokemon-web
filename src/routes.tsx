@@ -11,6 +11,7 @@ import HomePage from "./pages/home/home-page"
 import MainEmptyLayout from "./pages/main-empty-layout"
 import MainGrayLayout from "./pages/main-gray-layout"
 import MainContainerLayout from "./pages/main-layout"
+import PaymentSeccessPage from "./pages/payment-success-page"
 import RootLayout from "./pages/root-layout"
 
 const router = createBrowserRouter(
@@ -46,6 +47,10 @@ const router = createBrowserRouter(
             {
               path: "event/search",
               Component: EventSearchListPage,
+            },
+            {
+              path: "paymentSuccess",
+              Component: PaymentSeccessPage,
             },
           ],
         },
