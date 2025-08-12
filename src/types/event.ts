@@ -12,4 +12,11 @@ export interface EventType {
   venueId?: number
   total?: number
   saved?: boolean
+  seatPrice?: SeatPrice[]
+  tenantId?: number
+}
+
+export interface SeatPrice {
+  className: string
+  price: number
 }
