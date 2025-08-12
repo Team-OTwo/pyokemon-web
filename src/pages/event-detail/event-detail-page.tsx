@@ -11,6 +11,8 @@ import { SeatPrice } from "@/types/event"
 import Button from "@/components/ui/button"
 import GenreBadge from "@/components/ui/genre-badge"
 
+import LoadingPage from "../loading-page"
+
 const EventDetailPage = () => {
   const navigate = useNavigate()
   const { eventId } = useParams()
@@ -20,7 +22,7 @@ const EventDetailPage = () => {
     setIsMarked(!isMarked)
     postSavedEvent(Number(eventId))
   }
-  const { data: event, isLoading } = useGetEventDetailQuery(Number(eventId))
+  const { data: event, isLoading, error } = useGetEventDetailQuery(Number(eventId))
   // const { data: booking } = useGetEventBookingQuery(event?.eventScheduleId ?? 1)
   // const prices = booking?.remainingSeatsByGrade
 
@@ -34,11 +36,11 @@ const EventDetailPage = () => {
   }, [event, setEvent])
 
   if (isLoading) {
-    return <div>loading...</div>
+    return <LoadingPage />
   }
 
-  if (!event) {
-    return <div>존재하지 않는 공연입니다.</div> // 로딩 중 UI
+  if (!event || error) {
+    return <LoadingPage /> // 로딩 중 UI
   }
 
   if (event.seatPrice?.length == 0) {

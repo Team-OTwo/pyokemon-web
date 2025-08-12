@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { useGetEventOpenTodayQuery } from "@/api/event/queries/get-event-list-query"
 import { eventList } from "@/constants/event"
+import LoadingPage from "@/pages/loading-page"
 import { Autoplay, Pagination } from "swiper/modules"
 import { Swiper, SwiperSlide } from "swiper/react"
 
@@ -14,7 +15,7 @@ const Carousel = () => {
     setSwiperReady(true)
   }, [])
 
-  if (isLoading) return <div>Loading...</div>
+  if (isLoading) return <LoadingPage />
   if (error) return <p>에러 발생!</p>
   if (!eventList || eventList.length === 0) return <p>오늘 오픈한 이벤트가 없습니다.</p>
 

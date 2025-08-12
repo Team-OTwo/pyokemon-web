@@ -6,6 +6,8 @@ import { EventType } from "@/types/event"
 import Pagination from "@/components/ui/pagination"
 import EventPreviewCard from "@/components/event-preview-card"
 
+import LoadingPage from "../loading-page"
+
 const SavedEventPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const page = Number(searchParams.get("page") ?? "1")
@@ -14,10 +16,16 @@ const SavedEventPage = () => {
     setSearchParams({ page: newPage.toString() })
   }
 
-  const { data, isLoading } = useGetSavedEventQuery(page)
+  const { data, isLoading, error } = useGetSavedEventQuery(page)
+
   if (isLoading) {
-    return <div>loading...</div>
+    return <LoadingPage />
   }
+
+  if (error) {
+    return <LoadingPage />
+  }
+
   return (
     <div className="px-160 mb-48">
       <h1 className="title-24-bold pt-48">내 관심 공연</h1>

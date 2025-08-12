@@ -12,6 +12,7 @@ import { usePostEventBookingQuery } from "../../api/booking/queries/use-post-eve
 import Footer from "../../components/footer"
 import Header from "../../components/header"
 import { Seat_class } from "../../types/booking"
+import LoadingPage from "../loading-page"
 import BookingSidebar from "./_component/booking_sidebar"
 import SeatClassSeat from "./_component/seat_class_seat"
 import SeatingChart from "./_component/seating_chart"
@@ -123,13 +124,14 @@ const BookingPage = () => {
   const isLoading = isBookingLoading || (selectedGrade && isSeatsLoading) || isBookingPending
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-l text-white">
-        <Header />
-        <main className="flex items-center justify-center min-h-[calc(100vh-280px)]">
-          <div className="text-xl">로딩 중...</div>
-        </main>
-        <Footer />
-      </div>
+      // <div className="min-h-screen bg-l text-white">
+      //   <Header />
+      //   <main className="flex items-center justify-center min-h-[calc(100vh-280px)]">
+      //     <div className="text-xl">로딩 중...</div>
+      //   </main>
+      //   <Footer />
+      // </div>
+      <LoadingPage />
     )
   }
 
