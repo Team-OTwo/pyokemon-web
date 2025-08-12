@@ -1,12 +1,20 @@
 import React from "react"
 import { useGetSavedEventQuery } from "@/api/event/queries/use-get-saved-event-query"
+import { useSearchParams } from "react-router"
 
 import { EventType } from "@/types/event"
 import Pagination from "@/components/ui/pagination"
 import EventPreviewCard from "@/components/event-preview-card"
 
 const SavedEventPage = () => {
-  const { data, isLoading } = useGetSavedEventQuery()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const page = Number(searchParams.get("page") ?? "1")
+
+  const handlePageChange = (newPage: number) => {
+    setSearchParams({ page: newPage.toString() })
+  }
+
+  const { data, isLoading } = useGetSavedEventQuery(page)
   if (isLoading) {
     return <div>loading...</div>
   }
@@ -19,6 +27,15 @@ const SavedEventPage = () => {
             return <EventPreviewCard key={i} event={event} />
           })}
         </div>
+      </div>
+
+      <div className="flex justify-center mt-12">
+        <Pagination
+          current={page}
+          total={data[0]?.total ?? 0}
+          pageSize={9}
+          onChange={(p) => handlePageChange(p)}
+        />
       </div>
 
       {/* <Pagination
