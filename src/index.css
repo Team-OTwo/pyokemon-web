@@ -98,3 +98,19 @@ hr {
   width: 30px;
   border-radius: 10px;
 }
+
+@keyframes spin-pause {
+  0% {
+    transform: rotate(0deg);
+  }
+  83.33% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-pause {
+  animation: spin-pause 1.5s ease-in-out infinite;
+}
