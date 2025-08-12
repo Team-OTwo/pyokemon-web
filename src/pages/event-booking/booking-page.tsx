@@ -1,8 +1,6 @@
-import { useCallback, useState } from "react"
-import { usePostPaymentInitiateMutation } from "@/api/payment/queries/get-payments-query"
+import { useState } from "react"
 import { getTossClientKey } from "@/constants/env"
 import { loadTossPayments } from "@tosspayments/payment-sdk"
-import { nanoid } from "nanoid"
 import { useParams } from "react-router"
 import Swal from "sweetalert2"
 
@@ -11,8 +9,6 @@ import {
   useGetSeatClassQuery,
 } from "../../api/booking/queries/use-get-event-booking-query"
 import { usePostEventBookingQuery } from "../../api/booking/queries/use-post-event-booking-query"
-import Footer from "../../components/footer"
-import Header from "../../components/header"
 import { Seat_class } from "../../types/booking"
 import LoadingPage from "../loading-page"
 import BookingSidebar from "./_component/booking_sidebar"
@@ -25,7 +21,6 @@ const BookingPage = () => {
   const [selectedGrade, setSelectedGrade] = useState<string>("")
   const [selectedSeat, setSelectedSeat] = useState<Seat_class | null>(null)
   const [isPaymentLoading, setIsLoading] = useState(false)
-  const { mutateAsync } = usePostPaymentInitiateMutation()
   const { mutate: postBooking, isPending: isBookingPending } = usePostEventBookingQuery()
   const { data: bookingData, isLoading: isBookingLoading } = useGetEventBookingQuery(
     Number(eventId)
@@ -84,26 +79,26 @@ const BookingPage = () => {
       return
     }
     try {
-<!--       const res = await mutateAsync({
-        bookingId: 1,
-        orderId: `ORDER_${Date.now()}_${nanoid(8)}`,
-        amount: getSelectedSeatPrice(),
-        method: "카드",
-        accountId: 1,
-      })
+      // const res = await mutateAsync({
+      //   bookingId: 1,
+      //   orderId: `ORDER_${Date.now()}_${nanoid(8)}`,
+      //   amount: getSelectedSeatPrice(),
+      //   method: "카드",
+      //   accountId: 1,
+      // })
 
-      const { orderId, amount } = res
+      // const { orderId, amount } = res
 
-      const tossPayments = await loadTossPayments(getTossClientKey())
+      // const tossPayments = await loadTossPayments(getTossClientKey())
 
-      await tossPayments.requestPayment("카드", {
-        amount,
-        orderId,
-        orderName: `${selectedSeat.seatGrade}석 예매`,
-        customerName: "홍길동",
-        successUrl: `${window.location.origin}/user/paymentSuccess`,
-        failUrl: `${window.location.origin}/event/booking/${eventId}`,
-      }) -->
+      // await tossPayments.requestPayment("카드", {
+      //   amount,
+      //   orderId,
+      //   orderName: `${selectedSeat.seatGrade}석 예매`,
+      //   customerName: "홍길동",
+      //   successUrl: `${window.location.origin}/user/paymentSuccess`,
+      //   failUrl: `${window.location.origin}/event/booking/${eventId}`,
+      // })
       postBooking(
         {
           eventScheduleId: Number(eventId),
