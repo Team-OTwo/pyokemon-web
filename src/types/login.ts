@@ -9,6 +9,7 @@ export interface LoginResponse {
   data: {
     accessToken: string
     refreshToken: string
+    userName: string
     role: string
     accountId: number
     isVerified: boolean

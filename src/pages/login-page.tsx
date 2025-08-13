@@ -19,6 +19,8 @@ const LoginPage = () => {
       if (response.success) {
         localStorage.setItem("accessToken", response.data.accessToken)
         localStorage.setItem("refreshToken", response.data.refreshToken)
+        localStorage.setItem("name", response.data.userName)
+        localStorage.setItem("isVerified", response.data.isVerified.toString())
 
         if (response.data.isVerified) {
           navigate("/")

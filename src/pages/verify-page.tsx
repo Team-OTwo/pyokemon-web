@@ -13,6 +13,7 @@ const VerifyPage = () => {
     onSuccess: async (response) => {
       if (response.success) {
         console.log("본인인증 성공:", response.data)
+        localStorage.setItem("isVerified", "true")
 
         await Swal.fire({
           title: "본인인증 완료",
