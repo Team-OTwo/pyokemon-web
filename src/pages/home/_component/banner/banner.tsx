@@ -36,7 +36,7 @@ const Banner = () => {
 
   return (
     <div className="w-full">
-      <div className="relative w-full h-600 overflow-hidden">
+      <div className="relative w-full overflow-hidden">
         <Swiper
           modules={[Autoplay, Pagination]}
           loop={true}
@@ -44,14 +44,14 @@ const Banner = () => {
           pagination={{ el: ".banner-pagination", clickable: true }}
           onSwiper={setSwiperInstance}
           onSlideChange={handleSlideChange}
-          className="w-full h-full"
+          className="w-full"
         >
           {bannerData.map((banner) => (
             <SwiperSlide key={banner.id}>
               <img
                 src={banner.image}
                 alt={`Banner ${banner.id}`}
-                className="w-full h-full object-cover"
+                className="w-full h-auto object-cover"
               />
             </SwiperSlide>
           ))}
@@ -59,7 +59,7 @@ const Banner = () => {
 
         <div className="banner-pagination absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3" />
 
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex justify-center space-x-4 px-4 z-10">
+        <div className="absolute bottom-30 left-1/2 transform -translate-x-1/2 flex justify-center space-x-10 px-4 z-10">
           {bannerData.map((banner, index) => (
             <div
               key={banner.id}
