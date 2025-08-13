@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react"
+import { useState } from "react"
 import { IoNotificationsOutline, IoPersonOutline, IoSearchOutline } from "react-icons/io5"
 import { Link, useLocation, useNavigate } from "react-router"
 
@@ -22,7 +22,6 @@ function Header() {
   const navigate = useNavigate()
   const [showNotification, setShowNotification] = useState(false)
   const [showMyPageModal, setShowMyPageModal] = useState(false)
-  const searchBarRef = useRef<HTMLDivElement>(null)
 
   const handleClickMyPage = () => {
     const accessToken = localStorage.getItem("accessToken")
@@ -38,24 +37,6 @@ function Header() {
       navigate(`/event/search?keyword=${keyword}`)
     }
   }
-
-  const handleClickOutside = useCallback((event: MouseEvent) => {
-    if (searchBarRef.current && !searchBarRef.current.contains(event.target as Node)) {
-      setShowSearchBar(false)
-    }
-  }, [])
-
-  const handleSearchIconClick = useCallback(() => {
-    const newShowSearchBar = !showSearchBar
-    setShowSearchBar(newShowSearchBar)
-
-    if (newShowSearchBar) {
-      document.addEventListener("mousedown", handleClickOutside)
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [showSearchBar, handleClickOutside])
-
   return (
     <div className="flex bg-white h-100 w-full text-black items-center justify-between px-160 shadow-container">
       <Link to="/">
@@ -79,7 +60,6 @@ function Header() {
 
           {/* search bar */}
           <div
-            ref={searchBarRef}
             className="h-36 flex items-center border-black border-1 px-16 rounded-full justify-between transition-all duration-300 ease-in-out overflow-hidden"
             style={{
               opacity: showSearchBar ? 1 : 0,
@@ -105,7 +85,7 @@ function Header() {
 
           {/* icons */}
           <ul className="flex gap-16 relative">
-            <li className={listStyle} onClick={handleSearchIconClick}>
+            <li className={listStyle} onClick={() => setShowSearchBar(!showSearchBar)}>
               <IoSearchOutline className={iconStyle} />
             </li>
             <li className={listStyle} onClick={() => setShowNotification(!showNotification)}>
