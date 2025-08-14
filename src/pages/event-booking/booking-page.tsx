@@ -10,6 +10,7 @@ import {
   useGetSeatClassQuery,
 } from "../../api/booking/queries/use-get-event-booking-query"
 import { usePostEventBookingQuery } from "../../api/booking/queries/use-post-event-booking-query"
+import { useEventStore } from "../../store/event/event-store"
 import { Seat_class } from "../../types/booking"
 import LoadingPage from "../loading-page"
 import BookingSidebar from "./_component/booking_sidebar"
@@ -19,6 +20,7 @@ import SeatingChart from "./_component/seating_chart"
 const BookingPage = () => {
   const { id } = useParams()
   const eventId = id || ""
+  const { event } = useEventStore()
   const [selectedGrade, setSelectedGrade] = useState<string>("")
   const [selectedSeat, setSelectedSeat] = useState<Seat_class | null>(null)
   const [isPaymentLoading, setIsLoading] = useState(false)
@@ -50,22 +52,22 @@ const BookingPage = () => {
     return gradeInfo?.price || 0
   }
 
-  interface PaymentRequest {
-    bookingId: number
-    orderId: string
-    amount: number
-    method: string
-    accountId: number
-  }
+  // interface PaymentRequest {
+  //   bookingId: number
+  //   orderId: string
+  //   amount: number
+  //   method: string
+  //   accountId: number
+  // }
 
-  interface PaymentResponse {
-    orderId: string
-    amount: number
-  }
+  // interface PaymentResponse {
+  //   orderId: string
+  //   amount: number
+  // }
 
-  const mutateAsync = async (data: PaymentRequest): Promise<PaymentResponse> => {
-    return { orderId: data.orderId, amount: data.amount }
-  }
+  // const mutateAsync = async (data: PaymentRequest): Promise<PaymentResponse> => {
+  //   return { orderId: data.orderId, amount: data.amount }
+  // }
 
   const handlePaymentClick = async () => {
     if (isPaymentLoading) return
@@ -74,6 +76,17 @@ const BookingPage = () => {
       Swal.fire({
         icon: "warning",
         title: "좌석을 선택해주세요!",
+        confirmButtonText: "확인",
+        confirmButtonColor: "var(--color-primary)",
+      })
+      setIsLoading(false)
+      return
+    }
+    if (!event?.tenantId) {
+      Swal.fire({
+        icon: "error",
+        title: "예매 정보를 불러올 수 없습니다.",
+        text: "이전 페이지로 돌아가서 다시 시도해주세요.",
         confirmButtonText: "확인",
         confirmButtonColor: "var(--color-primary)",
       })
@@ -105,6 +118,7 @@ const BookingPage = () => {
         {
           eventScheduleId: Number(eventId),
           seatId: selectedSeat.seatId,
+          tenantId: Number(event.tenantId),
         },
         {
           onSuccess: async (bookingResponse) => {
@@ -142,16 +156,7 @@ const BookingPage = () => {
 
   const isLoading = isBookingLoading || (selectedGrade && isSeatsLoading) || isBookingPending
   if (isLoading) {
-    return (
-      // <div className="min-h-screen bg-l text-white">
-      //   <Header />
-      //   <main className="flex items-center justify-center min-h-[calc(100vh-280px)]">
-      //     <div className="text-xl">로딩 중...</div>
-      //   </main>
-      //   <Footer />
-      // </div>
-      <LoadingPage />
-    )
+    return <LoadingPage />
   }
 
   return (

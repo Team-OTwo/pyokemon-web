@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "react-router"
 
@@ -34,7 +34,7 @@ const LoginPage = () => {
     },
   })
 
-  const handleLogin = () => {
+  const handleLogin = useCallback(() => {
     if (!loginId || !password) {
       alert("아이디와 비밀번호를 입력해주세요.")
       return
@@ -44,7 +44,16 @@ const LoginPage = () => {
       loginId,
       password,
     })
-  }
+  }, [loginId, password, loginMutation])
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key === "Enter") {
+        handleLogin()
+      }
+    },
+    [handleLogin]
+  )
 
   const handleSignupClick = () => {
     navigate(`/signup`)
@@ -55,7 +64,7 @@ const LoginPage = () => {
       <div className="w-392 h-480 bg-white rounded-lg shadow-container flex flex-col items-center justify-center">
         <img src={login} alt="login" className="h-24 mb-60 mt-60" />
 
-        <div className="flex flex-col gap-16 mb-24">
+        <div className="flex flex-col gap-16 mb-24" onKeyDown={handleKeyDown} tabIndex={0}>
           <Input placeholder="아이디" value={loginId} onChange={setLoginId} type="text" />
           <Input placeholder="비밀번호" value={password} onChange={setPassword} type="password" />
         </div>

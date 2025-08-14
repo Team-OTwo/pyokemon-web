@@ -18,6 +18,7 @@ export interface Seat_class {
 export interface PostEventBookingRequest {
   eventScheduleId: number
   seatId: number
+  tenantId: number
 }
 
 export interface PostEventBookingResponse {

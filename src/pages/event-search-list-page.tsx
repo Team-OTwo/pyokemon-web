@@ -46,13 +46,6 @@ const EventSearchListPage = () => {
 
   if (isLoading || !eventList) return <LoadingPage />
   if (error) return <ErrorPage />
-  if (eventList.length === 0) {
-    return (
-      <div className="px-160 mb-48">
-        <p className="text-center py-48">검색 결과가 없습니다.</p>
-      </div>
-    )
-  }
 
   return (
     <div className="px-160 mb-48">
@@ -71,20 +64,26 @@ const EventSearchListPage = () => {
       </ul>
 
       {/* event */}
-      <div className="grid grid-cols-3 gap-24">
-        {eventList.map((event, i) => {
-          return <EventPreviewCard key={i} event={event} />
-        })}
-      </div>
+      {eventList.length === 0 ? (
+        <p className="text-center py-48">검색 결과가 없습니다.</p>
+      ) : (
+        <>
+          <div className="grid grid-cols-3 gap-24">
+            {eventList.map((event, i) => {
+              return <EventPreviewCard key={i} event={event} />
+            })}
+          </div>
 
-      <div className="flex justify-center mt-12">
-        <Pagination
-          current={page}
-          total={eventList[0]?.total ?? 0}
-          pageSize={9}
-          onChange={(p) => handlePageChange(p)}
-        />
-      </div>
+          <div className="flex justify-center mt-12">
+            <Pagination
+              current={page}
+              total={eventList[0]?.total ?? 0}
+              pageSize={9}
+              onChange={(p) => handlePageChange(p)}
+            />
+          </div>
+        </>
+      )}
     </div>
   )
 }

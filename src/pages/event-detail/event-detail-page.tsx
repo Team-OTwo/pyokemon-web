@@ -59,7 +59,7 @@ const EventDetailPage = () => {
 
   return (
     <div className="px-160 py-64">
-      <section className="flex gap-60 mb-60 justify-center">
+      <section className="flex gap-100 mb-60 justify-center">
         <article>
           <img
             src={event.thumbnailUrl}

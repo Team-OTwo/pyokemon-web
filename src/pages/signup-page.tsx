@@ -26,6 +26,15 @@ function formatPhoneNumber(value: string): string {
   return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`
 }
 
+function formatBirthDate(value: string): string {
+  const numbers = value.replace(/[^\d]/g, "")
+  if (numbers.length <= 4) return numbers
+  if (numbers.length <= 6) return `${numbers.slice(0, 4)}-${numbers.slice(4)}`
+  if (numbers.length <= 8)
+    return `${numbers.slice(0, 4)}-${numbers.slice(4, 6)}-${numbers.slice(6, 8)}`
+  return `${numbers.slice(0, 4)}-${numbers.slice(4, 6)}-${numbers.slice(6, 8)}`
+}
+
 function validateField(fieldName: keyof SignUpForm, value: string, form?: SignUpForm): string {
   switch (fieldName) {
     case "loginId":
@@ -81,6 +90,9 @@ function SignUpPage() {
       if (fieldName === "phone") {
         finalValue = formatPhoneNumber(value)
       }
+      if (fieldName === "birth") {
+        finalValue = formatBirthDate(value)
+      }
 
       setForm((prev) => ({ ...prev, [fieldName]: finalValue }))
       const error = validateField(fieldName, finalValue, { ...form, [fieldName]: finalValue })
@@ -131,12 +143,21 @@ function SignUpPage() {
     }
   }, [form, navigate])
 
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key === "Enter") {
+        handleSignUp()
+      }
+    },
+    [handleSignUp]
+  )
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="w-392 h-700 bg-white rounded-lg shadow-container flex flex-col items-center justify-center p-32">
         <img src={signup} alt="signup" className="h-24 mb-40 mt-40" />
 
-        <div className="flex flex-col gap-16 mb-24 w-full">
+        <div className="flex flex-col gap-16 mb-24 w-full" onKeyDown={handleKeyDown} tabIndex={0}>
           <div>
             <Input
               placeholder="아이디"
@@ -201,7 +222,7 @@ function SignUpPage() {
               placeholder="생년월일"
               value={form.birth}
               onChange={(value) => handleFieldChange("birth", value)}
-              type="date"
+              type="text"
               error={!!errors.birth}
             />
             {errors.birth && <p className="text-error text-12-regular mt-4">{errors.birth}</p>}
