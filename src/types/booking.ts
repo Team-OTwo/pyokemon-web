@@ -1,13 +1,11 @@
-export interface Booking_sidebar {
-  eventScheduleId: number
-  remainingSeatsByGrade: {
-    seatGrade: string
-    remainingSeats: number
-    price: number
-  }[]
+export interface EventBookingResponse {
+  seatClassId: number
+  seatGrade: string
+  price: number
+  seatCount: number
 }
 
-export interface Seat_class {
+export interface SelectedSeat {
   seatId: number
   row: string
   col: string

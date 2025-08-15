@@ -1,14 +1,14 @@
 import SeatingChart from "../../../assets/images/Seating_Chart.png"
 import Button from "../../../components/ui/button"
-import { Booking_sidebar, Seat_class } from "../../../types/booking"
+import { EventBookingResponse, SelectedSeat } from "../../../types/booking"
 
 const BookingSidebar = ({
   bookingData,
   selectedSeat,
   onPayment,
 }: {
-  bookingData: Booking_sidebar
-  selectedSeat?: Seat_class | null
+  bookingData: EventBookingResponse[]
+  selectedSeat?: SelectedSeat | null
   onPayment: () => void
 }) => {
   const getSeatGradeColor = (grade: string) => {
@@ -28,9 +28,7 @@ const BookingSidebar = ({
 
   const getSelectedSeatPrice = () => {
     if (!selectedSeat) return 0
-    const gradeInfo = bookingData.remainingSeatsByGrade.find(
-      (grade) => grade.seatGrade === selectedSeat.seatGrade
-    )
+    const gradeInfo = bookingData.find((grade) => grade.seatGrade === selectedSeat.seatGrade)
     return gradeInfo?.price || 0
   }
 
@@ -38,7 +36,7 @@ const BookingSidebar = ({
     <div className="bg-gray-100 flex flex-col gap-40 p-15 rounded-lg h-fit">
       <div>
         <h3 className="text-black m-0 mb-4 text-base font-bold">좌석 배치도</h3>
-        <div className="h-200 bg-black rounded-lg flex items-center justify-center overflow-hidden">
+        <div className="w-full h-auto rounded-lg flex items-center justify-center overflow-hidden">
           <img src={SeatingChart} alt="좌석 배치도" className="opacity-60" />
         </div>
       </div>
@@ -48,7 +46,7 @@ const BookingSidebar = ({
           좌석 등급 / 잔여석
         </h3>
         <div className="flex flex-col gap-7 pt-5">
-          {bookingData.remainingSeatsByGrade.map((grade) => (
+          {bookingData.map((grade) => (
             <div key={grade.seatGrade} className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-10">
                 <div className={`w-20 h-20 ${getSeatGradeColor(grade.seatGrade)}`} />
@@ -56,7 +54,7 @@ const BookingSidebar = ({
                   {grade.seatGrade} {grade.price.toLocaleString()}원
                 </span>
               </div>
-              <span className="text-gray-700">{grade.remainingSeats}석 / 120석</span>
+              <span className="text-gray-700">N석 / {grade.seatCount}석</span>
             </div>
           ))}
         </div>
@@ -64,7 +62,7 @@ const BookingSidebar = ({
 
       <div>
         <h3 className="text-black m-0 mb-4 text-base font-bold border-b border-gray-300 pb-5">
-          선택
+          선택된 좌석
         </h3>
         <div className="pt-5 flex flex-col gap-10 p-10 bg-gray-100 rounded-md">
           <div className="flex justify-between items-center">

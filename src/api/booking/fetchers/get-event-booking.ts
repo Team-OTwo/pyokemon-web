@@ -1,21 +1,19 @@
-import { eventClient } from "../../client"
+import { EventBookingResponse } from "../../../types/booking"
+import { eventClient, setAuthorizationHeader } from "../../client"
 
-export const getEventBooking = async (eventScheduleId: number) => {
+export const getEventBooking = async (eventScheduleId: number): Promise<EventBookingResponse[]> => {
+  const accessToken = localStorage.getItem("accessToken")
+
+  if (!accessToken) {
+    throw new Error("Access token not found")
+  }
+
   try {
-    const response = await eventClient.get(`/api/events/booking/${eventScheduleId}`)
+    setAuthorizationHeader(accessToken)
+    const response = await eventClient.get(`/api/events/booking-info/${eventScheduleId}`)
     return response.data
   } catch (error) {
     console.error("Failed to fetch booking data:", error)
-    throw error
-  }
-}
-
-export const getSeatClass = async (eventScheduleId: number, seatGrade: string) => {
-  try {
-    const response = await eventClient.get(`/api/events/booking/${eventScheduleId}/${seatGrade}`)
-    return response.data
-  } catch (error) {
-    console.error("Failed to fetch seats data:", error)
     throw error
   }
 }

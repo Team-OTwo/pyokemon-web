@@ -1,4 +1,4 @@
-import { Seat_class } from "../../../types/booking"
+import { SelectedSeat } from "../../../types/booking"
 
 const SeatClassSeat = ({
   seatGrade,
@@ -7,18 +7,18 @@ const SeatClassSeat = ({
   selectedSeat,
 }: {
   seatGrade: string
-  seats: Seat_class[]
-  onSeatSelect: (seat: Seat_class) => void
-  selectedSeat?: Seat_class | null
+  seats: SelectedSeat[]
+  onSeatSelect: (seat: SelectedSeat) => void
+  selectedSeat?: SelectedSeat | null
 }) => {
   const rows = [...new Set(seats.map((seat) => seat.row))].sort()
   const cols = [...new Set(seats.map((seat) => seat.col))].sort((a, b) => parseInt(a) - parseInt(b))
-  const seatMap = new Map<string, Seat_class>()
+  const seatMap = new Map<string, SelectedSeat>()
   seats.forEach((seat) => {
     seatMap.set(`${seat.row}-${seat.col}`, seat)
   })
 
-  const getSeatClasses = (seat: Seat_class) => {
+  const getSeatClasses = (seat: SelectedSeat) => {
     const baseClasses =
       "w-40 h-40 flex items-center justify-center text-xs font-bold transition-all duration-200"
 
