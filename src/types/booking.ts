@@ -10,7 +10,7 @@ export interface SelectedSeat {
   row: string
   col: string
   seatGrade: string
-  booked: boolean
+  isBooked: boolean
 }
 
 export interface PostEventBookingRequest {

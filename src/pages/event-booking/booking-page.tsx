@@ -5,7 +5,10 @@ import { loadTossPayments } from "@tosspayments/payment-sdk"
 import { useParams } from "react-router"
 import Swal from "sweetalert2"
 
-import { useGetEventBookingQuery } from "../../api/booking/queries/use-get-event-booking-query"
+import {
+  useGetEventBookingQuery,
+  useGetEventSeatGradeQuery,
+} from "../../api/booking/queries/use-get-event-booking-query"
 import { usePostEventBookingQuery } from "../../api/booking/queries/use-post-event-booking-query"
 import { useEventStore } from "../../store/event/event-store"
 import { SelectedSeat } from "../../types/booking"
@@ -25,6 +28,10 @@ const BookingPage = () => {
   const { mutate: postBooking, isPending: isBookingPending } = usePostEventBookingQuery()
   const { data: bookingData, isLoading: isBookingLoading } = useGetEventBookingQuery(
     Number(eventId)
+  )
+  const { data: seats, isLoading: isSeatIdsLoading } = useGetEventSeatGradeQuery(
+    Number(eventId),
+    selectedGrade
   )
 
   const handleSeatGradeSelect = (grade: string) => {
@@ -108,7 +115,7 @@ const BookingPage = () => {
     }
   }
 
-  const isLoading = isBookingLoading || isBookingPending
+  const isLoading = isBookingLoading || (selectedGrade && isSeatIdsLoading) || isBookingPending
   if (isLoading) {
     return <LoadingPage />
   }
@@ -122,7 +129,7 @@ const BookingPage = () => {
           ) : (
             <SeatClassSeat
               seatGrade={selectedGrade}
-              seats={[]}
+              seats={seats || []}
               onSeatSelect={handleSeatSelect}
               selectedSeat={selectedSeat}
             />

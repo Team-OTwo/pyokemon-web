@@ -22,11 +22,12 @@ const SeatClassSeat = ({
     const baseClasses =
       "w-40 h-40 flex items-center justify-center text-xs font-bold transition-all duration-200"
 
+    if (seat.isBooked) {
+      return `${baseClasses} bg-gray-400 border-0 cursor-not-allowed opacity-50`
+    }
+
     if (selectedSeat?.seatId === seat.seatId) {
       return `${baseClasses} bg-primary border-3 border-black cursor-pointer`
-    }
-    if (seat.booked) {
-      return `${baseClasses} bg-white border-0 text-gray-400 cursor-not-allowed`
     }
 
     return `${baseClasses} bg-primary border-0 cursor-pointer hover:scale-110`
@@ -63,8 +64,8 @@ const SeatClassSeat = ({
                 <button
                   key={col}
                   className={getSeatClasses(seat)}
-                  onClick={() => !seat.booked && onSeatSelect(seat)}
-                  disabled={seat.booked}
+                  onClick={() => !seat.isBooked && onSeatSelect(seat)}
+                  disabled={seat.isBooked}
                 />
               )
             })}
