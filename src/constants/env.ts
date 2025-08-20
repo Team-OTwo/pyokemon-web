@@ -29,6 +29,11 @@ const BOOKING_API_URL: Record<Environment, string> = {
   dev: `${GATEWAY_URL.dev}/payment`,
 }
 
+const BFF_API_URL: Record<Environment, string> = {
+  local: `${GATEWAY_URL.local}/bff`,
+  dev: `${GATEWAY_URL.dev}/bff`,
+}
+
 const TOSS_CLIENT_KEY: Record<Environment, string> = {
   local: "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq", // 테스트용 키 (실제 키로 대체 필요)
   dev: "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq", // 개발 환경용 키 (실제 키로 대체 필요)
@@ -39,6 +44,7 @@ export const getEventApiUrl = () => EVENT_API_URL[ENV]
 export const getAccountApiUrl = () => ACCOUNT_API_URL[ENV]
 export const getPaymentApiUrl = () => PAYMENT_API_URL[ENV]
 export const getBookingApiUrl = () => BOOKING_API_URL[ENV]
+export const getBffApiUrl = () => BFF_API_URL[ENV]
 export const getTossClientKey = () => TOSS_CLIENT_KEY[ENV]
 
 export default {
@@ -48,11 +54,13 @@ export default {
   ACCOUNT_API_URL,
   PAYMENT_API_URL,
   BOOKING_API_URL,
+  BFF_API_URL,
   TOSS_CLIENT_KEY,
   getGatewayUrl,
   getEventApiUrl,
   getAccountApiUrl,
   getPaymentApiUrl,
   getBookingApiUrl,
+  getBffApiUrl,
   getTossClientKey,
 }
