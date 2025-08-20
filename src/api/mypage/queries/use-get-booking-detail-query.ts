@@ -4,7 +4,7 @@ import { fetchBookingDetail } from "../fetchers/get-booking-detail"
 
 export const useGetBookingDetailQuery = (bookingId: number) => {
   return useQuery({
-    queryKey: ["bookingDetail"],
+    queryKey: ["bookingDetail", bookingId],
     queryFn: () => fetchBookingDetail(bookingId),
   })
 }
