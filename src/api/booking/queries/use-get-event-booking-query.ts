@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 
-import { getEventBooking, getSeatClass } from "../fetchers/get-event-booking"
+import { getEventBooking, getEventSeatGrade } from "../fetchers/get-event-booking"
 
 export const useGetEventBookingQuery = (eventScheduleId: number) => {
   return useQuery({
@@ -9,9 +9,10 @@ export const useGetEventBookingQuery = (eventScheduleId: number) => {
   })
 }
 
-export const useGetSeatClassQuery = (eventScheduleId: number, seatGrade: string) => {
+export const useGetEventSeatGradeQuery = (eventScheduleId: number, seatGrade: string) => {
   return useQuery({
-    queryKey: ["seatClass", eventScheduleId, seatGrade],
-    queryFn: () => getSeatClass(eventScheduleId, seatGrade),
+    queryKey: ["eventSeatGrade", eventScheduleId, seatGrade],
+    queryFn: () => getEventSeatGrade(eventScheduleId, seatGrade),
+    enabled: !!seatGrade,
   })
 }

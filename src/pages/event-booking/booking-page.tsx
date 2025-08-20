@@ -7,11 +7,11 @@ import Swal from "sweetalert2"
 
 import {
   useGetEventBookingQuery,
-  useGetSeatClassQuery,
+  useGetEventSeatGradeQuery,
 } from "../../api/booking/queries/use-get-event-booking-query"
 import { usePostEventBookingQuery } from "../../api/booking/queries/use-post-event-booking-query"
 import { useEventStore } from "../../store/event/event-store"
-import { Seat_class } from "../../types/booking"
+import { SelectedSeat } from "../../types/booking"
 import LoadingPage from "../loading-page"
 import BookingSidebar from "./_component/booking_sidebar"
 import SeatClassSeat from "./_component/seat_class_seat"
@@ -22,14 +22,14 @@ const BookingPage = () => {
   const eventId = id || ""
   const { event } = useEventStore()
   const [selectedGrade, setSelectedGrade] = useState<string>("")
-  const [selectedSeat, setSelectedSeat] = useState<Seat_class | null>(null)
+  const [selectedSeat, setSelectedSeat] = useState<SelectedSeat | null>(null)
   const [isPaymentLoading, setIsLoading] = useState(false)
   const { mutateAsync: initiatePayment } = usePostPaymentInitiateMutation()
   const { mutate: postBooking, isPending: isBookingPending } = usePostEventBookingQuery()
   const { data: bookingData, isLoading: isBookingLoading } = useGetEventBookingQuery(
     Number(eventId)
   )
-  const { data: seatsData, isLoading: isSeatsLoading } = useGetSeatClassQuery(
+  const { data: seats, isLoading: isSeatIdsLoading } = useGetEventSeatGradeQuery(
     Number(eventId),
     selectedGrade
   )
@@ -38,36 +38,17 @@ const BookingPage = () => {
     setSelectedGrade(grade)
     setSelectedSeat(null)
   }
-  const handleSeatSelect = (seat: Seat_class) => {
+  const handleSeatSelect = (seat: SelectedSeat) => {
     setSelectedSeat(seat)
   }
 
   const getSelectedSeatPrice = () => {
     if (!selectedSeat || !bookingData) return 0
 
-    const gradeInfo = bookingData.remainingSeatsByGrade.find(
-      (g: { seatGrade: string; price: number }) => g.seatGrade === selectedSeat.seatGrade
-    )
+    const gradeInfo = bookingData.find((g) => g.seatGrade === selectedSeat.seatGrade)
 
     return gradeInfo?.price || 0
   }
-
-  // interface PaymentRequest {
-  //   bookingId: number
-  //   orderId: string
-  //   amount: number
-  //   method: string
-  //   accountId: number
-  // }
-
-  // interface PaymentResponse {
-  //   orderId: string
-  //   amount: number
-  // }
-
-  // const mutateAsync = async (data: PaymentRequest): Promise<PaymentResponse> => {
-  //   return { orderId: data.orderId, amount: data.amount }
-  // }
 
   const handlePaymentClick = async () => {
     if (isPaymentLoading) return
@@ -94,26 +75,6 @@ const BookingPage = () => {
       return
     }
     try {
-      // const res = await mutateAsync({
-      //   bookingId: 1,
-      //   orderId: `ORDER_${Date.now()}_${nanoid(8)}`,
-      //   amount: getSelectedSeatPrice(),
-      //   method: "카드",
-      //   accountId: 1,
-      // })
-
-      // const { orderId, amount } = res
-
-      // const tossPayments = await loadTossPayments(getTossClientKey())
-
-      // await tossPayments.requestPayment("카드", {
-      //   amount,
-      //   orderId,
-      //   orderName: `${selectedSeat.seatGrade}석 예매`,
-      //   customerName: "홍길동",
-      //   successUrl: `${window.location.origin}/user/paymentSuccess`,
-      //   failUrl: `${window.location.origin}/event/booking/${eventId}`,
-      // })
       postBooking(
         {
           eventScheduleId: Number(eventId),
@@ -154,7 +115,7 @@ const BookingPage = () => {
     }
   }
 
-  const isLoading = isBookingLoading || (selectedGrade && isSeatsLoading) || isBookingPending
+  const isLoading = isBookingLoading || (selectedGrade && isSeatIdsLoading) || isBookingPending
   if (isLoading) {
     return <LoadingPage />
   }
@@ -168,7 +129,7 @@ const BookingPage = () => {
           ) : (
             <SeatClassSeat
               seatGrade={selectedGrade}
-              seats={seatsData || []}
+              seats={seats || []}
               onSeatSelect={handleSeatSelect}
               selectedSeat={selectedSeat}
             />

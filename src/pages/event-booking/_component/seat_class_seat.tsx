@@ -1,4 +1,4 @@
-import { Seat_class } from "../../../types/booking"
+import { SelectedSeat } from "../../../types/booking"
 
 const SeatClassSeat = ({
   seatGrade,
@@ -7,26 +7,27 @@ const SeatClassSeat = ({
   selectedSeat,
 }: {
   seatGrade: string
-  seats: Seat_class[]
-  onSeatSelect: (seat: Seat_class) => void
-  selectedSeat?: Seat_class | null
+  seats: SelectedSeat[]
+  onSeatSelect: (seat: SelectedSeat) => void
+  selectedSeat?: SelectedSeat | null
 }) => {
   const rows = [...new Set(seats.map((seat) => seat.row))].sort()
   const cols = [...new Set(seats.map((seat) => seat.col))].sort((a, b) => parseInt(a) - parseInt(b))
-  const seatMap = new Map<string, Seat_class>()
+  const seatMap = new Map<string, SelectedSeat>()
   seats.forEach((seat) => {
     seatMap.set(`${seat.row}-${seat.col}`, seat)
   })
 
-  const getSeatClasses = (seat: Seat_class) => {
+  const getSeatClasses = (seat: SelectedSeat) => {
     const baseClasses =
       "w-40 h-40 flex items-center justify-center text-xs font-bold transition-all duration-200"
 
+    if (seat.isBooked) {
+      return `${baseClasses} bg-gray-400 border-0 cursor-not-allowed opacity-50`
+    }
+
     if (selectedSeat?.seatId === seat.seatId) {
       return `${baseClasses} bg-primary border-3 border-black cursor-pointer`
-    }
-    if (seat.booked) {
-      return `${baseClasses} bg-white border-0 text-gray-400 cursor-not-allowed`
     }
 
     return `${baseClasses} bg-primary border-0 cursor-pointer hover:scale-110`
@@ -63,8 +64,8 @@ const SeatClassSeat = ({
                 <button
                   key={col}
                   className={getSeatClasses(seat)}
-                  onClick={() => !seat.booked && onSeatSelect(seat)}
-                  disabled={seat.booked}
+                  onClick={() => !seat.isBooked && onSeatSelect(seat)}
+                  disabled={seat.isBooked}
                 />
               )
             })}
