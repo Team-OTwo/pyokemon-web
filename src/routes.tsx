@@ -12,11 +12,11 @@ import LoginPage from "./pages/login-page"
 import MainEmptyLayout from "./pages/main-empty-layout"
 import MainGrayLayout from "./pages/main-gray-layout"
 import MainContainerLayout from "./pages/main-layout"
-import PaymentSeccessPage from "./pages/payment-success-page"
+import BookingDetailPage from "./pages/mypage/booking-detail-page"
+import MyBookingsPage from "./pages/mypage/my-bookings-page"
 import SavedEventPage from "./pages/mypage/saved-event-page"
 import SettingPage from "./pages/mypage/setting-page"
-import TicketDetailPage from "./pages/mypage/ticket-detail-page"
-import TicketPage from "./pages/mypage/ticket-page"
+import PaymentSeccessPage from "./pages/payment-success-page"
 import RootLayout from "./pages/root-layout"
 import SignUpPage from "./pages/signup-page"
 import VerifyPage from "./pages/verify-page"
@@ -80,12 +80,12 @@ const router = createBrowserRouter(
               Component: SavedEventPage,
             },
             {
-              path: "mypage/tickets",
-              Component: TicketPage,
+              path: "mypage/bookings",
+              Component: MyBookingsPage,
             },
             {
-              path: "mypage/tickets/:bookingId",
-              Component: TicketDetailPage,
+              path: "mypage/bookings/:bookingId",
+              Component: BookingDetailPage,
             },
           ],
         },

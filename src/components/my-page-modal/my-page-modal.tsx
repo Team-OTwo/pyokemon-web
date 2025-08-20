@@ -19,7 +19,7 @@ const MyPageModal: React.FC<MyPageModalProps> = ({ setShowMyPageModal }) => {
   }
 
   const menus: MenuItem[] = [
-    { title: "예매 내역", path: "/mypage/tickets" },
+    { title: "예매 내역", path: "/mypage/bookings" },
     { title: "관심 공연", path: "/mypage/saved" },
     { title: "본인 인증", path: "/verify", description: isVerified ? "인증 완료" : "인증 미완료" },
     { title: "로그아웃", path: "/" },

@@ -1,5 +1,5 @@
 import React from "react"
-import { ticket } from "@/constants/ticket"
+import { useGetBookingDetailQuery } from "@/api/mypage/queries/use-get-booking-detail-query"
 import { mapTicketDetailToTicket } from "@/utils/map-ticket"
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
@@ -9,31 +9,45 @@ import { useNavigate, useParams } from "react-router"
 import Button from "@/components/ui/button"
 import TicketCard from "@/components/ticket-card/ticket-card"
 
-const TicketDetailPage = () => {
+import ErrorPage from "../error-page"
+import LoadingPage from "../loading-page"
+
+const BookingDetailPage = () => {
   const { bookingId } = useParams()
   const navigate = useNavigate()
+
+  const { data, isLoading, error } = useGetBookingDetailQuery(Number(bookingId))
+
+  if (isLoading || !data) {
+    return <LoadingPage />
+  }
+
+  if (error) {
+    return <ErrorPage />
+  }
+
   const labelStyle = "text-16-medium text-gray-700 w-100"
   const valueStyle = "text-16-medium text-black"
-  const seat = `${ticket.seat.className}-${ticket.seat.col}열-${ticket.seat.row}`
+  const seat = `${data.seat.className}-${data.seat.col}열-${data.seat.row}`
 
-  const ticketInfoList = [
-    { label: "예매자", value: ticket.user.name },
-    { label: "예매번호", value: ticket.bookingId },
+  const bookingInfoList = [
+    { label: "예매자", value: data.user.name },
+    { label: "예매번호", value: data.bookingId },
     {
       label: "예매일",
-      value: format(new Date(ticket.createdAt), "yyyy.MM.dd(iii) HH:mm", { locale: ko }),
+      value: format(new Date(data.createdAt), "yyyy.MM.dd(iii) HH:mm", { locale: ko }),
     },
     { label: "좌석", value: seat },
   ]
 
   const paymentInfoList = [
-    { label: "결제 수단", value: ticket.payment.method },
-    { label: "결제 상태", value: ticket.payment.status },
+    { label: "결제 수단", value: data.payment.method },
+    { label: "결제 상태", value: data.payment.status },
     {
       label: "결제일",
-      value: format(new Date(ticket.payment.paidAt), "yyyy.MM.dd(iii) HH:mm", { locale: ko }),
+      value: format(new Date(data.payment.paidAt), "yyyy.MM.dd(iii) HH:mm", { locale: ko }),
     },
-    { label: "결제 금액", value: ticket.payment.amount.toLocaleString() + "원" },
+    { label: "결제 금액", value: data.payment.amount.toLocaleString() + "원" },
   ]
 
   return (
@@ -46,14 +60,14 @@ const TicketDetailPage = () => {
         예매 상세
       </h1>
       <div className="my-32">
-        <TicketCard ticket={mapTicketDetailToTicket(ticket)} />
+        <TicketCard ticket={mapTicketDetailToTicket(data)} />
 
         <div className="flex justify-between py-48">
           {/* 예매내역 */}
           <div>
             <h3 className="title-18-bold mb-24">예매 내역</h3>
             <ul className="flex flex-col gap-24">
-              {ticketInfoList.map((item, idx) => (
+              {bookingInfoList.map((item, idx) => (
                 <li className="flex" key={idx}>
                   <span className={labelStyle}>{item.label}</span>
                   <span className={valueStyle}>{item.value}</span>
@@ -81,4 +95,4 @@ const TicketDetailPage = () => {
   )
 }
 
-export default TicketDetailPage
+export default BookingDetailPage
