@@ -132,6 +132,7 @@ const BookingPage = () => {
               seats={seats || []}
               onSeatSelect={handleSeatSelect}
               selectedSeat={selectedSeat}
+              eventScheduleId={Number(eventId)}
             />
           )}
         </div>

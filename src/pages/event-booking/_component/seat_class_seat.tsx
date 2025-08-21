@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react"
+
+import { getRedisBooking } from "../../../api/booking/fetchers/get-event-booking"
 import { SelectedSeat } from "../../../types/booking"
 
 const SeatClassSeat = ({
@@ -5,16 +8,41 @@ const SeatClassSeat = ({
   seats,
   onSeatSelect,
   selectedSeat,
+  eventScheduleId,
 }: {
   seatGrade: string
   seats: SelectedSeat[]
   onSeatSelect: (seat: SelectedSeat) => void
   selectedSeat?: SelectedSeat | null
+  eventScheduleId: number
 }) => {
-  const rows = [...new Set(seats.map((seat) => seat.row))].sort()
-  const cols = [...new Set(seats.map((seat) => seat.col))].sort((a, b) => parseInt(a) - parseInt(b))
+  const [updatedSeats, setUpdatedSeats] = useState<SelectedSeat[]>(seats)
+
+  useEffect(() => {
+    const fetchSeatStatus = async () => {
+      try {
+        const redisData = await getRedisBooking(eventScheduleId)
+        const updatedSeatsData = seats.map((seat) => ({
+          ...seat,
+          isBooked: redisData[seat.seatId] !== "",
+        }))
+
+        setUpdatedSeats(updatedSeatsData)
+      } catch (error) {
+        console.error("Failed to fetch seat status:", error)
+        setUpdatedSeats(seats)
+      }
+    }
+
+    fetchSeatStatus()
+  }, [eventScheduleId, seats])
+
+  const rows = [...new Set(updatedSeats.map((seat) => seat.row))].sort()
+  const cols = [...new Set(updatedSeats.map((seat) => seat.col))].sort(
+    (a, b) => parseInt(a) - parseInt(b)
+  )
   const seatMap = new Map<string, SelectedSeat>()
-  seats.forEach((seat) => {
+  updatedSeats.forEach((seat) => {
     seatMap.set(`${seat.row}-${seat.col}`, seat)
   })
 
@@ -23,7 +51,7 @@ const SeatClassSeat = ({
       "w-40 h-40 flex items-center justify-center text-xs font-bold transition-all duration-200"
 
     if (seat.isBooked) {
-      return `${baseClasses} bg-gray-400 border-0 cursor-not-allowed opacity-50`
+      return `${baseClasses} bg-white border-0 cursor-not-allowed`
     }
 
     if (selectedSeat?.seatId === seat.seatId) {
