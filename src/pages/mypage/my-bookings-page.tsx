@@ -3,6 +3,7 @@ import { useGetMyBookingsQuery } from "@/api/mypage/queries/use-get-my-bookings-
 import { useNavigate, useSearchParams } from "react-router"
 
 import { Ticket } from "@/types/ticket"
+import Button from "@/components/ui/button"
 import Pagination from "@/components/ui/pagination"
 import TicketCard from "@/components/ticket-card/ticket-card"
 
@@ -24,7 +25,25 @@ const MyBookingsPage = () => {
     setSearchParams({ page: newPage.toString() })
   }
 
-  if (isLoading || !data) {
+  if (!data || data === "") {
+    return (
+      <div className="px-160 mb-48">
+        <h1 className="title-24-bold pt-48">내 예매 내역</h1>
+        <p className="text-center py-120 text-gray-500">예매 내역이 없습니다.</p>
+        <div className="w-full flex justify-center items-center">
+          <Button
+            text="공연 예매하러 가기"
+            border
+            borderColor="primary"
+            bgColor="white"
+            color="primary"
+            onClick={() => navigate("/event")}
+          />
+        </div>
+      </div>
+    )
+  }
+  if (isLoading) {
     return <LoadingPage />
   }
 
