@@ -1,6 +1,6 @@
 import { bffClient, setAuthorizationHeader } from "@/api/client/base-client"
 
-export const fetchMyBooking = async () => {
+export const fetchMyBooking = async (page: number = 0, size: number = 10) => {
   const accessToken = localStorage.getItem("accessToken")
 
   if (!accessToken) {
@@ -9,7 +9,9 @@ export const fetchMyBooking = async () => {
 
   try {
     setAuthorizationHeader(accessToken)
-    const res = await bffClient.get(`/api/mypage/bookings`)
+    const res = await bffClient.get(`/api/mypage/bookings`, {
+      params: { page, size },
+    })
     console.log(res.data)
     return res.data
   } catch (error) {
