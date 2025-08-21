@@ -9,6 +9,7 @@ interface TicketCardProps {
 }
 
 const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
+  const statusStyle = ticket.status === "예약 취소" ? "text-error" : "text-primary"
   return (
     <div className="shadow-container w-full p-24 bg-white rounded-lg h-200">
       <div className="flex justify-between h-full">
@@ -29,7 +30,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
         </div>
 
         <div className="flex flex-col justify-between text-end">
-          <p className="text-16-medium text-primary">{ticket.status}</p>
+          <p className={`text-16-medium ${statusStyle}`}>{ticket.status}</p>
           <p className="title-18-bold truncate">{ticket.totalPrice.toLocaleString()}원</p>
         </div>
       </div>
