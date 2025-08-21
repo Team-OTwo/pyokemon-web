@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react"
+
+import { getRedisBooking } from "../../../api/booking/fetchers/get-event-booking"
 import SeatingChart from "../../../assets/images/Seating_Chart.png"
 import Button from "../../../components/ui/button"
 import { EventBookingResponse, SelectedSeat } from "../../../types/booking"
@@ -6,11 +9,31 @@ const BookingSidebar = ({
   bookingData,
   selectedSeat,
   onPayment,
+  eventScheduleId,
 }: {
   bookingData: EventBookingResponse[]
   selectedSeat?: SelectedSeat | null
   onPayment: () => void
+  eventScheduleId: number
 }) => {
+  const [availableSeats, setAvailableSeats] = useState<number>(0)
+
+  useEffect(() => {
+    const fetchAvailableSeats = async () => {
+      try {
+        const redisData = await getRedisBooking(eventScheduleId)
+        // 빈 문자열로 된 좌석들만 카운트 (사용 가능한 좌석)
+        const availableCount = Object.values(redisData).filter((status) => status === "").length
+        setAvailableSeats(availableCount)
+      } catch (error) {
+        console.error("Failed to fetch available seats:", error)
+        setAvailableSeats(0)
+      }
+    }
+
+    fetchAvailableSeats()
+  }, [eventScheduleId])
+
   const getSeatGradeColor = (grade: string) => {
     switch (grade) {
       case "VIP":
@@ -30,6 +53,13 @@ const BookingSidebar = ({
     if (!selectedSeat) return 0
     const gradeInfo = bookingData.find((grade) => grade.seatGrade === selectedSeat.seatGrade)
     return gradeInfo?.price || 0
+  }
+
+  const getAvailableSeatsText = (grade: EventBookingResponse) => {
+    if (grade.seatGrade === "VIP") {
+      return `${availableSeats}석 / ${grade.seatCount}석`
+    }
+    return `N석 / ${grade.seatCount}석`
   }
 
   return (
@@ -54,7 +84,7 @@ const BookingSidebar = ({
                   {grade.seatGrade} {grade.price.toLocaleString()}원
                 </span>
               </div>
-              <span className="text-gray-700">N석 / {grade.seatCount}석</span>
+              <span className="text-gray-700">{getAvailableSeatsText(grade)}</span>
             </div>
           ))}
         </div>

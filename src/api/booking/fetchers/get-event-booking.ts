@@ -39,3 +39,20 @@ export const getEventSeatGrade = async (
     throw error
   }
 }
+
+export const getRedisBooking = async (eventScheduleId: number) => {
+  const accessToken = localStorage.getItem("accessToken")
+
+  if (!accessToken) {
+    throw new Error("Access token not found")
+  }
+
+  try {
+    setAuthorizationHeader(accessToken)
+    const response = await eventClient.get(`/api/seats/${eventScheduleId}/status`)
+    return response.data
+  } catch (error) {
+    console.error("Failed to fetch seat grade data:", error)
+    throw error
+  }
+}

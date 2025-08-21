@@ -142,6 +142,7 @@ const BookingPage = () => {
               bookingData={bookingData}
               selectedSeat={selectedSeat}
               onPayment={handlePaymentClick}
+              eventScheduleId={Number(eventId)}
             />
           )}
         </div>
