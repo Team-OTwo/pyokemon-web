@@ -1,10 +1,12 @@
 import React from "react"
+import { useDeleteEventBookingQuery } from "@/api/booking/queries/use-delete-event-booking-query"
 import { useGetBookingDetailQuery } from "@/api/mypage/queries/use-get-booking-detail-query"
 import { mapTicketDetailToTicket } from "@/utils/map-ticket"
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 import { IoChevronBackOutline } from "react-icons/io5"
 import { useNavigate, useParams } from "react-router"
+import Swal from "sweetalert2"
 
 import Button from "@/components/ui/button"
 import TicketCard from "@/components/ticket-card/ticket-card"
@@ -17,6 +19,56 @@ const BookingDetailPage = () => {
   const navigate = useNavigate()
 
   const { data, isLoading, error } = useGetBookingDetailQuery(Number(bookingId))
+  const { mutate: deleteBooking, isPending: isDeleting } = useDeleteEventBookingQuery()
+
+  const handleDeleteBooking = () => {
+    console.log("예매 상세 데이터:", data)
+    console.log("eventScheduleId:", data?.event?.eventScheduleId)
+
+    if (!data?.event?.eventScheduleId) {
+      Swal.fire({
+        icon: "error",
+        title: "오류",
+        text: "예매 정보를 찾을 수 없습니다.",
+        confirmButtonText: "확인",
+      })
+      return
+    }
+
+    Swal.fire({
+      title: "예매 취소",
+      text: "정말로 예매를 취소하시겠습니까?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "예매 취소",
+      cancelButtonText: "취소",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteBooking(data.event.eventScheduleId, {
+          onSuccess: () => {
+            Swal.fire({
+              icon: "success",
+              title: "예매 취소 완료",
+              text: "예매가 성공적으로 취소되었습니다.",
+              confirmButtonText: "확인",
+            }).then(() => {
+              navigate(-1)
+            })
+          },
+          onError: () => {
+            Swal.fire({
+              icon: "error",
+              title: "예매 취소 실패",
+              text: "예매 취소에 실패했습니다. 다시 시도해주세요.",
+              confirmButtonText: "확인",
+            })
+          },
+        })
+      }
+    })
+  }
 
   if (isLoading || !data) {
     return <LoadingPage />
@@ -25,6 +77,8 @@ const BookingDetailPage = () => {
   if (error) {
     return <ErrorPage />
   }
+
+  const isBookingCancelled = data.status === "예약 취소"
 
   const labelStyle = "text-16-medium text-gray-700 w-100"
   const valueStyle = "text-16-medium text-black"
@@ -87,7 +141,14 @@ const BookingDetailPage = () => {
                 </li>
               ))}
             </ul>
-            <Button border borderColor="error" text="예매 취소" bgColor="white" color="error" />
+            <Button
+              border
+              borderColor={isBookingCancelled ? "gray-500" : "error"}
+              text={isDeleting ? "취소 중..." : isBookingCancelled ? "예매 취소됨" : "예매 취소"}
+              bgColor="white"
+              color={isBookingCancelled ? "gray-500" : "error"}
+              onClick={isBookingCancelled ? undefined : handleDeleteBooking}
+            />
           </div>
         </div>
       </div>
