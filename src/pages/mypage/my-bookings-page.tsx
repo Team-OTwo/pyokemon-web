@@ -1,8 +1,10 @@
 import React from "react"
 import { useGetMyBookingsQuery } from "@/api/mypage/queries/use-get-my-bookings-query"
-import { useNavigate } from "react-router"
+import { useNavigate, useSearchParams } from "react-router"
 
 import { Ticket } from "@/types/ticket"
+import Button from "@/components/ui/button"
+import Pagination from "@/components/ui/pagination"
 import TicketCard from "@/components/ticket-card/ticket-card"
 
 import ErrorPage from "../error-page"
@@ -10,14 +12,38 @@ import LoadingPage from "../loading-page"
 
 const MyBookingsPage = () => {
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const page = Number(searchParams.get("page") ?? "1")
 
-  const { data, isLoading, error } = useGetMyBookingsQuery()
+  const { data, isLoading, error } = useGetMyBookingsQuery(page - 1)
 
   const handleClick = (bookingId: number) => {
     navigate(`/mypage/bookings/${bookingId}`)
   }
 
-  if (isLoading || !data) {
+  const handlePageChange = (newPage: number) => {
+    setSearchParams({ page: newPage.toString() })
+  }
+
+  if (!data || data === "") {
+    return (
+      <div className="px-160 mb-48">
+        <h1 className="title-24-bold pt-48">내 예매 내역</h1>
+        <p className="text-center py-120 text-gray-500">예매 내역이 없습니다.</p>
+        <div className="w-full flex justify-center items-center">
+          <Button
+            text="공연 예매하러 가기"
+            border
+            borderColor="primary"
+            bgColor="white"
+            color="primary"
+            onClick={() => navigate("/event")}
+          />
+        </div>
+      </div>
+    )
+  }
+  if (isLoading) {
     return <LoadingPage />
   }
 
@@ -29,7 +55,7 @@ const MyBookingsPage = () => {
     <div className="px-160 mb-48">
       <h1 className="title-24-bold pt-48">내 예매 내역</h1>
       <div className="flex flex-col gap-24 py-32">
-        {data.map((booking: Ticket) => {
+        {data.content.map((booking: Ticket) => {
           return (
             <li
               key={booking.bookingId}
@@ -40,6 +66,15 @@ const MyBookingsPage = () => {
             </li>
           )
         })}
+      </div>
+
+      <div className="flex justify-center">
+        <Pagination
+          current={data.page + 1}
+          total={data.totalCount}
+          pageSize={10}
+          onChange={(p) => handlePageChange(p)}
+        />
       </div>
     </div>
   )
