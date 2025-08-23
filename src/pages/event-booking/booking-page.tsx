@@ -5,6 +5,7 @@ import { loadTossPayments } from "@tosspayments/payment-sdk"
 import { useParams } from "react-router"
 import Swal from "sweetalert2"
 
+import { postReidsBookiing } from "../../api/booking/fetchers/post-event-booking"
 import {
   useGetEventBookingQuery,
   useGetEventSeatGradeQuery,
@@ -75,6 +76,9 @@ const BookingPage = () => {
       return
     }
     try {
+      // Redis에 HOLD 상태 올리기
+      await postReidsBookiing(Number(eventId), selectedSeat.seatId)
+
       postBooking(
         {
           eventScheduleId: Number(eventId),
@@ -108,7 +112,7 @@ const BookingPage = () => {
         }
       )
     } catch (error) {
-      console.error("토스 결제 오류:", error)
+      console.error("Redis HOLD 또는 토스 결제 오류:", error)
       Swal.fire("결제 실패", "잠시 후 다시 시도해주세요.", "error")
     } finally {
       setIsLoading(false)
@@ -132,6 +136,7 @@ const BookingPage = () => {
               seats={seats || []}
               onSeatSelect={handleSeatSelect}
               selectedSeat={selectedSeat}
+              eventScheduleId={Number(eventId)}
             />
           )}
         </div>
@@ -142,6 +147,7 @@ const BookingPage = () => {
               bookingData={bookingData}
               selectedSeat={selectedSeat}
               onPayment={handlePaymentClick}
+              eventScheduleId={Number(eventId)}
             />
           )}
         </div>

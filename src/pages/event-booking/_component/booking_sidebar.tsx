@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react"
+
+import { getRedisBooking } from "../../../api/booking/fetchers/get-event-booking"
 import SeatingChart from "../../../assets/images/Seating_Chart.png"
 import Button from "../../../components/ui/button"
 import { EventBookingResponse, SelectedSeat } from "../../../types/booking"
@@ -6,11 +9,39 @@ const BookingSidebar = ({
   bookingData,
   selectedSeat,
   onPayment,
+  eventScheduleId,
 }: {
   bookingData: EventBookingResponse[]
   selectedSeat?: SelectedSeat | null
   onPayment: () => void
+  eventScheduleId: number
 }) => {
+  const [availableSeatsByGrade, setAvailableSeatsByGrade] = useState<Record<string, number>>({})
+
+  useEffect(() => {
+    const fetchAvailableSeats = async () => {
+      try {
+        const redisData = await getRedisBooking(eventScheduleId)
+        const availableCounts: Record<string, number> = {}
+
+        // 각 등급별로 사용 가능한 좌석 수 계산
+        Object.entries(redisData).forEach(([grade, seats]) => {
+          const availableCount = Object.values(seats as Record<string, string>).filter(
+            (status) => status === ""
+          ).length
+          availableCounts[grade] = availableCount
+        })
+
+        setAvailableSeatsByGrade(availableCounts)
+      } catch (error) {
+        console.error("Failed to fetch available seats:", error)
+        setAvailableSeatsByGrade({})
+      }
+    }
+
+    fetchAvailableSeats()
+  }, [eventScheduleId])
+
   const getSeatGradeColor = (grade: string) => {
     switch (grade) {
       case "VIP":
@@ -30,6 +61,11 @@ const BookingSidebar = ({
     if (!selectedSeat) return 0
     const gradeInfo = bookingData.find((grade) => grade.seatGrade === selectedSeat.seatGrade)
     return gradeInfo?.price || 0
+  }
+
+  const getAvailableSeatsText = (grade: EventBookingResponse) => {
+    const availableCount = availableSeatsByGrade[grade.seatGrade] || 0
+    return `${availableCount}석 / ${grade.seatCount}석`
   }
 
   return (
@@ -54,7 +90,7 @@ const BookingSidebar = ({
                   {grade.seatGrade} {grade.price.toLocaleString()}원
                 </span>
               </div>
-              <span className="text-gray-700">N석 / {grade.seatCount}석</span>
+              <span className="text-gray-700">{getAvailableSeatsText(grade)}</span>
             </div>
           ))}
         </div>

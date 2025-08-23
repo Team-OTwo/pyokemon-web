@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react"
 import { useNavigate } from "react-router"
 
+import { getDuplicateId } from "../api/signup/fetchers/get-signup"
 import { postSignUp } from "../api/signup/fetchers/post-signup"
 import signup from "../assets/images/SIGN_UP.svg"
 import Button from "../components/ui/button"
@@ -83,6 +84,46 @@ function SignUpPage() {
     birth: "",
   })
   const [errors, setErrors] = useState<FormErrors>({})
+  const [isDuplicateChecked, setIsDuplicateChecked] = useState(false)
+  const [isDuplicateAvailable, setIsDuplicateAvailable] = useState(false)
+  const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false)
+
+  const handleDuplicateCheck = useCallback(async () => {
+    if (!form.loginId.trim()) {
+      setErrors((prev) => ({ ...prev, loginId: "아이디를 입력해주세요." }))
+      return
+    }
+
+    const loginIdError = validateField("loginId", form.loginId)
+    if (loginIdError) {
+      setErrors((prev) => ({ ...prev, loginId: loginIdError }))
+      return
+    }
+
+    setIsCheckingDuplicate(true)
+    try {
+      const response = await getDuplicateId(form.loginId)
+      if (response.success) {
+        setIsDuplicateChecked(true)
+        if (response.data.duplicated) {
+          setIsDuplicateAvailable(true)
+          setErrors((prev) => ({ ...prev, loginId: "" }))
+        } else {
+          setIsDuplicateAvailable(false)
+          setErrors((prev) => ({ ...prev, loginId: "이미 사용 중인 아이디입니다." }))
+        }
+      } else {
+        setIsDuplicateChecked(true)
+        setIsDuplicateAvailable(false)
+        setErrors((prev) => ({ ...prev, loginId: "중복확인에 실패했습니다." }))
+      }
+    } catch (error) {
+      console.error("중복확인 실패:", error)
+      setErrors((prev) => ({ ...prev, loginId: "중복확인 중 오류가 발생했습니다." }))
+    } finally {
+      setIsCheckingDuplicate(false)
+    }
+  }, [form.loginId])
 
   const handleFieldChange = useCallback(
     (fieldName: keyof SignUpForm, value: string) => {
@@ -97,6 +138,11 @@ function SignUpPage() {
       setForm((prev) => ({ ...prev, [fieldName]: finalValue }))
       const error = validateField(fieldName, finalValue, { ...form, [fieldName]: finalValue })
       setErrors((prev) => ({ ...prev, [fieldName]: error }))
+
+      if (fieldName === "loginId") {
+        setIsDuplicateChecked(false)
+        setIsDuplicateAvailable(false)
+      }
 
       if (fieldName === "password" && form.confirmPassword) {
         const confirmError = validateField("confirmPassword", form.confirmPassword, {
@@ -120,6 +166,10 @@ function SignUpPage() {
       if (error) newErrors[fieldName] = error
     })
 
+    if (!isDuplicateChecked || !isDuplicateAvailable) {
+      newErrors.loginId = "아이디 중복확인이 필요합니다."
+    }
+
     setErrors(newErrors)
 
     if (Object.keys(newErrors).length > 0) return
@@ -141,7 +191,7 @@ function SignUpPage() {
     } catch (error) {
       console.error("회원가입 실패:", error)
     }
-  }, [form, navigate])
+  }, [form, navigate, isDuplicateChecked, isDuplicateAvailable])
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
@@ -159,14 +209,27 @@ function SignUpPage() {
 
         <div className="flex flex-col gap-16 mb-24 w-full" onKeyDown={handleKeyDown} tabIndex={0}>
           <div>
-            <Input
-              placeholder="아이디"
-              value={form.loginId}
-              onChange={(value) => handleFieldChange("loginId", value)}
-              type="text"
-              error={!!errors.loginId}
-            />
+            <div className="flex gap-8 mr-7">
+              <Input
+                placeholder="아이디"
+                value={form.loginId}
+                onChange={(value) => handleFieldChange("loginId", value)}
+                type="text"
+                error={!!errors.loginId}
+              />
+              <Button
+                text={isCheckingDuplicate ? "확인중" : "중복확인"}
+                bgColor="primary"
+                color="white"
+                onClick={
+                  isCheckingDuplicate || !form.loginId.trim() ? undefined : handleDuplicateCheck
+                }
+              />
+            </div>
             {errors.loginId && <p className="text-error text-12-regular mt-4">{errors.loginId}</p>}
+            {isDuplicateChecked && isDuplicateAvailable && (
+              <p className="text-primary text-12-regular mt-4">사용 가능한 아이디입니다.</p>
+            )}
           </div>
 
           <div>
