@@ -25,6 +25,10 @@ const MyBookingsPage = () => {
     setSearchParams({ page: newPage.toString() })
   }
 
+  if (isLoading) {
+    return <LoadingPage />
+  }
+
   if (!data || data === "") {
     return (
       <div className="px-160 mb-48">
@@ -42,9 +46,6 @@ const MyBookingsPage = () => {
         </div>
       </div>
     )
-  }
-  if (isLoading) {
-    return <LoadingPage />
   }
 
   if (error) {
