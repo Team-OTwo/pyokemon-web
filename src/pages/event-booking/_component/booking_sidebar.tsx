@@ -16,18 +16,26 @@ const BookingSidebar = ({
   onPayment: () => void
   eventScheduleId: number
 }) => {
-  const [availableSeats, setAvailableSeats] = useState<number>(0)
+  const [availableSeatsByGrade, setAvailableSeatsByGrade] = useState<Record<string, number>>({})
 
   useEffect(() => {
     const fetchAvailableSeats = async () => {
       try {
         const redisData = await getRedisBooking(eventScheduleId)
-        // 빈 문자열로 된 좌석들만 카운트 (사용 가능한 좌석)
-        const availableCount = Object.values(redisData).filter((status) => status === "").length
-        setAvailableSeats(availableCount)
+        const availableCounts: Record<string, number> = {}
+
+        // 각 등급별로 사용 가능한 좌석 수 계산
+        Object.entries(redisData).forEach(([grade, seats]) => {
+          const availableCount = Object.values(seats as Record<string, string>).filter(
+            (status) => status === ""
+          ).length
+          availableCounts[grade] = availableCount
+        })
+
+        setAvailableSeatsByGrade(availableCounts)
       } catch (error) {
         console.error("Failed to fetch available seats:", error)
-        setAvailableSeats(0)
+        setAvailableSeatsByGrade({})
       }
     }
 
@@ -56,10 +64,8 @@ const BookingSidebar = ({
   }
 
   const getAvailableSeatsText = (grade: EventBookingResponse) => {
-    if (grade.seatGrade === "VIP") {
-      return `${availableSeats}석 / ${grade.seatCount}석`
-    }
-    return `N석 / ${grade.seatCount}석`
+    const availableCount = availableSeatsByGrade[grade.seatGrade] || 0
+    return `${availableCount}석 / ${grade.seatCount}석`
   }
 
   return (

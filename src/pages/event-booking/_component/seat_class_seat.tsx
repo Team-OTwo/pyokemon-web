@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-import { getRedisBooking } from "../../../api/booking/fetchers/get-event-booking"
+import { getRedisBookingBySeatClass } from "../../../api/booking/fetchers/get-event-booking"
 import { SelectedSeat } from "../../../types/booking"
 
 const SeatClassSeat = ({
@@ -21,10 +21,10 @@ const SeatClassSeat = ({
   useEffect(() => {
     const fetchSeatStatus = async () => {
       try {
-        const redisData = await getRedisBooking(eventScheduleId)
+        const redisData = await getRedisBookingBySeatClass(eventScheduleId, seatGrade)
         const updatedSeatsData = seats.map((seat) => ({
           ...seat,
-          isBooked: redisData[seat.seatId] !== "",
+          isBooked: redisData[seat.seatId.toString()] !== "",
         }))
 
         setUpdatedSeats(updatedSeatsData)
@@ -35,7 +35,7 @@ const SeatClassSeat = ({
     }
 
     fetchSeatStatus()
-  }, [eventScheduleId, seats])
+  }, [eventScheduleId, seats, seatGrade])
 
   const rows = [...new Set(updatedSeats.map((seat) => seat.row))].sort()
   const cols = [...new Set(updatedSeats.map((seat) => seat.col))].sort(
