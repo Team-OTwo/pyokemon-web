@@ -1,6 +1,12 @@
-import React from "react"
+import React, { ReactNode } from "react"
 import { postLogout } from "@/api/login/fetchers/post-login"
-import { IoChevronForwardOutline } from "react-icons/io5"
+import {
+  IoBookmarkOutline,
+  IoChevronForwardOutline,
+  IoLogOutOutline,
+  IoShieldCheckmarkOutline,
+  IoTicketOutline,
+} from "react-icons/io5"
 import { useNavigate } from "react-router"
 
 interface MyPageModalProps {
@@ -16,13 +22,27 @@ const MyPageModal: React.FC<MyPageModalProps> = ({ setShowMyPageModal }) => {
     title: string
     path: string
     description?: string
+    icon?: ReactNode
   }
 
   const menus: MenuItem[] = [
-    { title: "예매 내역", path: "/mypage/bookings" },
-    { title: "관심 공연", path: "/mypage/saved" },
-    { title: "본인 인증", path: "/verify", description: isVerified ? "인증 완료" : "인증 미완료" },
-    { title: "로그아웃", path: "/" },
+    {
+      title: "예매 내역",
+      path: "/mypage/bookings",
+      icon: <IoTicketOutline size={20} className="text-gray-700" />,
+    },
+    {
+      title: "관심 공연",
+      path: "/mypage/saved",
+      icon: <IoBookmarkOutline size={20} className="text-gray-700" />,
+    },
+    {
+      title: "본인 인증",
+      path: "/verify",
+      description: isVerified ? "인증 완료" : "인증 미완료",
+      icon: <IoShieldCheckmarkOutline size={20} className="text-gray-700" />,
+    },
+    { title: "로그아웃", path: "/", icon: <IoLogOutOutline size={20} className="text-error" /> },
   ]
 
   const handleClickMenu = async (menu: MenuItem) => {
@@ -66,7 +86,10 @@ const MyPageModal: React.FC<MyPageModalProps> = ({ setShowMyPageModal }) => {
               key={menu.title}
               onClick={() => handleClickMenu(menu)}
             >
-              {menu.title}{" "}
+              <div className="flex items-center gap-8">
+                {menu.icon}
+                {menu.title}
+              </div>
               <div className={listStyle}>
                 {menu.description && <span>{menu.description}</span>}
                 <IoChevronForwardOutline />

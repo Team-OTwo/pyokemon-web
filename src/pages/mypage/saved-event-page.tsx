@@ -1,7 +1,6 @@
 import React from "react"
 import { useGetSavedEventQuery } from "@/api/event/queries/use-get-saved-event-query"
-import { LuBookmark } from "react-icons/lu"
-import { PiBookmarkSimpleFill } from "react-icons/pi"
+import { IoBookmarkOutline } from "react-icons/io5"
 import { useNavigate, useSearchParams } from "react-router"
 
 import { EventType } from "@/types/event"
@@ -34,7 +33,7 @@ const SavedEventPage = () => {
   return (
     <div className="px-160 mb-48">
       <h1 className="title-24-bold pt-48 flex items-center gap-12">
-        <PiBookmarkSimpleFill className="text-black" />
+        <IoBookmarkOutline className="text-black" />
         관심 공연
       </h1>
 
