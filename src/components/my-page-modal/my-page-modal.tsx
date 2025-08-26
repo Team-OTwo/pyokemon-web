@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react"
+import React, { ReactNode, useEffect, useRef } from "react"
 import { postLogout } from "@/api/login/fetchers/post-login"
 import {
   IoBookmarkOutline,
@@ -11,12 +11,14 @@ import { useNavigate } from "react-router"
 
 interface MyPageModalProps {
   setShowMyPageModal: (value: boolean) => void
+  triggerRef?: React.RefObject<HTMLElement | null>
 }
 
-const MyPageModal: React.FC<MyPageModalProps> = ({ setShowMyPageModal }) => {
+const MyPageModal: React.FC<MyPageModalProps> = ({ setShowMyPageModal, triggerRef }) => {
   const navigate = useNavigate()
   const userName = localStorage.getItem("name") || ""
   const isVerified = localStorage.getItem("isVerified") === "true"
+  const modalRef = useRef<HTMLDivElement>(null)
 
   interface MenuItem {
     title: string
@@ -64,8 +66,30 @@ const MyPageModal: React.FC<MyPageModalProps> = ({ setShowMyPageModal }) => {
   }
 
   const listStyle = "text-sm text-gray-500 flex items-center justify-end gap-4"
+
+  // 바깥 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(e.target as Node) &&
+        triggerRef?.current &&
+        !triggerRef.current.contains(e.target as Node)
+      ) {
+        setShowMyPageModal(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [setShowMyPageModal])
+
   return (
-    <div className="absolute z-20 right-0 top-48 w-320 shadow-container rounded-xl overflow-hidden border-1 border-gray-300">
+    <div
+      ref={modalRef}
+      className="absolute z-120 right-0 top-48 w-320 shadow-container rounded-xl overflow-hidden border-1 border-gray-300"
+    >
       <ul className="w-full">
         <li
           className="px-16 py-20 bg-gray-100 flex justify-between items-center cursor-pointer"
