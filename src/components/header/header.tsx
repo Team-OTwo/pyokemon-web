@@ -34,6 +34,15 @@ function Header() {
     }
   }
 
+  const handleClickNotification = () => {
+    const accessToken = localStorage.getItem("accessToken")
+    if (accessToken) {
+      setShowNotification(!showNotification)
+    } else {
+      navigate("login")
+    }
+  }
+
   const handleSearch = () => {
     if (keyword.trim()) {
       navigate(`/event/search?keyword=${keyword}`)
@@ -92,7 +101,7 @@ function Header() {
             </li>
             <li
               className={listStyle}
-              onClick={() => setShowNotification(!showNotification)}
+              onClick={() => handleClickNotification()}
               ref={notificationRef}
             >
               <IoNotificationsOutline className={iconStyle} />

@@ -16,7 +16,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   createdAt,
 }) => {
   return (
-    <div className="p-16 border-b-1 border-gray-100 flex justify-between items-center">
+    <div className="p-16 border-b-1 border-gray-100 flex justify-between items-center bg-primary/10">
       <div>
         <p className="text-16-bold">{title}</p>
         <p className="text-16-medium mb-8">{message}</p>
