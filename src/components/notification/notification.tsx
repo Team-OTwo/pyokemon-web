@@ -35,7 +35,7 @@ const Notification = () => {
   ]
 
   return (
-    <div className="absolute z-10 right-0 top-48 w-320 shadow-container rounded-xl">
+    <div className="absolute z-20 right-0 top-48 w-320 shadow-container rounded-xl">
       <h1 className="title-18-bold border-b-1 border-gray-100 py-16 px-24">알림</h1>
 
       <div className="h-360 overflow-y-scroll">

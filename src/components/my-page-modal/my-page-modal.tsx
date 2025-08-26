@@ -65,7 +65,7 @@ const MyPageModal: React.FC<MyPageModalProps> = ({ setShowMyPageModal }) => {
 
   const listStyle = "text-sm text-gray-500 flex items-center justify-end gap-4"
   return (
-    <div className="absolute z-10 right-0 top-48 w-320 shadow-container rounded-xl overflow-hidden border-1 border-gray-300">
+    <div className="absolute z-20 right-0 top-48 w-320 shadow-container rounded-xl overflow-hidden border-1 border-gray-300">
       <ul className="w-full">
         <li
           className="px-16 py-20 bg-gray-100 flex justify-between items-center cursor-pointer"
