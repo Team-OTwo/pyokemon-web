@@ -44,7 +44,7 @@ const Banner = () => {
           pagination={{ el: ".banner-pagination", clickable: true }}
           onSwiper={setSwiperInstance}
           onSlideChange={handleSlideChange}
-          className="w-full"
+          className="w-full pointer-events-none"
         >
           {bannerData.map((banner) => (
             <SwiperSlide key={banner.id}>

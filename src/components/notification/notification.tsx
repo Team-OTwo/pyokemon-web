@@ -1,8 +1,15 @@
-import React from "react"
+import React, { useEffect, useRef } from "react"
 
 import NotificationItem from "./notification-item"
 
-const Notification = () => {
+interface NotificationProps {
+  setShowNotification: (value: boolean) => void
+  triggerRef?: React.RefObject<HTMLElement | null>
+}
+
+const Notification: React.FC<NotificationProps> = ({ setShowNotification, triggerRef }) => {
+  const modalRef = useRef<HTMLDivElement>(null)
+
   const notifications = [
     {
       id: 1,
@@ -34,8 +41,26 @@ const Notification = () => {
     },
   ]
 
+  // 🔹 바깥 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(e.target as Node) &&
+        triggerRef?.current &&
+        !triggerRef.current.contains(e.target as Node)
+      ) {
+        setShowNotification(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [setShowNotification])
+
   return (
-    <div className="absolute z-10 right-0 top-48 w-320 shadow-container rounded-xl">
+    <div className="absolute z-20 right-0 top-48 w-320 shadow-container rounded-xl" ref={modalRef}>
       <h1 className="title-18-bold border-b-1 border-gray-100 py-16 px-24">알림</h1>
 
       <div className="h-360 overflow-y-scroll">

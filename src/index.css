@@ -35,6 +35,14 @@ li{
     @apply text-2xl font-bold;
   }
 
+  .title-24-semibold {
+    @apply text-2xl font-semibold;
+  }
+
+  .title-24-medium {
+    @apply text-2xl font-medium;
+  }
+
   .title-20-bold {
     @apply text-xl font-bold;
   }
@@ -57,6 +65,14 @@ li{
 
   .text-16-medium {
     @apply text-base font-medium;
+  }
+
+  .text-16-normal {
+    @apply text-base font-normal;
+  }
+
+  .text-16-light {
+    @apply text-base font-light;
   }
 
   .text-14-semibold {

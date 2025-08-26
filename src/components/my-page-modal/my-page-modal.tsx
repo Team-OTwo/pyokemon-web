@@ -1,28 +1,50 @@
-import React from "react"
+import React, { ReactNode, useEffect, useRef } from "react"
 import { postLogout } from "@/api/login/fetchers/post-login"
-import { IoChevronForwardOutline } from "react-icons/io5"
+import {
+  IoBookmarkOutline,
+  IoChevronForwardOutline,
+  IoLogOutOutline,
+  IoShieldCheckmarkOutline,
+  IoTicketOutline,
+} from "react-icons/io5"
 import { useNavigate } from "react-router"
 
 interface MyPageModalProps {
   setShowMyPageModal: (value: boolean) => void
+  triggerRef?: React.RefObject<HTMLElement | null>
 }
 
-const MyPageModal: React.FC<MyPageModalProps> = ({ setShowMyPageModal }) => {
+const MyPageModal: React.FC<MyPageModalProps> = ({ setShowMyPageModal, triggerRef }) => {
   const navigate = useNavigate()
   const userName = localStorage.getItem("name") || ""
   const isVerified = localStorage.getItem("isVerified") === "true"
+  const modalRef = useRef<HTMLDivElement>(null)
 
   interface MenuItem {
     title: string
     path: string
     description?: string
+    icon?: ReactNode
   }
 
   const menus: MenuItem[] = [
-    { title: "예매 내역", path: "/mypage/bookings" },
-    { title: "관심 공연", path: "/mypage/saved" },
-    { title: "본인 인증", path: "/verify", description: isVerified ? "인증 완료" : "인증 미완료" },
-    { title: "로그아웃", path: "/" },
+    {
+      title: "예매 내역",
+      path: "/mypage/bookings",
+      icon: <IoTicketOutline size={20} className="text-gray-700" />,
+    },
+    {
+      title: "관심 공연",
+      path: "/mypage/saved",
+      icon: <IoBookmarkOutline size={20} className="text-gray-700" />,
+    },
+    {
+      title: "본인 인증",
+      path: "/verify",
+      description: isVerified ? "인증 완료" : "인증 미완료",
+      icon: <IoShieldCheckmarkOutline size={20} className="text-gray-700" />,
+    },
+    { title: "로그아웃", path: "/", icon: <IoLogOutOutline size={20} className="text-error" /> },
   ]
 
   const handleClickMenu = async (menu: MenuItem) => {
@@ -44,8 +66,30 @@ const MyPageModal: React.FC<MyPageModalProps> = ({ setShowMyPageModal }) => {
   }
 
   const listStyle = "text-sm text-gray-500 flex items-center justify-end gap-4"
+
+  // 바깥 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(e.target as Node) &&
+        triggerRef?.current &&
+        !triggerRef.current.contains(e.target as Node)
+      ) {
+        setShowMyPageModal(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [setShowMyPageModal])
+
   return (
-    <div className="absolute z-10 right-0 top-48 w-320 shadow-container rounded-xl overflow-hidden border-1 border-gray-300">
+    <div
+      ref={modalRef}
+      className="absolute z-120 right-0 top-48 w-320 shadow-container rounded-xl overflow-hidden border-1 border-gray-300"
+    >
       <ul className="w-full">
         <li
           className="px-16 py-20 bg-gray-100 flex justify-between items-center cursor-pointer"
@@ -66,7 +110,10 @@ const MyPageModal: React.FC<MyPageModalProps> = ({ setShowMyPageModal }) => {
               key={menu.title}
               onClick={() => handleClickMenu(menu)}
             >
-              {menu.title}{" "}
+              <div className="flex items-center gap-8">
+                {menu.icon}
+                {menu.title}
+              </div>
               <div className={listStyle}>
                 {menu.description && <span>{menu.description}</span>}
                 <IoChevronForwardOutline />

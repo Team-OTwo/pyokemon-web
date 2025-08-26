@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { IoNotificationsOutline, IoPersonOutline, IoSearchOutline } from "react-icons/io5"
 import { Link, useLocation, useNavigate } from "react-router"
 
@@ -22,6 +22,8 @@ function Header() {
   const navigate = useNavigate()
   const [showNotification, setShowNotification] = useState(false)
   const [showMyPageModal, setShowMyPageModal] = useState(false)
+  const myPageRef = useRef<HTMLLIElement>(null)
+  const notificationRef = useRef<HTMLLIElement>(null)
 
   const handleClickMyPage = () => {
     const accessToken = localStorage.getItem("accessToken")
@@ -88,14 +90,25 @@ function Header() {
             <li className={listStyle} onClick={() => setShowSearchBar(!showSearchBar)}>
               <IoSearchOutline className={iconStyle} />
             </li>
-            <li className={listStyle} onClick={() => setShowNotification(!showNotification)}>
+            <li
+              className={listStyle}
+              onClick={() => setShowNotification(!showNotification)}
+              ref={notificationRef}
+            >
               <IoNotificationsOutline className={iconStyle} />
             </li>
-            {showNotification && <Notification />}
-            <li className={listStyle} onClick={() => handleClickMyPage()}>
+            {showNotification && (
+              <Notification
+                setShowNotification={setShowNotification}
+                triggerRef={notificationRef}
+              />
+            )}
+            <li className={listStyle} onClick={() => handleClickMyPage()} ref={myPageRef}>
               <IoPersonOutline className={iconStyle} />
             </li>
-            {showMyPageModal && <MyPageModal setShowMyPageModal={setShowMyPageModal} />}
+            {showMyPageModal && (
+              <MyPageModal setShowMyPageModal={setShowMyPageModal} triggerRef={myPageRef} />
+            )}
           </ul>
         </nav>
       </div>

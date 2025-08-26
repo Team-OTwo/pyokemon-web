@@ -19,7 +19,7 @@ const EventPreviewCard: React.FC<EventPreviewProps> = ({ openAt, event }) => {
 
   return (
     <div className="mb-8" onClick={handleClick}>
-      <div className="relative mb-8 aspect-[3/4]">
+      <div className="relative mb-12 aspect-[3/4]">
         <img src={event.thumbnailUrl} alt="img" className="rounded-lg object-cover w-full h-full" />
       </div>
       {openAt && (
@@ -29,7 +29,8 @@ const EventPreviewCard: React.FC<EventPreviewProps> = ({ openAt, event }) => {
       )}
 
       <p className="title-18-bold mb-4">{event.title}</p>
-      <p className="text-gray-700 text-14-medium mb-6">
+      <p className="text-16-normal">{event.venueName}</p>
+      <p className="text-gray-700 text-16-normal mb-6">
         {format(event.eventDate, "yyyy.MM.dd (iii)", { locale: ko })}
       </p>
     </div>
