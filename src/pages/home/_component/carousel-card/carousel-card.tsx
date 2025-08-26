@@ -24,11 +24,11 @@ const CarouselCard: React.FC<CarouselCardProps> = ({ event }) => {
 
       {/* text */}
       <div className="p-24 z-1 text-white bg-gradient-to-b from-black/0 to-black/75 absolute bottom-0 left-0 w-full">
-        <h1 className="title-24-bold pb-12">{event.title}</h1>
-        <p className="text-16-medium">{event.venueName}</p>
+        <h1 className="title-24-bold pb-8 pt-32">{event.title}</h1>
         <p className="text-16-medium">
           {format(event.eventDate, "yyyy.MM.dd (iii)", { locale: ko })}
         </p>
+        <p className="text-16-light">{event.venueName}</p>
       </div>
     </div>
   )
