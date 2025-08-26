@@ -59,21 +59,27 @@ const EventListPage = () => {
         })}
       </ul>
 
-      {/* event */}
-      <div className="grid grid-cols-3 gap-24">
-        {eventList.map((event, i) => {
-          return <EventPreviewCard key={i} event={event} />
-        })}
-      </div>
+      {!eventList || eventList.length == 0 ? (
+        <p className="text-center text-gray-700 py-120">조회된 공연이 없습니다. </p>
+      ) : (
+        <>
+          {/* event */}
+          <div className="grid grid-cols-3 gap-24">
+            {eventList.map((event, i) => {
+              return <EventPreviewCard key={i} event={event} />
+            })}
+          </div>
 
-      <div className="flex justify-center mt-12">
-        <Pagination
-          current={page}
-          total={eventList[0]?.total ?? 0}
-          pageSize={9}
-          onChange={(p) => handlePageChange(p)}
-        />
-      </div>
+          <div className="flex justify-center mt-12">
+            <Pagination
+              current={page}
+              total={eventList[0]?.total ?? 0}
+              pageSize={9}
+              onChange={(p) => handlePageChange(p)}
+            />
+          </div>
+        </>
+      )}
     </div>
   )
 }
