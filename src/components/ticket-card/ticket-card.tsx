@@ -9,7 +9,7 @@ interface TicketCardProps {
 }
 
 const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
-  const statusStyle = ticket.status === "예약 취소" ? "text-error" : "text-primary"
+  const statusStyle = ticket.status === "예매 취소" ? "text-error" : "text-success"
   return (
     <div className="shadow-container w-full p-24 bg-white rounded-lg h-200">
       <div className="flex justify-between h-full">
@@ -22,7 +22,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
           />
           <div>
             <h3 className="title-18-bold mb-8">{ticket.eventTitle}</h3>
-            <p className="text-16-bold text-gray-700">
+            <p className="text-16-semibold text-black">
               {format(ticket.eventDate, "yyyy.MM.dd(iii) HH:mm", { locale: ko })}
             </p>
             <p className="text-6-medium text-gray-700">{ticket.venueName}</p>
