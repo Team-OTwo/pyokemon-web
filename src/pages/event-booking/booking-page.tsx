@@ -88,11 +88,13 @@ const BookingPage = () => {
         {
           onSuccess: async (bookingResponse) => {
             const res = await initiatePayment({
-              bookingId: bookingResponse.bookingId,
-              orderId: `ORDER_${Date.now()}_${Math.floor(Math.random() * 100000)}`,
-              amount: getSelectedSeatPrice(),
-              method: "카드",
-              accountId: 1,
+              payment: {
+                bookingId: bookingResponse.bookingId,
+                orderId: `ORDER_${Date.now()}_${Math.floor(Math.random() * 100000)}`,
+                amount: getSelectedSeatPrice(),
+                method: "카드",
+              },
+              eventScheduleId: Number(eventId),
             })
             const { orderId, amount } = res
             const tossPayments = await loadTossPayments(getTossClientKey())

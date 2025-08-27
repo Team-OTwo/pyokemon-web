@@ -2,9 +2,12 @@ import { PaymentsConfirmType } from "@/types/payments"
 
 import { paymentClient } from "../../client"
 
-export const fetchPaymentsInitiate = async (payment: PaymentsConfirmType) => {
+export const fetchPaymentsInitiate = async (
+  payment: PaymentsConfirmType,
+  eventScheduleId: number
+) => {
   try {
-    const res = await paymentClient.post("/api/payments/initiate", payment)
+    const res = await paymentClient.post(`/api/payments/initiate/${eventScheduleId}`, payment)
     return res.data
   } catch (err) {
     throw new Error("임시 저장 실패")
