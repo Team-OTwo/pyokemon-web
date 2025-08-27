@@ -2,9 +2,9 @@ import { useInfiniteQuery } from "@tanstack/react-query"
 
 import { fetchNotifications } from "../fetchers/get-notifications"
 
-export const useGetNotificationsQuery = (cursorId?: number) => {
+export const useGetNotificationsQuery = () => {
   return useInfiniteQuery({
-    queryKey: ["notifications", cursorId],
+    queryKey: ["notifications"],
     queryFn: async ({ pageParam }) => {
       return fetchNotifications(pageParam?.cursorId)
     },

@@ -4,6 +4,7 @@ import ErrorPage from "@/pages/error-page"
 import LoadingPage from "@/pages/loading-page"
 
 import { Notification } from "@/types/notification"
+import { useInfiniteScrollQuery } from "@/hooks/useInfiniteScrollQuery"
 
 import NotificationItem from "./notification-item"
 
@@ -36,13 +37,15 @@ const NotificationModal: React.FC<NotificationProps> = ({ setShowNotification, t
   const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useGetNotificationsQuery()
 
-  const notifications: Notification[] = useMemo(() => {
-    return data?.pages.flatMap((page) => page.events) ?? []
-  }, [data])
+  const sentinelRef = useInfiniteScrollQuery({
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  })
 
-  if (isLoading) {
-    return <LoadingPage />
-  }
+  const notifications: Notification[] = useMemo(() => {
+    return data?.pages.flatMap((page) => page.notifications) ?? []
+  }, [data])
 
   if (error) {
     return <ErrorPage />
@@ -52,21 +55,27 @@ const NotificationModal: React.FC<NotificationProps> = ({ setShowNotification, t
     <div className="absolute z-20 right-0 top-48 w-320 shadow-container rounded-xl" ref={modalRef}>
       <h1 className="title-18-bold border-b-1 border-gray-100 py-16 px-24">알림</h1>
 
-      <div className="h-360 overflow-y-scroll">
-        <ul>
-          {notifications?.map((item) => {
-            return (
-              <li key={item.notificationId}>
-                <NotificationItem
-                  title={item.title}
-                  message={item.message}
-                  isRead={item.isChecked}
-                  createdAt={item.createdAt}
-                />
-              </li>
-            )
-          })}
-        </ul>
+      <div className="h-360 overflow-y-scroll overscroll-contain">
+        {isLoading ? (
+          <LoadingPage full />
+        ) : (
+          <ul>
+            {notifications.map((item) => {
+              return (
+                <li key={item.notificationId}>
+                  <NotificationItem
+                    title={item.title}
+                    message={item.message}
+                    isRead={item.isChecked}
+                    createdAt={item.createdAt}
+                  />
+                </li>
+              )
+            })}
+          </ul>
+        )}
+
+        <div ref={sentinelRef}></div>
       </div>
     </div>
   )
