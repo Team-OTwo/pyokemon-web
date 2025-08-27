@@ -81,6 +81,9 @@ li{
   .text-14-medium {
     @apply text-sm font-medium;
   }
+  .text-14-normal {
+    @apply text-sm font-normal;
+  }
 
   .shadow-container{
     @apply bg-white shadow-[0px_0px_10px_0px_rgba(0,0,0,0.10)]
