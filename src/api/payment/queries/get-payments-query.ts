@@ -5,9 +5,15 @@ import { PaymentsConfirmType } from "@/types/payments"
 
 import { fetchPaymentsConfirm, fetchPaymentsInitiate } from "../fetchers/get-payment"
 
+type PaymentInitiateParams = {
+  payment: PaymentsConfirmType
+  eventScheduleId: number
+}
+
 export const usePostPaymentInitiateMutation = () => {
   return useMutation({
-    mutationFn: (payment: PaymentsConfirmType) => fetchPaymentsInitiate(payment),
+    mutationFn: ({ payment, eventScheduleId }: PaymentInitiateParams) =>
+      fetchPaymentsInitiate(payment, eventScheduleId),
   })
 }
 
