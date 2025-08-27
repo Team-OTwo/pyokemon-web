@@ -96,9 +96,12 @@ function Header() {
 
           {/* icons */}
           <ul className="flex gap-16 relative">
+            {/* search */}
             <li className={listStyle} onClick={() => setShowSearchBar(!showSearchBar)}>
               <IoSearchOutline className={iconStyle} />
             </li>
+
+            {/* notification */}
             <li
               className={listStyle}
               onClick={() => handleClickNotification()}
@@ -112,6 +115,8 @@ function Header() {
                 triggerRef={notificationRef}
               />
             )}
+
+            {/* mypage */}
             <li className={listStyle} onClick={() => handleClickMyPage()} ref={myPageRef}>
               <IoPersonOutline className={iconStyle} />
             </li>
