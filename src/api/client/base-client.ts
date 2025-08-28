@@ -19,13 +19,70 @@ const createClient = (baseURL: string): AxiosInstance => {
     (error) => {}
   )
 
+  let isRefreshing = false
+  let refreshSubscribers: ((token: string) => void)[] = []
+
+  const subscribeTokenRefresh = (cb: (token: string) => void) => {
+    refreshSubscribers.push(cb)
+  }
+
+  const onRefreshed = (token: string) => {
+    refreshSubscribers.forEach((cb) => cb(token))
+    refreshSubscribers = []
+  }
+
   client.interceptors.response.use(
     (config) => {
       return config
     },
-    (error) => {
-      if (error instanceof AxiosError) {
-        console.error(error)
+    async (error) => {
+      console.log(error)
+      const originalRequest = error.config
+      const status = error.response.status
+
+      if (status == 401 && !originalRequest._retry) {
+        originalRequest._retry = true
+
+        if (isRefreshing) {
+          return new Promise((resolve) => {
+            subscribeTokenRefresh((token: string) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`
+              resolve(axios(originalRequest))
+            })
+          })
+        }
+
+        isRefreshing = true
+
+        try {
+          const refreshToken = localStorage.getItem("refreshToken")
+          const res = await axios.post(
+            `${getAccountApiUrl()}/api/refresh`,
+            {},
+            {
+              headers: {
+                Authorization: `Bearer ${refreshToken}`,
+              },
+            }
+          )
+          console.log(res)
+          const newAccessToken = res.data.data.accessToken
+          localStorage.setItem("accessToken", newAccessToken)
+
+          onRefreshed(newAccessToken)
+          isRefreshing = false
+
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
+          return axios(originalRequest)
+        } catch (error) {
+          isRefreshing = false
+          localStorage.clear()
+
+          // TODO: login 페이지로 이동
+          window.location.href = "/user/login"
+
+          return Promise.reject(error)
+        }
       }
 
       return Promise.reject(error)
