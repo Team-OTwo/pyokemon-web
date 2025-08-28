@@ -19,13 +19,18 @@ const createClient = (baseURL: string): AxiosInstance => {
     (error) => {}
   )
 
+  // Refresh Token 요청이 진행 중인지 체크
   let isRefreshing = false
+
+  // 대기 중인 요청들을 저장하는 배열
   let refreshSubscribers: ((token: string) => void)[] = []
 
+  // refresh가 끝나면 실행될 콜백 저장
   const subscribeTokenRefresh = (cb: (token: string) => void) => {
     refreshSubscribers.push(cb)
   }
 
+  // refresh 성공 후 저장된 콜백 실행, 대기 중인 요청들에게 새 토큰 적용
   const onRefreshed = (token: string) => {
     refreshSubscribers.forEach((cb) => cb(token))
     refreshSubscribers = []
