@@ -15,7 +15,7 @@ export const fetchNotifications = async (cursorId?: number) => {
     console.log(res.data)
     return res.data.data
   } catch (error) {
-    console.error("Failed to fetch booking data:", error)
+    console.error("Failed to fetch notification data:", error)
     throw error
   }
 }
