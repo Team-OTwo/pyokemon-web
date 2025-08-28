@@ -3,6 +3,7 @@ import {
   getBffApiUrl,
   getBookingApiUrl,
   getEventApiUrl,
+  getNotificationApiUrl,
   getPaymentApiUrl,
 } from "@/constants/env"
 import axios, { AxiosError, AxiosInstance } from "axios"
@@ -40,6 +41,7 @@ export const accountClient = createClient(getAccountApiUrl())
 export const paymentClient = createClient(getPaymentApiUrl())
 export const bookingClient = createClient(getBookingApiUrl())
 export const bffClient = createClient(getBffApiUrl())
+export const notificationClient = createClient(getNotificationApiUrl())
 
 // 기존 baseClient 호환성 유지 (이벤트 클라이언트로 매핑)
 const baseClient = eventClient
@@ -51,6 +53,7 @@ export const setAuthorizationHeader = (token: string) => {
   paymentClient.defaults.headers.common["Authorization"] = `Bearer ${token}`
   bookingClient.defaults.headers.common["Authorization"] = `Bearer ${token}`
   bffClient.defaults.headers.common["Authorization"] = `Bearer ${token}`
+  notificationClient.defaults.headers.common["Authorization"] = `Bearer ${token}`
 }
 
 export const removeAuthorizationHeader = () => {
@@ -59,6 +62,7 @@ export const removeAuthorizationHeader = () => {
   delete paymentClient.defaults.headers.common["Authorization"]
   delete bookingClient.defaults.headers.common["Authorization"]
   delete bffClient.defaults.headers.common["Authorization"]
+  delete notificationClient.defaults.headers.common["Authorization"]
 }
 
 export default baseClient

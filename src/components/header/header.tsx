@@ -34,6 +34,15 @@ function Header() {
     }
   }
 
+  const handleClickNotification = () => {
+    const accessToken = localStorage.getItem("accessToken")
+    if (accessToken) {
+      setShowNotification(!showNotification)
+    } else {
+      navigate("login")
+    }
+  }
+
   const handleSearch = () => {
     if (keyword.trim()) {
       navigate(`/event/search?keyword=${keyword}`)
@@ -87,12 +96,15 @@ function Header() {
 
           {/* icons */}
           <ul className="flex gap-16 relative">
+            {/* search */}
             <li className={listStyle} onClick={() => setShowSearchBar(!showSearchBar)}>
               <IoSearchOutline className={iconStyle} />
             </li>
+
+            {/* notification */}
             <li
               className={listStyle}
-              onClick={() => setShowNotification(!showNotification)}
+              onClick={() => handleClickNotification()}
               ref={notificationRef}
             >
               <IoNotificationsOutline className={iconStyle} />
@@ -103,6 +115,8 @@ function Header() {
                 triggerRef={notificationRef}
               />
             )}
+
+            {/* mypage */}
             <li className={listStyle} onClick={() => handleClickMyPage()} ref={myPageRef}>
               <IoPersonOutline className={iconStyle} />
             </li>
