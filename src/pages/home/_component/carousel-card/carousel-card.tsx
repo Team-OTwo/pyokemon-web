@@ -1,5 +1,5 @@
 import React from "react"
-import { differenceInCalendarDays, format, isBefore, parseISO } from "date-fns"
+import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 import { useNavigate } from "react-router"
 
@@ -17,7 +17,7 @@ const CarouselCard: React.FC<CarouselCardProps> = ({ event }) => {
   }
   return (
     <div
-      className="relative rounded-lg aspect-[3/4] flex flex-col justify-end overflow-hidden w-full"
+      className="relative rounded-lg aspect-[3/4] flex flex-col justify-end overflow-hidden w-full cursor-pointer"
       onClick={handleClick}
     >
       <img src={event.thumbnailUrl} alt="img" className="object-cover w-full h-full" />
