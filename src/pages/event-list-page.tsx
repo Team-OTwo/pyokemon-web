@@ -52,7 +52,11 @@ const EventListPage = () => {
         {GENRE_LIST.map((genre) => {
           const isActive = type === genre.type
           return (
-            <li key={genre.title} onClick={() => handleGenreClick(genre.type)}>
+            <li
+              key={genre.title}
+              onClick={() => handleGenreClick(genre.type)}
+              className="hover:opacity-60"
+            >
               <GenreBadge genre={genre.title} gray={!isActive} />
             </li>
           )
