@@ -30,7 +30,7 @@ function Header() {
     if (accessToken) {
       setShowMyPageModal(!showMyPageModal)
     } else {
-      navigate("login")
+      navigate("/login")
     }
   }
 
@@ -39,7 +39,7 @@ function Header() {
     if (accessToken) {
       setShowNotification(!showNotification)
     } else {
-      navigate("login")
+      navigate("/login")
     }
   }
 

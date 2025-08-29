@@ -19,13 +19,75 @@ const createClient = (baseURL: string): AxiosInstance => {
     (error) => {}
   )
 
+  // Refresh Token 요청이 진행 중인지 체크
+  let isRefreshing = false
+
+  // 대기 중인 요청들을 저장하는 배열
+  let refreshSubscribers: ((token: string) => void)[] = []
+
+  // refresh가 끝나면 실행될 콜백 저장
+  const subscribeTokenRefresh = (cb: (token: string) => void) => {
+    refreshSubscribers.push(cb)
+  }
+
+  // refresh 성공 후 저장된 콜백 실행, 대기 중인 요청들에게 새 토큰 적용
+  const onRefreshed = (token: string) => {
+    refreshSubscribers.forEach((cb) => cb(token))
+    refreshSubscribers = []
+  }
+
   client.interceptors.response.use(
     (config) => {
       return config
     },
-    (error) => {
-      if (error instanceof AxiosError) {
-        console.error(error)
+    async (error) => {
+      console.log(error)
+      const originalRequest = error.config
+      const status = error.response.status
+
+      if (status == 401 && !originalRequest._retry) {
+        originalRequest._retry = true
+
+        if (isRefreshing) {
+          return new Promise((resolve) => {
+            subscribeTokenRefresh((token: string) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`
+              resolve(axios(originalRequest))
+            })
+          })
+        }
+
+        isRefreshing = true
+
+        try {
+          const refreshToken = localStorage.getItem("refreshToken")
+          const res = await axios.post(
+            `${getAccountApiUrl()}/api/refresh`,
+            {},
+            {
+              headers: {
+                Authorization: `Bearer ${refreshToken}`,
+              },
+            }
+          )
+          console.log(res)
+          const newAccessToken = res.data.data.accessToken
+          localStorage.setItem("accessToken", newAccessToken)
+
+          onRefreshed(newAccessToken)
+          isRefreshing = false
+
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
+          return axios(originalRequest)
+        } catch (error) {
+          isRefreshing = false
+          localStorage.clear()
+
+          // TODO: login 페이지로 이동
+          window.location.href = "/user/login"
+
+          return Promise.reject(error)
+        }
       }
 
       return Promise.reject(error)

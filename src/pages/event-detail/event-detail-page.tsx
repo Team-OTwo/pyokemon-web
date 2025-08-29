@@ -19,12 +19,15 @@ const EventDetailPage = () => {
   const [isMarked, setIsMarked] = useState<boolean | null>(null)
 
   const handleMarkClick = () => {
-    setIsMarked(!isMarked)
-    postSavedEvent(Number(eventId))
+    const accessToken = localStorage.getItem("accessToken")
+    if (accessToken) {
+      setIsMarked(!isMarked)
+      postSavedEvent(Number(eventId))
+    } else {
+      navigate("/login")
+    }
   }
   const { data: event, isLoading, error } = useGetEventDetailQuery(Number(eventId))
-  // const { data: booking } = useGetEventBookingQuery(event?.eventScheduleId ?? 1)
-  // const prices = booking?.remainingSeatsByGrade
 
   const { setEvent } = useEventStore()
 
@@ -129,9 +132,9 @@ const EventDetailPage = () => {
       </section>
 
       <hr />
-      <div className="h-600 py-24">
+      <div className="py-24">
         <h2 className="title-18-bold mb-24">상세 설명</h2>
-        {event.description}
+        <img src={event.description} alt="" />
       </div>
     </div>
   )
