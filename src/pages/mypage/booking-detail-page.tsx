@@ -82,7 +82,7 @@ const BookingDetailPage = () => {
 
   const labelStyle = "text-16-medium text-gray-700 w-100"
   const valueStyle = "text-16-medium text-black"
-  const seat = `${data.seat.className}-${data.seat.col}열-${data.seat.row}`
+  const seat = `${data.seat.className}-${data.seat.row}열-${data.seat.col}`
 
   const bookingInfoList = [
     { label: "예매자", value: data.user.name },
