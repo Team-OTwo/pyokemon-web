@@ -78,7 +78,7 @@ const BookingDetailPage = () => {
     return <ErrorPage />
   }
 
-  const isBookingCancelled = data.status === "예약 취소"
+  const isBookingCancelled = data.status === "예매 취소"
 
   const labelStyle = "text-16-medium text-gray-700 w-100"
   const valueStyle = "text-16-medium text-black"

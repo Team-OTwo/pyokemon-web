@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { usePostPaymentInitiateMutation } from "@/api/payment/queries/get-payments-query"
 import { getTossClientKey } from "@/constants/env"
 import { loadTossPayments } from "@tosspayments/payment-sdk"
@@ -11,6 +11,7 @@ import {
   useGetEventSeatGradeQuery,
 } from "../../api/booking/queries/use-get-event-booking-query"
 import { usePostEventBookingQuery } from "../../api/booking/queries/use-post-event-booking-query"
+import { useGetEventDetailQuery } from "../../api/event/queries/use-get-event-detail-query"
 import { useEventStore } from "../../store/event/event-store"
 import { SelectedSeat } from "../../types/booking"
 import LoadingPage from "../loading-page"
@@ -20,68 +21,89 @@ import SeatingChart from "./_component/seating_chart"
 
 const BookingPage = () => {
   const { id } = useParams()
-  const eventId = id || ""
-  const { event } = useEventStore()
+  const eventId = Number(id) || 0
+  const { event: storeEvent, setEvent } = useEventStore()
   const [selectedGrade, setSelectedGrade] = useState<string>("")
   const [selectedSeat, setSelectedSeat] = useState<SelectedSeat | null>(null)
   const [isPaymentLoading, setIsLoading] = useState(false)
+
   const { mutateAsync: initiatePayment } = usePostPaymentInitiateMutation()
   const { mutate: postBooking, isPending: isBookingPending } = usePostEventBookingQuery()
-  const { data: bookingData, isLoading: isBookingLoading } = useGetEventBookingQuery(
-    Number(eventId)
-  )
+  const { data: eventDetail, isLoading: isEventDetailLoading } = useGetEventDetailQuery(eventId)
+  const { data: bookingData, isLoading: isBookingLoading } = useGetEventBookingQuery(eventId)
   const { data: seats, isLoading: isSeatIdsLoading } = useGetEventSeatGradeQuery(
-    Number(eventId),
+    eventId,
     selectedGrade
   )
 
-  const handleSeatGradeSelect = (grade: string) => {
+  const event = useMemo(() => {
+    const currentEvent = storeEvent || eventDetail
+    if (eventDetail && !storeEvent) {
+      setEvent(eventDetail)
+    }
+    return currentEvent
+  }, [storeEvent, eventDetail, setEvent])
+
+  const handleSeatGradeSelect = useCallback((grade: string) => {
     setSelectedGrade(grade)
     setSelectedSeat(null)
-  }
-  const handleSeatSelect = (seat: SelectedSeat) => {
+  }, [])
+
+  const handleSeatSelect = useCallback((seat: SelectedSeat) => {
     setSelectedSeat(seat)
-  }
+  }, [])
 
-  const getSelectedSeatPrice = () => {
+  const handleBackToSeatingChart = useCallback(() => {
+    setSelectedGrade("")
+    setSelectedSeat(null)
+  }, [])
+
+  const selectedSeatPrice = useMemo(() => {
     if (!selectedSeat || !bookingData) return 0
-
     const gradeInfo = bookingData.find((g) => g.seatGrade === selectedSeat.seatGrade)
-
     return gradeInfo?.price || 0
-  }
+  }, [selectedSeat, bookingData])
 
-  const handlePaymentClick = async () => {
+  const showErrorAlert = useCallback((title: string, message?: string) => {
+    Swal.fire({
+      icon: "error",
+      title,
+      text: message,
+      confirmButtonText: "확인",
+      confirmButtonColor: "var(--color-primary)",
+    })
+  }, [])
+
+  const showWarningAlert = useCallback((title: string) => {
+    Swal.fire({
+      icon: "warning",
+      title,
+      confirmButtonText: "확인",
+      confirmButtonColor: "var(--color-primary)",
+    })
+  }, [])
+
+  const handlePaymentClick = useCallback(async () => {
     if (isPaymentLoading) return
-    setIsLoading(true)
+
     if (!selectedSeat) {
-      Swal.fire({
-        icon: "warning",
-        title: "좌석을 선택해주세요!",
-        confirmButtonText: "확인",
-        confirmButtonColor: "var(--color-primary)",
-      })
-      setIsLoading(false)
+      showWarningAlert("좌석을 선택해주세요!")
       return
     }
+
     if (!event?.tenantId) {
-      Swal.fire({
-        icon: "error",
-        title: "예매 정보를 불러올 수 없습니다.",
-        text: "이전 페이지로 돌아가서 다시 시도해주세요.",
-        confirmButtonText: "확인",
-        confirmButtonColor: "var(--color-primary)",
-      })
-      setIsLoading(false)
+      showErrorAlert("예매 정보를 불러올 수 없습니다.", "이전 페이지로 돌아가서 다시 시도해주세요.")
       return
     }
+
+    setIsLoading(true)
+
     try {
-      // Redis에 HOLD 상태 올리기
-      await postReidsBookiing(Number(eventId), selectedSeat.seatId)
+      await postReidsBookiing(eventId, selectedSeat.seatId)
 
       postBooking(
         {
-          eventScheduleId: Number(eventId),
+          eventScheduleId: eventId,
           seatId: selectedSeat.seatId,
           tenantId: Number(event.tenantId),
         },
@@ -91,10 +113,10 @@ const BookingPage = () => {
               payment: {
                 bookingId: bookingResponse.bookingId,
                 orderId: `ORDER_${Date.now()}_${Math.floor(Math.random() * 100000)}`,
-                amount: getSelectedSeatPrice(),
+                amount: selectedSeatPrice,
                 method: "카드",
               },
-              eventScheduleId: Number(eventId),
+              eventScheduleId: eventId,
             })
             const { orderId, amount } = res
             const tossPayments = await loadTossPayments(getTossClientKey())
@@ -104,24 +126,44 @@ const BookingPage = () => {
               orderName: `${selectedSeat.seatGrade}석 예매`,
               customerName: "홍길동",
               successUrl: `${window.location.origin}/user/paymentSuccess`,
-              failUrl: `${window.location.origin}/event/booking/${eventId}`,
+              failUrl: `${window.location.origin}/event/booking/${id}`,
             })
           },
           onError: (error) => {
             console.error("예매 API 오류:", error)
-            Swal.fire("예매 실패", "잠시 후 다시 시도해주세요.", "error")
+            showErrorAlert("예매 실패", "잠시 후 다시 시도해주세요.")
           },
         }
       )
     } catch (error) {
       console.error("Redis HOLD 또는 토스 결제 오류:", error)
-      Swal.fire("결제 실패", "잠시 후 다시 시도해주세요.", "error")
+      showErrorAlert("결제 실패", "잠시 후 다시 시도해주세요.")
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [
+    isPaymentLoading,
+    selectedSeat,
+    event?.tenantId,
+    eventId,
+    selectedSeatPrice,
+    id,
+    postReidsBookiing,
+    postBooking,
+    initiatePayment,
+    showErrorAlert,
+    showWarningAlert,
+  ])
 
-  const isLoading = isBookingLoading || (selectedGrade && isSeatIdsLoading) || isBookingPending
+  const isLoading = useMemo(
+    () =>
+      isBookingLoading ||
+      isEventDetailLoading ||
+      (selectedGrade && isSeatIdsLoading) ||
+      isBookingPending,
+    [isBookingLoading, isEventDetailLoading, selectedGrade, isSeatIdsLoading, isBookingPending]
+  )
+
   if (isLoading) {
     return <LoadingPage />
   }
@@ -138,21 +180,22 @@ const BookingPage = () => {
               seats={seats || []}
               onSeatSelect={handleSeatSelect}
               selectedSeat={selectedSeat}
-              eventScheduleId={Number(eventId)}
+              eventScheduleId={eventId}
+              onBackToSeatingChart={handleBackToSeatingChart}
             />
           )}
         </div>
 
-        <div className="w-350">
-          {bookingData && (
+        {bookingData && (
+          <div className="w-350">
             <BookingSidebar
               bookingData={bookingData}
               selectedSeat={selectedSeat}
               onPayment={handlePaymentClick}
-              eventScheduleId={Number(eventId)}
+              eventScheduleId={eventId}
             />
-          )}
-        </div>
+          </div>
+        )}
       </main>
     </div>
   )
