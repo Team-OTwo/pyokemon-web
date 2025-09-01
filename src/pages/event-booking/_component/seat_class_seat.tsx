@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { IoArrowBack } from "react-icons/io5"
 
 import { getRedisBookingBySeatClass } from "../../../api/booking/fetchers/get-event-booking"
 import { SelectedSeat } from "../../../types/booking"
@@ -9,12 +10,14 @@ const SeatClassSeat = ({
   onSeatSelect,
   selectedSeat,
   eventScheduleId,
+  onBackToSeatingChart,
 }: {
   seatGrade: string
   seats: SelectedSeat[]
   onSeatSelect: (seat: SelectedSeat) => void
   selectedSeat?: SelectedSeat | null
   eventScheduleId: number
+  onBackToSeatingChart: () => void
 }) => {
   const [updatedSeats, setUpdatedSeats] = useState<SelectedSeat[]>(seats)
 
@@ -62,8 +65,16 @@ const SeatClassSeat = ({
   }
 
   return (
-    <div className="flex flex-col items-center gap-30 p-30 rounded-lg min-h-[500px]">
-      <h2 className="text-gray-700 text-2xl font-bold m-0">좌석 배치도 - {seatGrade}</h2>
+    <div className="flex flex-col items-center gap-30 p-30 rounded-lg min-h-500">
+      <div className="flex items-center justify-center gap-40 w-full relative">
+        <button
+          onClick={onBackToSeatingChart}
+          className="flex items-center justify-center w-32 h-32 text-gray-600"
+        >
+          <IoArrowBack size={20} />
+        </button>
+        <h2 className="text-gray-700 text-2xl font-bold m-0">좌석 배치도 - {seatGrade}</h2>
+      </div>
 
       <div className="flex flex-col gap-15 bg-gray-500 p-50 pl-10 pt-20 rounded-lg">
         <div className="flex gap-20 mb-1 items-center">

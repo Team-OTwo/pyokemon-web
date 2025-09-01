@@ -24,7 +24,6 @@ const BookingSidebar = ({
         const redisData = await getRedisBooking(eventScheduleId)
         const availableCounts: Record<string, number> = {}
 
-        // 각 등급별로 사용 가능한 좌석 수 계산
         Object.entries(redisData).forEach(([grade, seats]) => {
           const availableCount = Object.values(seats as Record<string, string>).filter(
             (status) => status === ""

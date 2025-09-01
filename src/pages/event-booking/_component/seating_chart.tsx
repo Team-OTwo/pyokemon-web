@@ -23,17 +23,26 @@ const SeatingChart = ({ onSeatGradeSelect }: { onSeatGradeSelect: (grade: string
           <span className="text-white font-bold">VIP</span>
         </div>
         <div className="bg-black col-start-3 row-start-2 rounded-lg flex justify-center items-center min-h-220" />
-        <div className="col-start-4 row-start-2 rounded-lg flex justify-center items-center h-190 bg-primary-dark mt-30">
+        <div
+          className="col-start-4 row-start-2 rounded-lg flex justify-center items-center h-190 bg-primary-dark mt-30"
+          onClick={() => onSeatGradeSelect("VIP")}
+        >
           <span className="text-white font-bold">VIP</span>
         </div>
 
         {/* R석 */}
-        <div className="col-start-2 col-span-3 row-start-3 bg-primary rounded-lg flex justify-center items-center min-h-90">
+        <div
+          className="col-start-2 col-span-3 row-start-3 bg-primary rounded-lg flex justify-center items-center min-h-90"
+          onClick={() => onSeatGradeSelect("R")}
+        >
           <span className="text-white font-bold">R</span>
         </div>
 
         {/* A석 */}
-        <div className="col-start-2 col-span-3 row-start-4 bg-primary/50 rounded-lg flex justify-center items-center min-h-90">
+        <div
+          className="col-start-2 col-span-3 row-start-4 bg-primary/50 rounded-lg flex justify-center items-center min-h-90"
+          onClick={() => onSeatGradeSelect("A")}
+        >
           <span className="text-white font-bold">A</span>
         </div>
 
@@ -41,15 +50,20 @@ const SeatingChart = ({ onSeatGradeSelect }: { onSeatGradeSelect: (grade: string
         <div
           className="col-start-1 row-start-3 row-span-2 bg-[#E3F1FF] rounded-lg flex justify-center items-center"
           style={{ marginBottom: "-30px" }}
+          onClick={() => onSeatGradeSelect("B")}
         >
           <span className="text-primary-dark font-bold">B</span>
         </div>
-        <div className="col-start-1 col-span-5 bg-[#E3F1FF] rounded-lg flex justify-center items-center min-h-100">
+        <div
+          className="col-start-1 col-span-5 bg-[#E3F1FF] rounded-lg flex justify-center items-center min-h-100"
+          onClick={() => onSeatGradeSelect("B")}
+        >
           <span className="text-primary-dark font-bold">B</span>
         </div>
         <div
           className="col-start-5 row-start-3 row-span-2 bg-[#E3F1FF] rounded-lg flex justify-center items-center"
           style={{ marginBottom: "-30px" }}
+          onClick={() => onSeatGradeSelect("B")}
         >
           <span className="text-primary-dark font-bold">B</span>
         </div>
