@@ -3,28 +3,52 @@ import type { Swiper as SwiperType } from "swiper"
 import { Autoplay, Pagination } from "swiper/modules"
 import { Swiper, SwiperSlide } from "swiper/react"
 
-import Banner1 from "@/assets/images/Banner1.png"
-import Banner2 from "@/assets/images/Banner2.png"
-import Banner3 from "@/assets/images/Banner3.png"
-import Banner4 from "@/assets/images/Banner4.png"
-import Banner5 from "@/assets/images/Banner5.png"
-import Banner6 from "@/assets/images/Banner6.png"
-import Banner7 from "@/assets/images/Banner7.png"
-import Banner8 from "@/assets/images/Banner8.png"
-import Banner9 from "@/assets/images/Banner9.png"
-import Banner10 from "@/assets/images/Banner10.png"
-
 const bannerData = [
-  { id: 1, image: Banner9 },
-  { id: 2, image: Banner2 },
-  { id: 3, image: Banner3 },
-  { id: 4, image: Banner4 },
-  { id: 5, image: Banner5 },
-  { id: 6, image: Banner6 },
-  { id: 7, image: Banner7 },
-  { id: 8, image: Banner8 },
-  { id: 9, image: Banner1 },
-  { id: 10, image: Banner10 },
+  {
+    id: 1,
+    image:
+      "https://ticketimage.interpark.com/TCMS3.0/NMain/BbannerPC/2506/250610085920_16007528.gif",
+  },
+  {
+    id: 2,
+    image:
+      "https://ticketimage.interpark.com/TCMS3.0/NMain/BbannerPC/2508/250822034813_25011387.gif",
+  },
+  {
+    id: 3,
+    image:
+      "https://ticketimage.interpark.com/TCMS3.0/NMain/BbannerPC/2508/250814012045_25005777.gif",
+  },
+  {
+    id: 4,
+    image:
+      "https://ticketimage.interpark.com/TCMS3.0/NMain/BbannerPC/2508/250827062818_25012012.gif",
+  },
+  {
+    id: 5,
+    image:
+      "https://ticketimage.interpark.com/TCMS3.0/NMain/BbannerPC/2507/250708011516_25009843.gif",
+  },
+  {
+    id: 6,
+    image:
+      "https://ticketimage.interpark.com/TCMS3.0/NMain/BbannerPC/2508/250811040307_25011651.gif",
+  },
+  {
+    id: 7,
+    image:
+      "https://ticketimage.interpark.com/TCMS3.0/NMain/BbannerPC/2508/250812040611_25011068.gif",
+  },
+  {
+    id: 8,
+    image:
+      "https://ticketimage.interpark.com/TCMS3.0/NMain/BbannerPC/2508/250820060700_25011816.gif",
+  },
+  {
+    id: 9,
+    image:
+      "https://ticketimage.interpark.com/TCMS3.0/NMain/BbannerPC/2508/250828050802_25012652.gif",
+  },
 ]
 
 const Banner = () => {
