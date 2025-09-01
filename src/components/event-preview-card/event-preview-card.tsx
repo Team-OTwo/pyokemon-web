@@ -18,7 +18,7 @@ const EventPreviewCard: React.FC<EventPreviewProps> = ({ openAt, event }) => {
   }
 
   return (
-    <div className="mb-8" onClick={handleClick}>
+    <div className="mb-8 cursor-pointer" onClick={handleClick}>
       <div className="relative mb-12 aspect-[3/4]">
         <img src={event.thumbnailUrl} alt="img" className="rounded-lg object-cover w-full h-full" />
       </div>
