@@ -108,21 +108,23 @@ const SeatClassSeat = ({
   const secondHalfCols = useMemo(() => cols.slice(10), [cols])
 
   return (
-    <div className="flex flex-col items-center p-30 rounded-lg min-h-500 bg-white h-full mr-20">
+    <div className="flex flex-col items-center p-30 rounded-lg min-h-500 bg-white w-full h-full mr-20">
       <h2 className="text-gray-700 text-2xl font-bold m-0">좌석 배치도 - {seatGrade}</h2>
 
-      <div className="w-850 h-100 bg-black rounded-lg flex items-center justify-center mt-50">
-        <span className="text-white font-bold text-lg">STAGE</span>
-      </div>
-      <div className="flex gap-40 items-start">
-        <div className="flex flex-col gap-10 mt-30">
-          {rows.map((row) => renderSeatRow(row, firstHalfCols))}
+      <div className="flex flex-col pt-30 w-full justify-center">
+        <div className="w-full h-100 bg-black rounded-lg flex items-center justify-center mt-50">
+          <span className="text-white font-bold text-lg">STAGE</span>
         </div>
+        <div className="flex items-center justify-center w-full gap-30 min-w-0">
+          <div className="flex flex-col gap-5 min-w-0">
+            {rows.map((row) => renderSeatRow(row, firstHalfCols))}
+          </div>
 
-        <div className="w-120 h-430 bg-black rounded-b-lg flex items-center justify-center " />
+          <div className="w-120 h-430 bg-black rounded-b-lg flex items-center justify-center " />
 
-        <div className="flex flex-col gap-10 mt-30">
-          {rows.map((row) => renderSeatRow(row, secondHalfCols))}
+          <div className="flex flex-col gap-5 min-w-0">
+            {rows.map((row) => renderSeatRow(row, secondHalfCols))}
+          </div>
         </div>
       </div>
     </div>

@@ -170,8 +170,8 @@ const BookingPage = () => {
 
   return (
     <div className="bg-black/90">
-      <main className="flex p-20 pr-140 pl-140">
-        <div className="flex-1">
+      <main className="flex gap-20 w-full px-160 overflow-hidden p-20">
+        <div className="flex-[3] min-w-0">
           {!selectedGrade ? (
             <SeatClassSeat
               seatGrade=""
@@ -203,7 +203,7 @@ const BookingPage = () => {
         </div>
 
         {bookingData && (
-          <div className="w-350">
+          <div className="flex-[1]">
             <BookingSidebar
               bookingData={bookingData}
               selectedSeat={selectedSeat}

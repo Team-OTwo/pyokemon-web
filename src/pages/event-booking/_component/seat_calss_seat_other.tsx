@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { IoArrowBack } from "react-icons/io5"
 
 import { getRedisBookingBySeatClass } from "../../../api/booking/fetchers/get-event-booking"
 import { SelectedSeat } from "../../../types/booking"
@@ -29,7 +28,6 @@ const SeatClassSeatOther = ({
           ...seat,
           isBooked: redisData[seat.seatId.toString()] !== "",
         }))
-
         setUpdatedSeats(updatedSeatsData)
       } catch (error) {
         console.error("Failed to fetch seat status:", error)
@@ -65,11 +63,11 @@ const SeatClassSeatOther = ({
         "w-30 h-30 flex items-center justify-center text-xs font-bold transition-all duration-200"
 
       if (seat.isBooked) {
-        return `${baseClasses} bg-white border-1 border-gray-500 cursor-not-allowed`
+        return `${baseClasses} bg-white border border-gray-400 cursor-not-allowed`
       }
 
       if (selectedSeat?.seatId === seat.seatId) {
-        return `${baseClasses} bg-primary border-3 border-black cursor-pointer`
+        return `${baseClasses} bg-primary border-2 border-black cursor-pointer`
       }
 
       return `${baseClasses} bg-primary border-0 cursor-pointer hover:scale-110`
@@ -100,18 +98,18 @@ const SeatClassSeatOther = ({
     const gToMRows = [...new Set(gToMSeats.map((seat) => seat.row))].sort()
 
     return (
-      <div className="flex flex-col gap-10 pt-40">
-        <div className="flex flex-col gap-10">
-          {aToFRows.map((row) => {
-            const rowSeats = aToFSeats
-              .filter((seat) => seat.row === row)
-              .sort((a, b) => parseInt(a.col) - parseInt(b.col))
+      <div className="flex flex-col gap-10 pt-6 w-full">
+        {aToFRows.map((row) => {
+          const rowSeats = aToFSeats
+            .filter((seat) => seat.row === row)
+            .sort((a, b) => parseInt(a.col) - parseInt(b.col))
 
-            const first7Seats = rowSeats.slice(0, 7)
-            const last7Seats = rowSeats.slice(-7)
+          const first7Seats = rowSeats.slice(0, 7)
+          const last7Seats = rowSeats.slice(-7)
 
-            return (
-              <div key={row} className="flex gap-10 items-center">
+          return (
+            <div key={row} className="flex justify-between items-center w-full px-6">
+              <div className="flex gap-10 w-full">
                 {first7Seats.map((seat) => (
                   <button
                     key={`${seat.row}-${seat.col}`}
@@ -120,7 +118,9 @@ const SeatClassSeatOther = ({
                     disabled={seat.isBooked}
                   />
                 ))}
-                <div className="w-470" />
+              </div>
+
+              <div className="flex gap-10 w-full">
                 {last7Seats.map((seat) => (
                   <button
                     key={`${seat.row}-${seat.col}`}
@@ -130,18 +130,18 @@ const SeatClassSeatOther = ({
                   />
                 ))}
               </div>
-            )
-          })}
-        </div>
+            </div>
+          )
+        })}
 
-        <div className="flex flex-col gap-10">
-          {gToMRows.map((row) => {
-            const rowSeats = gToMSeats
-              .filter((seat) => seat.row === row)
-              .sort((a, b) => parseInt(a.col) - parseInt(b.col))
+        {gToMRows.map((row) => {
+          const rowSeats = gToMSeats
+            .filter((seat) => seat.row === row)
+            .sort((a, b) => parseInt(a.col) - parseInt(b.col))
 
-            return (
-              <div key={row} className="flex gap-10 items-center">
+          return (
+            <div key={row} className="flex justify-between items-center w-full px-6">
+              <div className="flex gap-10 w-full">
                 {rowSeats.map((seat) => (
                   <button
                     key={`${seat.row}-${seat.col}`}
@@ -151,9 +151,9 @@ const SeatClassSeatOther = ({
                   />
                 ))}
               </div>
-            )
-          })}
-        </div>
+            </div>
+          )
+        })}
       </div>
     )
   }, [seatGrade, updatedSeats, getSeatClasses, handleSeatClick])
@@ -162,9 +162,9 @@ const SeatClassSeatOther = ({
     if (seatGrade === "B") return null
 
     return (
-      <div className="flex flex-col gap-10 mt-30">
+      <div className="flex flex-col gap-10 mt-6 w-full">
         {rows.map((row) => (
-          <div key={row} className="flex gap-10 items-center">
+          <div key={row} className="flex justify-between items-center w-full px-6">
             {cols.map((col) => {
               const seat = seatMap.get(`${row}-${col}`)
               if (!seat) return null
@@ -185,10 +185,12 @@ const SeatClassSeatOther = ({
   }, [seatGrade, rows, cols, seatMap, getSeatClasses, handleSeatClick])
 
   return (
-    <div className="flex flex-col items-center p-30 rounded-lg min-h-500 bg-white h-full mr-20">
+    <div className="flex flex-col items-center p-30 rounded-lg min-h-500 bg-white w-full h-full mr-20">
       <h2 className="text-gray-700 text-2xl font-bold m-0">좌석 배치도 - {seatGrade}</h2>
-      {renderBSeats()}
-      {renderNormalSeats()}
+      <div className="flex w-full items-center">
+        {renderBSeats()}
+        {renderNormalSeats()}
+      </div>
     </div>
   )
 }
