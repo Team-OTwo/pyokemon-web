@@ -16,14 +16,14 @@ import { useEventStore } from "../../store/event/event-store"
 import { SelectedSeat } from "../../types/booking"
 import LoadingPage from "../loading-page"
 import BookingSidebar from "./_component/booking_sidebar"
+import SeatClassSeatOther from "./_component/seat_calss_seat_other"
 import SeatClassSeat from "./_component/seat_class_seat"
-import SeatingChart from "./_component/seating_chart"
 
 const BookingPage = () => {
   const { id } = useParams()
   const eventId = Number(id) || 0
   const { event: storeEvent, setEvent } = useEventStore()
-  const [selectedGrade, setSelectedGrade] = useState<string>("")
+  const [selectedGrade, setSelectedGrade] = useState<string>("VIP")
   const [selectedSeat, setSelectedSeat] = useState<SelectedSeat | null>(null)
   const [isPaymentLoading, setIsLoading] = useState(false)
 
@@ -169,13 +169,29 @@ const BookingPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-700">
-      <main className="flex pr-20 min-h-[calc(100vh-280px)]">
+    <div className="bg-black/90">
+      <main className="flex p-20 pr-140 pl-140">
         <div className="flex-1">
           {!selectedGrade ? (
-            <SeatingChart onSeatGradeSelect={handleSeatGradeSelect} />
-          ) : (
             <SeatClassSeat
+              seatGrade=""
+              seats={[]}
+              onSeatSelect={handleSeatSelect}
+              selectedSeat={selectedSeat}
+              eventScheduleId={eventId}
+              onBackToSeatingChart={handleBackToSeatingChart}
+            />
+          ) : selectedGrade === "VIP" ? (
+            <SeatClassSeat
+              seatGrade={selectedGrade}
+              seats={seats || []}
+              onSeatSelect={handleSeatSelect}
+              selectedSeat={selectedSeat}
+              eventScheduleId={eventId}
+              onBackToSeatingChart={handleBackToSeatingChart}
+            />
+          ) : (
+            <SeatClassSeatOther
               seatGrade={selectedGrade}
               seats={seats || []}
               onSeatSelect={handleSeatSelect}
@@ -193,6 +209,8 @@ const BookingPage = () => {
               selectedSeat={selectedSeat}
               onPayment={handlePaymentClick}
               eventScheduleId={eventId}
+              onSeatGradeSelect={handleSeatGradeSelect}
+              selectedGrade={selectedGrade}
             />
           </div>
         )}
