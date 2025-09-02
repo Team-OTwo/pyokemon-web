@@ -54,6 +54,10 @@ li{
   .title-18-bold {
     @apply text-lg font-bold;
   }
+  
+  .title-18-medium {
+    @apply text-lg font-medium;
+  }
 
   .text-16-bold {
     @apply text-base font-bold;

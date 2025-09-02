@@ -9,6 +9,7 @@ interface ButtonProps {
   bgColor?: string
   onClick?: () => void
   icon?: React.ReactNode
+  disabled?: boolean
 }
 
 // color : 글자 색
@@ -24,6 +25,7 @@ const getColorStyle = (type: "text" | "bg" | "border", color?: string) => {
     black: "var(--color-black)",
     error: "var(--color-error)",
     success: "var(--color-success)",
+    "gray-100": "var(--color-gray-100)",
     "gray-300": "var(--color-gray-300)",
     "gray-500": "var(--color-gray-500)",
     "gray-700": "var(--color-gray-700)",
@@ -52,9 +54,10 @@ const Button: React.FC<ButtonProps> = ({
   bgColor = "primary",
   onClick,
   icon,
+  disabled,
 }) => {
-  const textStyle = getColorStyle("text", color)
-  const bgStyle = getColorStyle("bg", bgColor)
+  const textStyle = disabled ? getColorStyle("text", "gray-500") : getColorStyle("text", color)
+  const bgStyle = disabled ? getColorStyle("bg", "gray-300") : getColorStyle("bg", bgColor)
   const borderStyle = border
     ? {
         border: "1px solid",
@@ -63,7 +66,7 @@ const Button: React.FC<ButtonProps> = ({
     : {}
 
   const baseStyle =
-    "rounded-lg h-51 flex justify-center items-center cursor-pointer hover:opacity-80 text-16-semibold "
+    "rounded-lg h-51 flex justify-center items-center cursor-pointer text-16-semibold "
 
   const sizeStyle = small ? "px-24" : "w-320"
 
@@ -71,7 +74,7 @@ const Button: React.FC<ButtonProps> = ({
   const style = { ...textStyle, ...bgStyle, ...borderStyle }
 
   return (
-    <button className={className} style={style} onClick={onClick}>
+    <button className={className} style={style} onClick={onClick} disabled={disabled}>
       {icon && <span className="mr-6">{icon}</span>}
       {text}
     </button>

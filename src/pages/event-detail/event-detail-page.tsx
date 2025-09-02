@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react"
 import { postSavedEvent } from "@/api/event/fetchers/post-saved-event"
 import { useGetEventDetailQuery } from "@/api/event/queries/use-get-event-detail-query"
 import { useEventStore } from "@/store/event/event-store"
-import { format } from "date-fns"
+import { format, isAfter, isBefore, isToday } from "date-fns"
+import { ko } from "date-fns/locale"
 import { IoBookmark, IoBookmarkOutline } from "react-icons/io5"
 import { useNavigate, useParams } from "react-router"
 
@@ -60,6 +61,10 @@ const EventDetailPage = () => {
     navigate(`/event/booking/${event.eventScheduleId}`)
   }
 
+  const disabled = !isToday(event.ticketOpenAt)
+  const beforeOpen = isAfter(event.ticketOpenAt, new Date())
+  const afterEvent = isBefore(event.eventDate, new Date())
+
   return (
     <div className="px-160 py-64">
       <section className="flex gap-100 mb-60 justify-center">
@@ -110,7 +115,20 @@ const EventDetailPage = () => {
 
           {/* buttons */}
           <div className="flex flex-col gap-16">
-            <Button text="예매하기" onClick={handleClickBooking} />
+            {beforeOpen && (
+              <div>
+                <p className="text-center text-primary-dark">
+                  {format(event.ticketOpenAt, "yyyy.MM.dd(iii) HH:mm ", { locale: ko })}
+                  티켓 오픈!
+                </p>
+              </div>
+            )}
+            {afterEvent && (
+              <div>
+                <p className="text-center text-gray-500">이미 종료된 공연입니다.</p>
+              </div>
+            )}
+            <Button text="예매하기" onClick={handleClickBooking} disabled={disabled} />
 
             <Button
               onClick={handleMarkClick}
