@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 import { getRedisBooking } from "../../../api/booking/fetchers/get-event-booking"
 import Button from "../../../components/ui/button"
@@ -21,28 +21,19 @@ const BookingSidebar = ({
 }) => {
   const [availableSeatsByGrade, setAvailableSeatsByGrade] = useState<Record<string, number>>({})
 
-  useEffect(() => {
-    const fetchAvailableSeats = async () => {
-      try {
-        const redisData = await getRedisBooking(eventScheduleId)
-        const availableCounts: Record<string, number> = {}
-
-        Object.entries(redisData).forEach(([grade, seats]) => {
-          const availableCount = Object.values(seats as Record<string, string>).filter(
-            (status) => status === ""
-          ).length
-          availableCounts[grade] = availableCount
-        })
-
-        setAvailableSeatsByGrade(availableCounts)
-      } catch (error) {
-        console.error("Failed to fetch available seats:", error)
-        setAvailableSeatsByGrade({})
-      }
+  const fetchAvailableSeats = useCallback(async () => {
+    try {
+      const redisData = await getRedisBooking(eventScheduleId)
+      setAvailableSeatsByGrade(redisData)
+    } catch (error) {
+      console.error("Failed to fetch available seats:", error)
+      setAvailableSeatsByGrade({})
     }
-
-    fetchAvailableSeats()
   }, [eventScheduleId])
+
+  useEffect(() => {
+    fetchAvailableSeats()
+  }, [fetchAvailableSeats])
 
   const getSeatGradeColor = (grade: string) => {
     switch (grade) {
