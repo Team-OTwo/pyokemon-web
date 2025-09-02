@@ -16,8 +16,9 @@ import { useEventStore } from "../../store/event/event-store"
 import { SelectedSeat } from "../../types/booking"
 import LoadingPage from "../loading-page"
 import BookingSidebar from "./_component/booking_sidebar"
-import SeatClassSeatOther from "./_component/seat_calss_seat_other"
 import SeatClassSeat from "./_component/seat_class_seat"
+import SeatClassSeatB from "./_component/seat-class-seat-b"
+import SeatClassSeatNormal from "./_component/seat-class-seat-normal"
 
 const BookingPage = () => {
   const { id } = useParams()
@@ -179,7 +180,6 @@ const BookingPage = () => {
               onSeatSelect={handleSeatSelect}
               selectedSeat={selectedSeat}
               eventScheduleId={eventId}
-              onBackToSeatingChart={handleBackToSeatingChart}
             />
           ) : selectedGrade === "VIP" ? (
             <SeatClassSeat
@@ -188,16 +188,22 @@ const BookingPage = () => {
               onSeatSelect={handleSeatSelect}
               selectedSeat={selectedSeat}
               eventScheduleId={eventId}
-              onBackToSeatingChart={handleBackToSeatingChart}
             />
-          ) : (
-            <SeatClassSeatOther
-              seatGrade={selectedGrade}
+          ) : selectedGrade === "B" ? (
+            <SeatClassSeatB
               seats={seats || []}
               onSeatSelect={handleSeatSelect}
               selectedSeat={selectedSeat}
               eventScheduleId={eventId}
-              onBackToSeatingChart={handleBackToSeatingChart}
+              seatGrade={selectedGrade}
+            />
+          ) : (
+            <SeatClassSeatNormal
+              seats={seats || []}
+              onSeatSelect={handleSeatSelect}
+              selectedSeat={selectedSeat}
+              eventScheduleId={eventId}
+              seatGrade={selectedGrade}
             />
           )}
         </div>
