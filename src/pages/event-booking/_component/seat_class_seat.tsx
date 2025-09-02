@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { IoArrowBack } from "react-icons/io5"
 
 import { getRedisBookingBySeatClass } from "../../../api/booking/fetchers/get-event-booking"
 import { SelectedSeat } from "../../../types/booking"
@@ -9,12 +10,14 @@ const SeatClassSeat = ({
   onSeatSelect,
   selectedSeat,
   eventScheduleId,
+  onBackToSeatingChart,
 }: {
   seatGrade: string
   seats: SelectedSeat[]
   onSeatSelect: (seat: SelectedSeat) => void
   selectedSeat?: SelectedSeat | null
   eventScheduleId: number
+  onBackToSeatingChart: () => void
 }) => {
   const [updatedSeats, setUpdatedSeats] = useState<SelectedSeat[]>(seats)
 
@@ -37,68 +40,90 @@ const SeatClassSeat = ({
     fetchSeatStatus()
   }, [eventScheduleId, seats, seatGrade])
 
-  const rows = [...new Set(updatedSeats.map((seat) => seat.row))].sort()
-  const cols = [...new Set(updatedSeats.map((seat) => seat.col))].sort(
-    (a, b) => parseInt(a) - parseInt(b)
+  const rows = useMemo(
+    () => [...new Set(updatedSeats.map((seat) => seat.row))].sort(),
+    [updatedSeats]
   )
-  const seatMap = new Map<string, SelectedSeat>()
-  updatedSeats.forEach((seat) => {
-    seatMap.set(`${seat.row}-${seat.col}`, seat)
-  })
 
-  const getSeatClasses = (seat: SelectedSeat) => {
-    const baseClasses =
-      "w-40 h-40 flex items-center justify-center text-xs font-bold transition-all duration-200"
+  const cols = useMemo(
+    () =>
+      [...new Set(updatedSeats.map((seat) => seat.col))].sort((a, b) => parseInt(a) - parseInt(b)),
+    [updatedSeats]
+  )
 
-    if (seat.isBooked) {
-      return `${baseClasses} bg-white border-0 cursor-not-allowed`
-    }
+  const seatMap = useMemo(() => {
+    const map = new Map<string, SelectedSeat>()
+    updatedSeats.forEach((seat) => {
+      map.set(`${seat.row}-${seat.col}`, seat)
+    })
+    return map
+  }, [updatedSeats])
 
-    if (selectedSeat?.seatId === seat.seatId) {
-      return `${baseClasses} bg-primary border-3 border-black cursor-pointer`
-    }
+  const getSeatClasses = useCallback(
+    (seat: SelectedSeat) => {
+      const baseClasses =
+        "w-30 h-30 flex items-center justify-center text-xs font-bold transition-all duration-200"
 
-    return `${baseClasses} bg-primary border-0 cursor-pointer hover:scale-110`
-  }
+      if (seat.isBooked) {
+        return `${baseClasses} bg-white border-1 border-gray-500 cursor-not-allowed`
+      }
+
+      if (selectedSeat?.seatId === seat.seatId) {
+        return `${baseClasses} bg-primary border-3 border-black cursor-pointer`
+      }
+
+      return `${baseClasses} bg-primary border-0 cursor-pointer hover:scale-110`
+    },
+    [selectedSeat?.seatId]
+  )
+
+  const handleSeatClick = useCallback(
+    (seat: SelectedSeat) => {
+      if (!seat.isBooked) {
+        onSeatSelect(seat)
+      }
+    },
+    [onSeatSelect]
+  )
+
+  const renderSeatRow = (row: string, cols: string[]) => (
+    <div key={row} className="flex gap-10 items-center">
+      {cols.map((col) => {
+        const seat = seatMap.get(`${row}-${col}`)
+        if (!seat) return null
+
+        return (
+          <button
+            key={col}
+            className={getSeatClasses(seat)}
+            onClick={() => handleSeatClick(seat)}
+            disabled={seat.isBooked}
+          />
+        )
+      })}
+    </div>
+  )
+
+  const firstHalfCols = useMemo(() => cols.slice(0, 10), [cols])
+  const secondHalfCols = useMemo(() => cols.slice(10), [cols])
 
   return (
-    <div className="flex flex-col items-center gap-30 p-30 rounded-lg min-h-[500px]">
+    <div className="flex flex-col items-center p-30 rounded-lg min-h-500 bg-white h-full mr-20">
       <h2 className="text-gray-700 text-2xl font-bold m-0">좌석 배치도 - {seatGrade}</h2>
 
-      <div className="flex flex-col gap-15 bg-gray-500 p-50 pl-10 pt-20 rounded-lg">
-        <div className="flex gap-20 mb-1 items-center">
-          <div className="w-40 h-8"></div>
-          {cols.map((col) => (
-            <div
-              key={col}
-              className="w-40 h-20 flex items-center justify-center text-white text-xs font-bold"
-            >
-              {col.padStart(2, "0")}
-            </div>
-          ))}
+      <div className="w-850 h-100 bg-black rounded-lg flex items-center justify-center mt-50">
+        <span className="text-white font-bold text-lg">STAGE</span>
+      </div>
+      <div className="flex gap-40 items-start">
+        <div className="flex flex-col gap-10 mt-30">
+          {rows.map((row) => renderSeatRow(row, firstHalfCols))}
         </div>
 
-        {rows.map((row) => (
-          <div key={row} className="flex gap-20 items-center">
-            <div className="w-40 h-40 flex items-center justify-center text-white text-sm font-bold mr-1">
-              {row}
-            </div>
-            {cols.map((col) => {
-              const seat = seatMap.get(`${row}-${col}`)
-              if (!seat) {
-                return <div key={col} className="w-10 h-10" />
-              }
-              return (
-                <button
-                  key={col}
-                  className={getSeatClasses(seat)}
-                  onClick={() => !seat.isBooked && onSeatSelect(seat)}
-                  disabled={seat.isBooked}
-                />
-              )
-            })}
-          </div>
-        ))}
+        <div className="w-120 h-430 bg-black rounded-b-lg flex items-center justify-center " />
+
+        <div className="flex flex-col gap-10 mt-30">
+          {rows.map((row) => renderSeatRow(row, secondHalfCols))}
+        </div>
       </div>
     </div>
   )
