@@ -16,8 +16,9 @@ import { useEventStore } from "../../store/event/event-store"
 import { SelectedSeat } from "../../types/booking"
 import LoadingPage from "../loading-page"
 import BookingSidebar from "./_component/booking_sidebar"
-import SeatClassSeatOther from "./_component/seat_calss_seat_other"
 import SeatClassSeat from "./_component/seat_class_seat"
+import SeatClassSeatB from "./_component/seat-class-seat-b"
+import SeatClassSeatNormal from "./_component/seat-class-seat-normal"
 
 const BookingPage = () => {
   const { id } = useParams()
@@ -170,8 +171,8 @@ const BookingPage = () => {
 
   return (
     <div className="bg-black/90">
-      <main className="flex p-20 pr-140 pl-140">
-        <div className="flex-1">
+      <main className="flex gap-20 w-full px-160 overflow-hidden p-20">
+        <div className="flex-[3] min-w-0">
           {!selectedGrade ? (
             <SeatClassSeat
               seatGrade=""
@@ -179,7 +180,6 @@ const BookingPage = () => {
               onSeatSelect={handleSeatSelect}
               selectedSeat={selectedSeat}
               eventScheduleId={eventId}
-              onBackToSeatingChart={handleBackToSeatingChart}
             />
           ) : selectedGrade === "VIP" ? (
             <SeatClassSeat
@@ -188,22 +188,28 @@ const BookingPage = () => {
               onSeatSelect={handleSeatSelect}
               selectedSeat={selectedSeat}
               eventScheduleId={eventId}
-              onBackToSeatingChart={handleBackToSeatingChart}
             />
-          ) : (
-            <SeatClassSeatOther
-              seatGrade={selectedGrade}
+          ) : selectedGrade === "B" ? (
+            <SeatClassSeatB
               seats={seats || []}
               onSeatSelect={handleSeatSelect}
               selectedSeat={selectedSeat}
               eventScheduleId={eventId}
-              onBackToSeatingChart={handleBackToSeatingChart}
+              seatGrade={selectedGrade}
+            />
+          ) : (
+            <SeatClassSeatNormal
+              seats={seats || []}
+              onSeatSelect={handleSeatSelect}
+              selectedSeat={selectedSeat}
+              eventScheduleId={eventId}
+              seatGrade={selectedGrade}
             />
           )}
         </div>
 
         {bookingData && (
-          <div className="w-350">
+          <div className="flex-[1]">
             <BookingSidebar
               bookingData={bookingData}
               selectedSeat={selectedSeat}

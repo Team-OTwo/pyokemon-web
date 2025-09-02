@@ -3,19 +3,21 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { getRedisBookingBySeatClass } from "../../../api/booking/fetchers/get-event-booking"
 import { SelectedSeat } from "../../../types/booking"
 
-const SeatClassSeat = ({
-  seatGrade,
-  seats,
-  onSeatSelect,
-  selectedSeat,
-  eventScheduleId,
-}: {
-  seatGrade: string
+interface SeatClassSeatNormalProps {
   seats: SelectedSeat[]
   onSeatSelect: (seat: SelectedSeat) => void
   selectedSeat?: SelectedSeat | null
   eventScheduleId: number
-}) => {
+  seatGrade: string
+}
+
+const SeatClassSeatNormal = ({
+  seats,
+  onSeatSelect,
+  selectedSeat,
+  eventScheduleId,
+  seatGrade,
+}: SeatClassSeatNormalProps) => {
   const [updatedSeats, setUpdatedSeats] = useState<SelectedSeat[]>(seats)
 
   useEffect(() => {
@@ -26,7 +28,6 @@ const SeatClassSeat = ({
           ...seat,
           isBooked: redisData[seat.seatId.toString()] !== "",
         }))
-
         setUpdatedSeats(updatedSeatsData)
       } catch (error) {
         console.error("Failed to fetch seat status:", error)
@@ -62,11 +63,11 @@ const SeatClassSeat = ({
         "w-30 h-30 flex items-center justify-center text-xs font-bold transition-all duration-200"
 
       if (seat.isBooked) {
-        return `${baseClasses} bg-white border-1 border-gray-500 cursor-not-allowed`
+        return `${baseClasses} bg-white border border-gray-400 cursor-not-allowed`
       }
 
       if (selectedSeat?.seatId === seat.seatId) {
-        return `${baseClasses} bg-primary border-3 border-black cursor-pointer`
+        return `${baseClasses} bg-primary border-2 border-black cursor-pointer`
       }
 
       return `${baseClasses} bg-primary border-0 cursor-pointer hover:scale-110`
@@ -83,49 +84,30 @@ const SeatClassSeat = ({
     [onSeatSelect]
   )
 
-  const renderSeatRow = (row: string, cols: string[]) => (
-    <div key={row} className="flex gap-5 items-center">
-      {cols.map((col) => {
-        const seat = seatMap.get(`${row}-${col}`)
-        if (!seat) return null
-
-        return (
-          <button
-            key={col}
-            className={getSeatClasses(seat)}
-            onClick={() => handleSeatClick(seat)}
-            disabled={seat.isBooked}
-          />
-        )
-      })}
-    </div>
-  )
-
-  const firstHalfCols = useMemo(() => cols.slice(0, 10), [cols])
-  const secondHalfCols = useMemo(() => cols.slice(10), [cols])
-
   return (
-    <div className="flex flex-col items-center p-30 rounded-lg min-h-500 bg-white w-full h-full mr-20">
+    <div className="flex flex-col items-center p-30 rounded-lg min-h-500 bg-white w-full h-full overflow-hidden">
       <h2 className="text-gray-700 text-2xl font-bold m-0">좌석 배치도 - {seatGrade}</h2>
+      <div className="flex flex-col gap-5 pt-6 w-full max-w-full pt-50">
+        {rows.map((row) => (
+          <div key={row} className="flex gap-5 w-full justify-center">
+            {cols.map((col) => {
+              const seat = seatMap.get(`${row}-${col}`)
+              if (!seat) return null
 
-      <div className="flex flex-col w-full justify-center">
-        <div className="flex w-full min-h-80 bg-black rounded-lg items-center justify-center mt-50">
-          <span className="text-white font-bold text-lg">STAGE</span>
-        </div>
-      </div>
-      <div className="flex items-center justify-center w-full gap-30 min-w-0">
-        <div className="flex flex-col gap-5 min-w-0">
-          {rows.map((row) => renderSeatRow(row, firstHalfCols))}
-        </div>
-
-        <div className="w-120 h-430 bg-black rounded-b-lg flex items-center justify-center " />
-
-        <div className="flex flex-col gap-5 min-w-0">
-          {rows.map((row) => renderSeatRow(row, secondHalfCols))}
-        </div>
+              return (
+                <button
+                  key={col}
+                  className={getSeatClasses(seat)}
+                  onClick={() => handleSeatClick(seat)}
+                  disabled={seat.isBooked}
+                />
+              )
+            })}
+          </div>
+        ))}
       </div>
     </div>
   )
 }
 
-export default SeatClassSeat
+export default SeatClassSeatNormal
