@@ -65,35 +65,38 @@ const SeatClassSeatB = ({
     [onSeatSelect]
   )
 
-  const aToFSeats = useMemo(
-    () =>
-      updatedSeats.filter((seat) =>
-        ["A", "B", "C", "D", "E", "F", "G", "H", "I"].includes(seat.row)
-      ),
+  const allRows = useMemo(
+    () => [...new Set(updatedSeats.map((seat) => seat.row))].sort(),
     [updatedSeats]
   )
 
-  const gToMSeats = useMemo(
-    () => updatedSeats.filter((seat) => ["J", "K", "L", "M", "N", "O"].includes(seat.row)),
+  const aToIRows = useMemo(
+    () => allRows.filter((row) => ["A", "B", "C", "D", "E", "F", "G", "H", "I"].includes(row)),
+    [allRows]
+  )
+
+  const jToORows = useMemo(
+    () => allRows.filter((row) => ["J", "K", "L", "M", "N", "O"].includes(row)),
+    [allRows]
+  )
+
+  const maxCols = useMemo(() => {
+    return Math.max(...updatedSeats.map((seat) => parseInt(seat.col)))
+  }, [updatedSeats])
+
+  const getSeatForPosition = useCallback(
+    (row: string, col: number) => {
+      return updatedSeats.find((seat) => seat.row === row && parseInt(seat.col) === col)
+    },
     [updatedSeats]
-  )
-
-  const aToFRows = useMemo(
-    () => [...new Set(aToFSeats.map((seat) => seat.row))].sort(),
-    [aToFSeats]
-  )
-
-  const gToMRows = useMemo(
-    () => [...new Set(gToMSeats.map((seat) => seat.row))].sort(),
-    [gToMSeats]
   )
 
   return (
-    <div className="flex flex-col items-center p-30 rounded-lg min-h-500 bg-white w-full h-full">
+    <div className="flex flex-col items-center p-30 rounded-lg min-h-500 bg-white w-full h-full overflow-hidden">
       <h2 className="text-gray-700 text-2xl font-bold m-0">좌석 배치도 - {seatGrade}</h2>
-      <div className="flex flex-col w-full justify-center gap-5 pt-50">
-        {aToFRows.map((row) => {
-          const rowSeats = aToFSeats
+      <div className="flex flex-col gap-5 pt-50 w-full overflow-x-auto">
+        {aToIRows.map((row) => {
+          const rowSeats = updatedSeats
             .filter((seat) => seat.row === row)
             .sort((a, b) => parseInt(a.col) - parseInt(b.col))
 
@@ -101,7 +104,7 @@ const SeatClassSeatB = ({
           const last7Seats = rowSeats.slice(-7)
 
           return (
-            <div key={row} className="flex justify-between">
+            <div key={row} className="flex gap-5 justify-center min-w-max">
               <div className="flex gap-5">
                 {first7Seats.map((seat) => (
                   <button
@@ -112,6 +115,13 @@ const SeatClassSeatB = ({
                   />
                 ))}
               </div>
+
+              <div className="flex gap-5">
+                {Array.from({ length: 12 }, (_, index) => (
+                  <div key={`empty-${row}-${index}`} className="w-30 h-30 bg-white" />
+                ))}
+              </div>
+
               <div className="flex gap-5">
                 {last7Seats.map((seat) => (
                   <button
@@ -126,23 +136,21 @@ const SeatClassSeatB = ({
           )
         })}
 
-        {gToMRows.map((row) => {
-          const rowSeats = gToMSeats
+        {jToORows.map((row) => {
+          const rowSeats = updatedSeats
             .filter((seat) => seat.row === row)
             .sort((a, b) => parseInt(a.col) - parseInt(b.col))
 
           return (
-            <div key={row}>
-              <div className="flex gap-5">
-                {rowSeats.map((seat) => (
-                  <button
-                    key={`${seat.row}-${seat.col}`}
-                    className={getSeatClasses(seat)}
-                    onClick={() => handleSeatClick(seat)}
-                    disabled={seat.isBooked}
-                  />
-                ))}
-              </div>
+            <div key={row} className="flex gap-5 justify-center min-w-max">
+              {rowSeats.map((seat) => (
+                <button
+                  key={`${seat.row}-${seat.col}`}
+                  className={getSeatClasses(seat)}
+                  onClick={() => handleSeatClick(seat)}
+                  disabled={seat.isBooked}
+                />
+              ))}
             </div>
           )
         })}
