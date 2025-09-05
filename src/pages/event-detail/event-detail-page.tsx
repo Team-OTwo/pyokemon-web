@@ -4,6 +4,7 @@ import { useGetEventDetailQuery } from "@/api/event/queries/use-get-event-detail
 import { useEventStore } from "@/store/event/event-store"
 import { format, isAfter, isBefore, isToday } from "date-fns"
 import { ko } from "date-fns/locale"
+import DOMPurify from "dompurify"
 import { IoBookmark, IoBookmarkOutline } from "react-icons/io5"
 import { useNavigate, useParams } from "react-router"
 
@@ -64,6 +65,11 @@ const EventDetailPage = () => {
   const disabled = !isToday(event.ticketOpenAt)
   const beforeOpen = isAfter(event.ticketOpenAt, new Date())
   const afterEvent = isBefore(event.eventDate, new Date())
+
+  function SafeHtmlComponent(html: string) {
+    const safeHtml = DOMPurify.sanitize(html)
+    return <div dangerouslySetInnerHTML={{ __html: safeHtml }} />
+  }
 
   return (
     <div className="px-160 py-64">
@@ -152,7 +158,8 @@ const EventDetailPage = () => {
       <hr />
       <div className="py-24">
         <h2 className="title-18-bold mb-24">상세 설명</h2>
-        <img src={event.description} alt="" />
+        {/* <img src={event.description} alt="" /> */}
+        {event.description && SafeHtmlComponent(event.description)}
       </div>
     </div>
   )
