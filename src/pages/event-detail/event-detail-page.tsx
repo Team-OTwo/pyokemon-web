@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import { postSavedEvent } from "@/api/event/fetchers/post-saved-event"
 import { useGetEventDetailQuery } from "@/api/event/queries/use-get-event-detail-query"
 import { useEventStore } from "@/store/event/event-store"
-import { format, isAfter, isBefore, isToday } from "date-fns"
+import { format, isAfter, isBefore, isWithinInterval } from "date-fns"
 import { ko } from "date-fns/locale"
 import DOMPurify from "dompurify"
 import { IoBookmark, IoBookmarkOutline } from "react-icons/io5"
@@ -62,9 +62,13 @@ const EventDetailPage = () => {
     navigate(`/event/booking/${event.eventScheduleId}`)
   }
 
-  const disabled = !isToday(event.ticketOpenAt)
   const beforeOpen = isAfter(event.ticketOpenAt, new Date())
   const afterEvent = isBefore(event.eventDate, new Date())
+  const today = new Date()
+  const isOpen = isWithinInterval(today, {
+    start: event.ticketOpenAt,
+    end: event.eventDate,
+  })
 
   function SafeHtmlComponent(html: string) {
     const safeHtml = DOMPurify.sanitize(html)
@@ -134,7 +138,7 @@ const EventDetailPage = () => {
                 <p className="text-center text-gray-500">이미 종료된 공연입니다.</p>
               </div>
             )}
-            <Button text="예매하기" onClick={handleClickBooking} disabled={disabled} />
+            <Button text="예매하기" onClick={handleClickBooking} disabled={!isOpen} />
 
             <Button
               onClick={handleMarkClick}
