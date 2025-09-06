@@ -193,8 +193,8 @@ const BookingSidebar = ({
         </div>
       </div>
 
-      <div className="mt-auto" onClick={onPayment}>
-        <Button text="결제하기" border={false} />
+      <div className="mt-auto w-full">
+        <Button text="결제하기" border={false} size="full" onClick={onPayment} />
       </div>
     </div>
   )
