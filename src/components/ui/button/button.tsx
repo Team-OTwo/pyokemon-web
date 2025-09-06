@@ -4,7 +4,7 @@ interface ButtonProps {
   text: string
   border?: boolean
   borderColor?: string
-  small?: boolean
+  size?: string
   color?: string
   bgColor?: string
   onClick?: () => void
@@ -47,7 +47,6 @@ const getColorStyle = (type: "text" | "bg" | "border", color?: string) => {
 
 const Button: React.FC<ButtonProps> = ({
   text,
-  small = false,
   border = false,
   borderColor = "primary",
   color = "white",
@@ -55,6 +54,7 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   icon,
   disabled,
+  size,
 }) => {
   const textStyle = disabled ? getColorStyle("text", "gray-500") : getColorStyle("text", color)
   const bgStyle = disabled ? getColorStyle("bg", "gray-300") : getColorStyle("bg", bgColor)
@@ -68,7 +68,7 @@ const Button: React.FC<ButtonProps> = ({
   const baseStyle =
     "rounded-lg h-51 flex justify-center items-center cursor-pointer text-16-semibold "
 
-  const sizeStyle = small ? "px-24" : "w-320"
+  const sizeStyle = size === "small" ? "px-24" : size === "full" ? "w-full" : "w-320"
 
   const className = [baseStyle, sizeStyle].join(" ")
   const style = { ...textStyle, ...bgStyle, ...borderStyle }
