@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { usePostPaymentInitiateMutation } from "@/api/payment/queries/get-payments-query"
 import { getTossClientKey } from "@/constants/env"
 import { loadTossPayments } from "@tosspayments/payment-sdk"
@@ -38,12 +38,14 @@ const BookingPage = () => {
   )
 
   const event = useMemo(() => {
-    const currentEvent = storeEvent || eventDetail
+    return storeEvent || eventDetail
+  }, [storeEvent, eventDetail])
+
+  useEffect(() => {
     if (eventDetail && !storeEvent) {
       setEvent(eventDetail)
     }
-    return currentEvent
-  }, [storeEvent, eventDetail, setEvent])
+  }, [eventDetail, storeEvent, setEvent])
 
   const handleSeatGradeSelect = useCallback((grade: string) => {
     setSelectedGrade(grade)
