@@ -3,7 +3,7 @@ import { putReadAllNotifications } from "@/api/notification/fetchers/put-read-al
 import { useGetNotificationsQuery } from "@/api/notification/queries/use-get-notifications-query"
 import ErrorPage from "@/pages/error-page"
 import LoadingPage from "@/pages/loading-page"
-import { useQueryClient } from "@tanstack/react-query"
+import { InfiniteData, useQueryClient } from "@tanstack/react-query"
 import { IoCheckmarkDone } from "react-icons/io5"
 
 import { Notification } from "@/types/notification"
@@ -36,7 +36,7 @@ const NotificationModal: React.FC<NotificationProps> = ({ setShowNotification, t
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
     }
-  }, [setShowNotification])
+  }, [setShowNotification, triggerRef])
 
   const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useGetNotificationsQuery()
@@ -51,27 +51,26 @@ const NotificationModal: React.FC<NotificationProps> = ({ setShowNotification, t
     return data?.pages.flatMap((page) => page.notifications) ?? []
   }, [data])
 
-  if (error) {
-    return <ErrorPage />
-  }
-
   const handleReadAll = () => {
     putReadAllNotifications()
 
     // 캐시 직접 수정
-    queryClient.setQueryData(["notifications"], (oldData: any) => {
-      if (!oldData) return oldData
-      return {
-        ...oldData,
-        pages: oldData.pages.map((page: any) => ({
-          ...page,
-          notifications: page.notifications.map((n: any) => ({
-            ...n,
-            isChecked: true, // 모두 읽음으로 변경
+    queryClient.setQueryData<InfiniteData<{ notifications: Notification[] }>>(
+      ["notifications"],
+      (oldData) => {
+        if (!oldData) return oldData
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page) => ({
+            ...page,
+            notifications: page.notifications.map((n) => ({
+              ...n,
+              isChecked: true, // 모두 읽음으로 변경
+            })),
           })),
-        })),
+        }
       }
-    })
+    )
   }
 
   return (
@@ -90,6 +89,8 @@ const NotificationModal: React.FC<NotificationProps> = ({ setShowNotification, t
       <div className="h-360 overflow-y-scroll overscroll-contain">
         {isLoading ? (
           <LoadingPage full />
+        ) : error ? (
+          <ErrorPage />
         ) : (
           <ul>
             {notifications.map((item) => {

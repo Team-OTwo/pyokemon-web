@@ -17,14 +17,14 @@ const ErrorPage = () => {
       <div className="flex gap-24">
         <Button
           text="이전 페이지"
-          small
+          size="small"
           border
           bgColor="white"
           borderColor="black"
           color="black"
           onClick={() => navigate(-1)}
         />
-        <Button text="메인으로" small bgColor="black" onClick={() => navigate("/")} />
+        <Button text="메인으로" size="small" bgColor="black" onClick={() => navigate("/")} />
       </div>
     </div>
   )

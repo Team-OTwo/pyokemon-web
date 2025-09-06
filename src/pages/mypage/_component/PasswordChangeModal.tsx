@@ -125,14 +125,14 @@ const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({ isOpen, onClo
         <div className="flex justify-end space-x-12 mt-40">
           <Button
             text="취소"
-            small
+            size="small"
             border
             borderColor="gray-300"
             color="gray-700"
             bgColor="white"
             onClick={handleClose}
           />
-          <Button text="완료" small color="white" bgColor="primary" onClick={handleSubmit} />
+          <Button text="완료" size="small" color="white" bgColor="primary" onClick={handleSubmit} />
         </div>
       </div>
     </div>

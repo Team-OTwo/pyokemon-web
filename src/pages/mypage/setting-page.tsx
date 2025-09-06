@@ -86,7 +86,7 @@ const SettingPage = () => {
           </div>
           <Button
             text="수정하기"
-            small
+            size="small"
             border
             borderColor="primary"
             color="primary"
@@ -104,7 +104,7 @@ const SettingPage = () => {
           </div>
           <Button
             text="탈퇴하기"
-            small
+            size="small"
             border
             borderColor="error"
             color="error"
