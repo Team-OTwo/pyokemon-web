@@ -41,7 +41,7 @@ const NOTIFICATION_API_URL: Record<Environment, string> = {
 
 const TOSS_CLIENT_KEY: Record<Environment, string> = {
   local: "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq", // 테스트용 키 (실제 키로 대체 필요)
-  dev: "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq", // 개발 환경용 키 (실제 키로 대체 필요)
+  dev: import.meta.env.VITE_TOSS_CLIENT_KEY || "", // GitHub Actions에서 시크릿 값 사용
 }
 
 export const getGatewayUrl = () => GATEWAY_URL[ENV]
